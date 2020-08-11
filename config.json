@@ -1,0 +1,8 @@
+{
+	"discordPrefix" : "!",
+	"discordToken" : "DISCORD-TOKEN",
+	"mongodbUser" : "MONGODB-USER",
+	"mongodbPass" : "MONGODB-PASS",
+	"mongodbHost" : "MONGODB-HOST",
+	"mongodbDatabase" : "MONGODB-NAME"
+}
