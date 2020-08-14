@@ -13,33 +13,32 @@ const prefix = config.discordPrefix;
 mongoose.connect('mongodb+srv://'+config.mongodbUser+':'+config.mongodbPass+'@'+config.mongodbHost+'/'+config.mongodbDatabase,{ useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-var Schema  = mongoose.Schema ;
-var walkerSchema = new Schema( {
-		walkerID: Number,
-		name: String,
-		isBeingUsed: Boolean,
-		lastUser: String,
-		ownerUser: String,
-		isPublic: Boolean,
-		description: String,
-		location: String
-	});
-var Walker = mongoose.model('walkers', walkerSchema);
 
+const Walkers = mongoose.model('walkers', mongoose.Schema({
+	walkerID: Number,
+	name: String,
+	isBeingUsed: Boolean,
+	lastUser: String,
+	ownerUser: String,
+	isPublic: Boolean,
+	description: String,
+	location: String
+}));
 client.on('message', msg => {
-	if (msg.author.bot) return;
-	if (msg.content.includes('traveled')) {
-		msg.channel.send("Walker ID: "+ msg.content.match(/(\d+)/)[1]);
-		var newWalker = new Walker({walkerID: msg.content.match(/(\d+)/)[1]});
+	if (msg.content.includes('traveled') && msg.author.bot) {
+		var newWalker = new Walkers({walkerID: msg.content.match(/\((\d+)\)/)[1], lastUser: msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1], name: msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1]});
+		insertNewWalker(newWalker);
 	}
-	if (!msg.content.startsWith(prefix)) return;
+	if (!msg.content.startsWith(prefix) && msg.author.bot) return;
 	const args = msg.content.slice(prefix.length).trim().split(' ');
 	const command = args.shift().toLowerCase();
 	if (command === 'loaddwalker') {
 		addWalkerPass(msg,args);
+	} else if (command === 'lolistwalkers') {
+		
 	} else if (command === 'locraft') {
 		if (!args.length) {
-			return msg.reply("Tienes que poner lo que quieres craftear y si quieres la cantidad para hacer. Para más info pon "+prefix+"locommands");
+			return msg.reply("Tienes que poner lo que quieres craftear y si quieres la cantidad para hacer. Para más info pon " + prefix + "locommands");
 		}
 		var multiplier = 1;
 		if (/(\d+)/.test(msg.content)) {
@@ -51,7 +50,7 @@ client.on('message', msg => {
 		}
 		var materials = getNecessaryMaterials(item.trim(),msg,multiplier);
 	} else if (command === 'locommands') {
-		msg.channel.send(prefix+"locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \n```Ejemplo de uso: "+prefix+"locraft Barrier Base \nSi quieres ver los materiales para hacer 10: "+prefix+"locraft 10x Barrier Base```");
+		msg.channel.send(prefix+"locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \n```Ejemplo de uso: " + prefix + "locraft Barrier Base \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Barrier Base```");
 	}
 });
 
@@ -68,7 +67,6 @@ function getNecessaryMaterials(item,msg,multiplier) {
 						message += " | " + le[ing].count*multiplier + "x " + le[ing].name;
 					}
 				}
-				console.log(message);
 			}
 		}
 		msg.reply(message);
@@ -80,6 +78,21 @@ function addWalkerPass(msg,args) {
 		return msg.reply("Para agregar un walker pon " + prefix + "loaddwalker id dueño \n```Ejemplo: "+ prefix +"loaddwalker 721480717 Dm94Dani```");
 	} else {
 		msg.reply("Walker agregado \n```ID del waker: "+args[0]+"\nDueño: "+args[1]+" ```");
+		var newWalker = new Walkers({walkerID: args[0],ownerUser: args[1]});
+		insertNewWalker(newWalker);
 	}
-	
+}
+
+function insertNewWalker(newWalker) {
+	Walkers.exists({ walkerID: newWalker.walkerID}).then(exists => {
+		if (exists) {
+			var query = {'walkerID': newWalker.walkerID};
+			Walkers.findOneAndUpdate(query, newWalker, {upsert: true}, function(err, doc) {
+			});
+		} else {
+			newWalker.save(function (err, book) {
+				if (err) return console.error(err);
+			});
+		}
+	});
 }
