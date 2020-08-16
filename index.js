@@ -26,7 +26,19 @@ const Walkers = mongoose.model('walkers', mongoose.Schema({
 }));
 client.on('message', msg => {
 	if (msg.content.includes('traveled') && msg.author.bot) {
-		var newWalker = new Walkers({walkerID: msg.content.match(/\((\d+)\)/)[1], lastUser: msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1], name: msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1]});
+		var walkerId = 0;
+		var walkerName = "";
+		var lastUser = "";
+		if (/\((\d+)\)/.test(msg.content)) {
+			walkerId = msg.content.match(/\((\d+)\)/)[1];
+		}
+		if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
+			lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
+		}
+		if (/(?:with walker\s``)(.+)(?:``\s)/.test(msg.content)) {
+			walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
+		}
+		var newWalker = new Walkers({walkerID: walkerId, lastUser: lastUser, name: walkerName});
 		insertNewWalker(newWalker);
 	}
 	if (!msg.content.startsWith(prefix) && msg.author.bot) return;
@@ -58,18 +70,45 @@ function getNecessaryMaterials(item,msg,multiplier) {
 	var message = multiplier + "x " + item;
 	var url = 'https://raw.githubusercontent.com/Last-Oasis-Crafter/lastoasis-crafting-calculator/master/src/items.json';
 	getJSON(url, function(error, response){
+		var areItems = false;
+		message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + item)	.setDescription("Here are the necessary materials");
 		for (var key in response) {
 			if (response[key].name == item) {
 				ingredie = response[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
 					var le = ingredie[i].ingredients;
 					for (var ing in le) {
-						message += " | " + le[ing].count*multiplier + "x " + le[ing].name;
+						areItems = true;
+						message.addField(le[ing].name, le[ing].count*multiplier, true);
+						//message += " | " + le[ing].count*multiplier + "x " + le[ing].name;
 					}
 				}
 			}
 		}
-		msg.reply(message);
+		if (areItems) {
+			msg.channel.send(message);
+		}
+	});
+	//To show the items in Spanish
+	getJSON("https://raw.githubusercontent.com/dm94/lastoasis-crafting-calculator/master/src/itemsES.json", function(error, response){
+		var areItems = false;
+		message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + item)	.setDescription("Aquí tienes los materiales necesarios");
+		for (var key in response) {
+			if (response[key].name == item) {
+				ingredie = response[key].crafting;
+				for (var i = 0; i < ingredie.length; i++) {
+					var le = ingredie[i].ingredients;
+					for (var ing in le) {
+						areItems = true;
+						message.addField(le[ing].name, le[ing].count*multiplier, true);
+						//message += " | " + le[ing].count*multiplier + "x " + le[ing].name;
+					}
+				}
+			}
+		}
+		if (areItems) {
+			msg.channel.send(message);
+		}
 	});
 }
 
