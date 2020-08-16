@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-var mongoose = require('mongoose');
+var MongoClient = require('mongodb').MongoClient;
 const client = new Discord.Client();
 var config = require('./config.json');
 var getJSON = require('get-json');
@@ -10,27 +10,17 @@ client.on('ready', () => {
 
 client.login(config.discordToken);
 const prefix = config.discordPrefix;
-mongoose.connect('mongodb+srv://'+config.mongodbUser+':'+config.mongodbPass+'@'+config.mongodbHost+'/'+config.mongodbDatabase,{ useNewUrlParser: true});
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
 
-const Walkers = mongoose.model('walkers', mongoose.Schema({
-	walkerID: Number,
-	name: String,
-	isBeingUsed: Boolean,
-	lastUser: String,
-	ownerUser: String,
-	isPublic: Boolean,
-	description: String,
-	location: String
-}));
+var urlMongoConnect = 'mongodb+srv://'+config.mongodbUser+':'+config.mongodbPass+'@'+config.mongodbHost;
+const clientmongo = new MongoClient(urlMongoConnect, {useNewUrlParser: true});
+
 client.on('message', msg => {
 	if (msg.content.includes('traveled') && msg.author.bot) {
 		var walkerId = 0;
 		var walkerName = "";
 		var lastUser = "";
 		if (/\((\d+)\)/.test(msg.content)) {
-			walkerId = msg.content.match(/\((\d+)\)/)[1];
+			walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
 		}
 		if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
 			lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
@@ -38,7 +28,7 @@ client.on('message', msg => {
 		if (/(?:with walker\s``)(.+)(?:``\s)/.test(msg.content)) {
 			walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
 		}
-		var newWalker = new Walkers({walkerID: walkerId, lastUser: lastUser, name: walkerName});
+		var newWalker = {walkerID: walkerId, lastUser: lastUser, name: walkerName};
 		insertNewWalker(newWalker);
 	}
 	if (!msg.content.startsWith(prefix) && msg.author.bot) return;
@@ -47,7 +37,7 @@ client.on('message', msg => {
 	if (command === 'loaddwalker') {
 		addWalkerPass(msg,args);
 	} else if (command === 'lolistwalkers') {
-		
+		listAllWalkers(msg);
 	} else if (command === 'locraft') {
 		if (!args.length) {
 			return msg.reply("Tienes que poner lo que quieres craftear y si quieres la cantidad para hacer. Para más info pon " + prefix + "locommands");
@@ -80,7 +70,6 @@ function getNecessaryMaterials(item,msg,multiplier) {
 					for (var ing in le) {
 						areItems = true;
 						message.addField(le[ing].name, le[ing].count*multiplier, true);
-						//message += " | " + le[ing].count*multiplier + "x " + le[ing].name;
 					}
 				}
 			}
@@ -101,7 +90,6 @@ function getNecessaryMaterials(item,msg,multiplier) {
 					for (var ing in le) {
 						areItems = true;
 						message.addField(le[ing].name, le[ing].count*multiplier, true);
-						//message += " | " + le[ing].count*multiplier + "x " + le[ing].name;
 					}
 				}
 			}
@@ -122,16 +110,25 @@ function addWalkerPass(msg,args) {
 	}
 }
 
+function listAllWalkers(msg) {
+	MongoClient.connect(urlMongoConnect, function(err, db) {
+		var dbo = db.db(config.mongodbDatabase);
+		dbo.collection("walkers").find({}).toArray(function(err, result) {
+			if (err) console.log(err);
+			
+			console.log(result);
+			db.close();
+		});
+	});
+}
+
 function insertNewWalker(newWalker) {
-	Walkers.exists({ walkerID: newWalker.walkerID}).then(exists => {
-		if (exists) {
-			var query = {'walkerID': newWalker.walkerID};
-			Walkers.findOneAndUpdate(query, newWalker, {upsert: true}, function(err, doc) {
-			});
-		} else {
-			newWalker.save(function (err, book) {
-				if (err) return console.error(err);
-			});
-		}
+	clientmongo.connect(function(err) {
+		const db = clientmongo.db(config.mongodbDatabase);
+		var col = db.collection('walkers');
+		var newvalues = { $set: newWalker };
+		col.findOneAndUpdate({walkerID: newWalker.walkerID}, newvalues,{upsert: true},function(err, r) {
+			clientmongo.close();
+		});
 	});
 }
