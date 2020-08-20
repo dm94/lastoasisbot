@@ -14,6 +14,10 @@ const prefix = config.discordPrefix;
 var urlMongoConnect = 'mongodb+srv://'+config.mongodbUser+':'+config.mongodbPass+'@'+config.mongodbHost;
 const clientmongo = new MongoClient(urlMongoConnect, {useNewUrlParser: true});
 
+client.on('ready', () => {
+	client.user.setActivity('!lohelp', { type: 'STREAMING', url: 'https://www.twitch.tv/dm94dani' });
+});
+
 client.on('message', msg => {
 	if (msg.content.includes('traveled') && msg.author.bot) {
 		var walkerId = 0;
@@ -36,7 +40,7 @@ client.on('message', msg => {
 	const command = args.shift().toLowerCase();
 	if (command === 'loaddwalker') {
 		addWalkerPass(msg,args);
-	} else if (command === 'lolistwalkers') {
+	} else if (command === 'lolistwalkers' && msg.author.id === 82444319507615744) {
 		listAllWalkers(msg);
 	} else if (command === 'locraft') {
 		if (!args.length) {
@@ -50,9 +54,12 @@ client.on('message', msg => {
 		if (multiplier != 1) {
 			item = msg.content.substr(msg.content.indexOf('x')+1);
 		}
-		var materials = getNecessaryMaterials(item.trim(),msg,multiplier);
-	} else if (command === 'locommands') {
-		msg.channel.send(prefix+"locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \n```Ejemplo de uso: " + prefix + "locraft Barrier Base \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Barrier Base```");
+		var materials = getNecessaryMaterials(item.trim().toLowerCase(),msg,multiplier);
+	} else if (command === 'locommands' || command === 'lohelp') {
+		msg.channel.send(":flag_es: \n```" + prefix+"locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \nEjemplo de uso: " + prefix + "locraft Cuerpo de Walker Cobra \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Cuerpo de Walker Cobra``` \n" + prefix + "loinfo = Muestra información del bot.```");
+		msg.channel.send(":flag_gb: \n```" + prefix+"locraft = With this command you can see the materials needed to make an object. \nExample of use: " + prefix + "locraft Barrier Base \nIf you want to see the materials to make 10: " + prefix + "locraft 10x Barrier Base \n" + prefix + "loinfo = Displays bot information.```");
+	} else if (command === 'loinfo') {
+		mostrarInfo(msg);
 	}
 });
 
@@ -63,7 +70,8 @@ function getNecessaryMaterials(item,msg,multiplier) {
 		var areItems = false;
 		message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + item)	.setDescription("Here are the necessary materials");
 		for (var key in response) {
-			if (response[key].name == item) {
+			var objetitem = response[key].name.toLowerCase();
+			if (objetitem == item) {
 				ingredie = response[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
 					var le = ingredie[i].ingredients;
@@ -83,7 +91,8 @@ function getNecessaryMaterials(item,msg,multiplier) {
 		var areItems = false;
 		message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + item)	.setDescription("Aquí tienes los materiales necesarios");
 		for (var key in response) {
-			if (response[key].name == item) {
+			var objetitem = response[key].name.toLowerCase();
+			if (objetitem == item) {
 				ingredie = response[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
 					var le = ingredie[i].ingredients;
@@ -105,7 +114,8 @@ function addWalkerPass(msg,args) {
 		return msg.reply("Para agregar un walker pon " + prefix + "loaddwalker id dueño \n```Ejemplo: "+ prefix +"loaddwalker 721480717 Dm94Dani```");
 	} else {
 		msg.reply("Walker agregado \n```ID del waker: "+args[0]+"\nDueño: "+args[1]+" ```");
-		var newWalker = new Walkers({walkerID: args[0],ownerUser: args[1]});
+		var walkerId = parseInt(args[0]);
+		var newWalker = {walkerID: walkerId, ownerUser: args[1]};
 		insertNewWalker(newWalker);
 	}
 }
@@ -114,8 +124,6 @@ function listAllWalkers(msg) {
 	MongoClient.connect(urlMongoConnect, function(err, db) {
 		var dbo = db.db(config.mongodbDatabase);
 		dbo.collection("walkers").find({}).toArray(function(err, result) {
-			if (err) console.log(err);
-			
 			console.log(result);
 			db.close();
 		});
@@ -131,4 +139,15 @@ function insertNewWalker(newWalker) {
 			clientmongo.close();
 		});
 	});
+}
+
+function mostrarInfo(msg) {
+	var message = new Discord.MessageEmbed()
+		.setColor('#008FFF').setTitle("LO BOT")
+		.setURL('https://github.com/dm94/lastoasisbot')
+		.setAuthor('Dm94Dani', 'https://comunidadgzone.es/wp-content/uploads/2020/08/FENIX-dm94dani.png', 'https://github.com/dm94')
+		.setDescription("Discord Bot for Last Oasis" + 
+		"\nTo add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584" +
+		"\nThe list of items comes from this repository: https://github.com/Last-Oasis-Crafter/lastoasis-crafting-calculator");
+	msg.channel.send(message);
 }
