@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-var MongoClient = require('mongodb').MongoClient;
 const client = new Discord.Client();
 var config = require('./config.json');
 var getJSON = require('get-json');
+var mysql = require('mysql');
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
@@ -11,8 +11,12 @@ client.on('ready', () => {
 client.login(config.discordToken);
 const prefix = config.discordPrefix;
 
-var urlMongoConnect = 'mongodb+srv://'+config.mongodbUser+':'+config.mongodbPass+'@'+config.mongodbHost;
-const clientmongo = new MongoClient(urlMongoConnect, {useNewUrlParser: true});
+var con = mysql.createConnection({
+	host: config.mysqldbHost,
+	user: config.mysqldbUser,
+	password: config.mysqldbPass,
+	database: config.mysqldbDatabase
+});
 
 client.on('ready', () => {
 	client.user.setActivity('!lohelp', { type: 'STREAMING', url: 'https://www.twitch.tv/dm94dani' });
@@ -33,14 +37,14 @@ client.on('message', msg => {
 			walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
 		}
 		var newWalker = {walkerID: walkerId, lastUser: lastUser, name: walkerName};
-		insertNewWalker(newWalker);
+		insertNewWalker(newWalker,msg.guild.id);
 	}
 	if (!msg.content.startsWith(prefix) && msg.author.bot) return;
 	const args = msg.content.slice(prefix.length).trim().split(' ');
 	const command = args.shift().toLowerCase();
 	if (command === 'loaddwalker') {
 		addWalkerPass(msg,args);
-	} else if (command === 'lolistwalkers' && msg.author.id === 82444319507615744) {
+	} else if (command === 'lolistwalkers') {
 		listAllWalkers(msg);
 	} else if (command === 'locraft') {
 		if (!args.length) {
@@ -113,32 +117,45 @@ function addWalkerPass(msg,args) {
 	if (!args.length && args.length != 3) {
 		return msg.reply("Para agregar un walker pon " + prefix + "loaddwalker id dueño \n```Ejemplo: "+ prefix +"loaddwalker 721480717 Dm94Dani```");
 	} else {
-		msg.reply("Walker agregado \n```ID del waker: "+args[0]+"\nDueño: "+args[1]+" ```");
 		var walkerId = parseInt(args[0]);
-		var newWalker = {walkerID: walkerId, ownerUser: args[1]};
-		insertNewWalker(newWalker);
+		var sql = "update walkers set ownerUser = '"+args[1]+"' where walkerID = "+ walkerId;
+		execSQL(sql);
+		msg.reply("Walker agregado \n```ID del waker: "+args[0]+"\nDueño: "+args[1]+" ```");
 	}
 }
 
 function listAllWalkers(msg) {
-	MongoClient.connect(urlMongoConnect, function(err, db) {
-		var dbo = db.db(config.mongodbDatabase);
-		dbo.collection("walkers").find({}).toArray(function(err, result) {
-			console.log(result);
-			db.close();
-		});
+	
+}
+
+function insertNewWalker(newWalker,discordid) {
+	if (walkerExist(newWalker)) {
+		var sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"' where walkerID = "+ newWalker.walkerID;
+		execSQL(sql);
+		console.log("Walker actualizado");
+	} else {
+		var sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "')";
+		execSQL(sql);
+	}
+}
+
+function execSQL(sql) {
+	con.connect(function(err) {
+		con.query(sql, function (err, result) {});
 	});
 }
 
-function insertNewWalker(newWalker) {
-	clientmongo.connect(function(err) {
-		const db = clientmongo.db(config.mongodbDatabase);
-		var col = db.collection('walkers');
-		var newvalues = { $set: newWalker };
-		col.findOneAndUpdate({walkerID: newWalker.walkerID}, newvalues,{upsert: true},function(err, r) {
-			clientmongo.close();
+function walkerExist(newWalker) {
+	var existe = false;
+	con.connect(function(err) {
+		con.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, function (err, result, fields) {
+			if (fields != null) {
+				existe = true;
+			}
 		});
 	});
+	
+	return existe;
 }
 
 function mostrarInfo(msg) {
