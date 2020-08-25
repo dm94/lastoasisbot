@@ -3,6 +3,7 @@ const client = new Discord.Client();
 var config = require('./config.json');
 var getJSON = require('get-json');
 var mysql = require('mysql');
+var itemsES = require('./itemsES.json');
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
@@ -10,13 +11,6 @@ client.on('ready', () => {
 
 client.login(config.discordToken);
 const prefix = config.discordPrefix;
-
-var con = mysql.createConnection({
-	host: config.mysqldbHost,
-	user: config.mysqldbUser,
-	password: config.mysqldbPass,
-	database: config.mysqldbDatabase
-});
 
 client.on('ready', () => {
 	client.user.setActivity('!lohelp', { type: 'STREAMING', url: 'https://www.twitch.tv/dm94dani' });
@@ -69,13 +63,13 @@ client.on('message', msg => {
 
 function getNecessaryMaterials(item,msg,multiplier) {
 	var message = multiplier + "x " + item;
-	var url = 'https://raw.githubusercontent.com/Last-Oasis-Crafter/lastoasis-crafting-calculator/master/src/items.json';
-	getJSON(url, function(error, response){
-		var areItems = false;
-		message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + item)	.setDescription("Here are the necessary materials");
+	var found = false;
+	getJSON("https://raw.githubusercontent.com/Last-Oasis-Crafter/lastoasis-crafting-calculator/master/src/items.json", function(error, response){
 		for (var key in response) {
+			var areItems = false;
 			var objetitem = response[key].name.toLowerCase();
-			if (objetitem == item) {
+			if (objetitem.includes(item)) {
+				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Here are the necessary materials");
 				ingredie = response[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
 					var le = ingredie[i].ingredients;
@@ -85,19 +79,20 @@ function getNecessaryMaterials(item,msg,multiplier) {
 					}
 				}
 			}
-		}
-		if (areItems) {
-			msg.channel.send(message);
+			if (areItems) {
+				found = true;
+				msg.channel.send(message);
+			}
 		}
 	});
-	//To show the items in Spanish
-	getJSON("https://raw.githubusercontent.com/dm94/lastoasis-crafting-calculator/master/src/itemsES.json", function(error, response){
-		var areItems = false;
-		message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + item)	.setDescription("Aquí tienes los materiales necesarios");
-		for (var key in response) {
-			var objetitem = response[key].name.toLowerCase();
-			if (objetitem == item) {
-				ingredie = response[key].crafting;
+	if (!found) {
+		//To show the items in Spanish
+		for (var key in itemsES) {
+			var areItems = false;
+			var objetitem = itemsES[key].name.toLowerCase();
+			if (objetitem.includes(item)) {
+				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Aquí tienes los materiales necesarios");
+				ingredie = itemsES[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
 					var le = ingredie[i].ingredients;
 					for (var ing in le) {
@@ -106,11 +101,11 @@ function getNecessaryMaterials(item,msg,multiplier) {
 					}
 				}
 			}
+			if (areItems) {
+				msg.channel.send(message);
+			}
 		}
-		if (areItems) {
-			msg.channel.send(message);
-		}
-	});
+	}
 }
 
 function addWalkerPass(msg,args) {
@@ -140,21 +135,35 @@ function insertNewWalker(newWalker,discordid) {
 }
 
 function execSQL(sql) {
-	con.connect(function(err) {
-		con.query(sql, function (err, result) {});
+	var pool = mysql.createPool({
+		host: config.mysqldbHost,
+		user: config.mysqldbUser,
+		password: config.mysqldbPass,
+		database: config.mysqldbDatabase,
+		connectionLimit: 5
+	});
+	
+	pool.query(sql, function (err, result) {
+		if (err) console.log(err);
 	});
 }
 
 function walkerExist(newWalker) {
-	var existe = false;
-	con.connect(function(err) {
-		con.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, function (err, result, fields) {
-			if (fields != null) {
-				existe = true;
-			}
-		});
+	var pool = mysql.createPool({
+		host: config.mysqldbHost,
+		user: config.mysqldbUser,
+		password: config.mysqldbPass,
+		database: config.mysqldbDatabase,
+		connectionLimit: 5
 	});
 	
+	var existe = false;
+	pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, function (err, result, fields) {
+		if (err) console.log(err);
+		if (Object.entries(result).length > 0) {
+			existe = true;
+		}
+	});
 	return existe;
 }
 
