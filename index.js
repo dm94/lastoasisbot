@@ -31,6 +31,7 @@ client.on('message', msg => {
 			walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
 		}
 		var newWalker = {walkerID: walkerId, lastUser: lastUser, name: walkerName};
+		walkerAlarm(newWalker,msg);
 		insertNewWalker(newWalker,msg.guild.id);
 	}
 	if (!msg.content.startsWith(prefix) && msg.author.bot) return;
@@ -41,6 +42,7 @@ client.on('message', msg => {
 	} else if (command === 'lolistwalkers') {
 		listAllWalkers(msg);
 	} else if (command === 'locraft') {
+		console.log(new Date() + " " + msg);
 		if (!args.length) {
 			return msg.reply("Tienes que poner lo que quieres craftear y si quieres la cantidad para hacer. Para más info pon " + prefix + "locommands");
 		}
@@ -66,13 +68,13 @@ function getNecessaryMaterials(item,msg,multiplier) {
 	var found = false;
 	getJSON("https://raw.githubusercontent.com/Last-Oasis-Crafter/lastoasis-crafting-calculator/master/src/items.json", function(error, response){
 		for (var key in response) {
-			var areItems = false;
-			var objetitem = response[key].name.toLowerCase();
+			let areItems = false;
+			let objetitem = response[key].name.toLowerCase();
 			if (objetitem.includes(item)) {
 				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Here are the necessary materials");
 				ingredie = response[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
-					var le = ingredie[i].ingredients;
+					let le = ingredie[i].ingredients;
 					for (var ing in le) {
 						areItems = true;
 						message.addField(le[ing].name, le[ing].count*multiplier, true);
@@ -88,13 +90,13 @@ function getNecessaryMaterials(item,msg,multiplier) {
 	if (!found) {
 		//To show the items in Spanish
 		for (var key in itemsES) {
-			var areItems = false;
-			var objetitem = itemsES[key].name.toLowerCase();
+			let areItems = false;
+			let objetitem = itemsES[key].name.toLowerCase();
 			if (objetitem.includes(item)) {
 				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Aquí tienes los materiales necesarios");
 				ingredie = itemsES[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
-					var le = ingredie[i].ingredients;
+					let le = ingredie[i].ingredients;
 					for (var ing in le) {
 						areItems = true;
 						message.addField(le[ing].name, le[ing].count*multiplier, true);
@@ -110,28 +112,90 @@ function getNecessaryMaterials(item,msg,multiplier) {
 
 function addWalkerPass(msg,args) {
 	if (!args.length && args.length != 3) {
-		return msg.reply("Para agregar un walker pon " + prefix + "loaddwalker id dueño \n```Ejemplo: "+ prefix +"loaddwalker 721480717 Dm94Dani```");
+		msg.reply("Para agregar un walker pon " + prefix + "loaddwalker id dueño \n```Ejemplo: "+ prefix +"loaddwalker 721480717 Dm94Dani```");
 	} else {
-		var walkerId = parseInt(args[0]);
-		var sql = "update walkers set ownerUser = '"+args[1]+"' where walkerID = "+ walkerId;
+		let walkerId = parseInt(args[0]);
+		let sql = "update walkers set ownerUser = '"+args[1]+"' where walkerID = "+ walkerId;
 		execSQL(sql);
 		msg.reply("Walker agregado \n```ID del waker: "+args[0]+"\nDueño: "+args[1]+" ```");
 	}
 }
 
+function walkerAlarm(newWalker, msg) {
+	var pool = mysql.createPool({
+		host: config.mysqldbHost,
+		user: config.mysqldbUser,
+		password: config.mysqldbPass,
+		database: config.mysqldbDatabase,
+		connectionLimit: 5
+	});
+	pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
+		if (err) console.log(err);
+		if (Object.entries(result).length > 0) {
+			for (var walker in result) {
+				if (result[walker].ownerUser === "null") {
+					message.addField("Owner", result[walker].ownerUser, true);
+				} else if (result[walker].ownerUser =! newWalker.lastUser) {
+					msg.channel.send("@everyone Alert the walker with owner has been used");
+				}
+			}
+		}
+	});
+}
+
 function listAllWalkers(msg) {
+	var pool = mysql.createPool({
+		host: config.mysqldbHost,
+		user: config.mysqldbUser,
+		password: config.mysqldbPass,
+		database: config.mysqldbDatabase,
+		connectionLimit: 5
+	});
 	
+	pool.query("SELECT * FROM walkers where discorid = " + msg.guild.id, (err, result) => {
+		if (err) console.log(err);
+		if (Object.entries(result).length > 0) {
+			for (var walker in result) {
+				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
+				message.addField("Walker ID", result[walker].walkerID, true);
+				message.addField("Last User", result[walker].lastUser, true);
+				if (result[walker].ownerUser === "null") {
+					message.addField("Owner", result[walker].ownerUser, true);
+				} else {
+					message.addField("Owner", "Not defined", true);
+				}
+				msg.channel.send(message);
+			}
+		} else {
+			msg.channel.send("No walkers added since this discord");
+		}
+		pool.end();
+	});
 }
 
 function insertNewWalker(newWalker,discordid) {
-	if (walkerExist(newWalker)) {
-		var sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"' where walkerID = "+ newWalker.walkerID;
-		execSQL(sql);
-		console.log("Walker actualizado");
-	} else {
-		var sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "')";
-		execSQL(sql);
-	}
+	var pool = mysql.createPool({
+		host: config.mysqldbHost,
+		user: config.mysqldbUser,
+		password: config.mysqldbPass,
+		database: config.mysqldbDatabase,
+		connectionLimit: 5
+	});
+	
+	pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
+		if (err) console.log(err);
+		if (Object.entries(result).length > 0) {
+			let sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"' where walkerID = "+ newWalker.walkerID;
+			execSQL(sql);
+			console.log("Walker actualizado");
+		} else {
+			let sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "')";
+			execSQL(sql);
+			console.log("Nuevo walker insertado");
+		}
+		pool.end();
+	});
+	
 }
 
 function execSQL(sql) {
@@ -143,28 +207,10 @@ function execSQL(sql) {
 		connectionLimit: 5
 	});
 	
-	pool.query(sql, function (err, result) {
+	pool.query(sql, (err, result) => {
 		if (err) console.log(err);
+		pool.end();
 	});
-}
-
-function walkerExist(newWalker) {
-	var pool = mysql.createPool({
-		host: config.mysqldbHost,
-		user: config.mysqldbUser,
-		password: config.mysqldbPass,
-		database: config.mysqldbDatabase,
-		connectionLimit: 5
-	});
-	
-	var existe = false;
-	pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, function (err, result, fields) {
-		if (err) console.log(err);
-		if (Object.entries(result).length > 0) {
-			existe = true;
-		}
-	});
-	return existe;
 }
 
 function mostrarInfo(msg) {
