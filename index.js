@@ -47,6 +47,8 @@ client.on('message', msg => {
 	const command = args.shift().toLowerCase();
 	if (command === 'loaddwalker') {
 		addWalkerPass(msg,args);
+	} else if (command === 'lowalkerinfo') {
+		walkerInfo(msg,args);
 	} else if (command === 'lolistwalkers') {
 		listAllWalkers(msg);
 	} else if (command === 'locraft') {
@@ -64,8 +66,23 @@ client.on('message', msg => {
 		}
 		var materials = getNecessaryMaterials(item.trim().toLowerCase(),msg,multiplier);
 	} else if (command === 'locommands' || command === 'lohelp') {
-		msg.channel.send(":flag_es: \n```" + prefix+"locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \nEjemplo de uso: " + prefix + "locraft Cuerpo de Walker Cobra \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Cuerpo de Walker Cobra``` \n" + prefix + "loinfo = Muestra información del bot.```");
-		msg.channel.send(":flag_gb: \n```" + prefix+"locraft = With this command you can see the materials needed to make an object. \nExample of use: " + prefix + "locraft Barrier Base \nIf you want to see the materials to make 10: " + prefix + "locraft 10x Barrier Base \n" + prefix + "loinfo = Displays bot information.```");
+		let messageEs = ":flag_es: \n```";
+		messageEs += prefix + "locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \nEjemplo de uso: " + prefix + "locraft Cuerpo de Walker Cobra \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Cuerpo de Walker Cobra";
+		messageEs += "\n" + prefix + "loinfo = Muestra información del bot.";
+		messageEs += "\n" + prefix + "lolistwalkers = Muestra todos los walkers añadidos desde este discord.";
+		messageEs += "\n" + prefix + "loaddwalker (id) (dueño) = Permite asignar un dueño a un walker y si ese walker lo saca la persona que no es el dueño avisa en el discord.";
+		messageEs += "\n" + prefix + "lowalkerinfo (id) = Muestra la información de un walker en concreto";
+		messageEs += "```";
+		msg.channel.send(messageEs);
+		
+		let messageEn = ":flag_gb: \n```";
+		messageEn += prefix + "locraft = With this command you can see the materials needed to make an object. \nExample of use: " + prefix + "locraft Barrier Base \nIf you want to see the materials to make 10: " + prefix + "locraft 10x Barrier Base ";
+		messageEn += "\n" + prefix + "loinfo = Displays bot information.";
+		messageEn += "\n" + prefix + "lolistwalkers = Shows all the walkers added since this discord.";
+		messageEn += "\n" + prefix + "loaddwalker (id) (owner) = It allows to assign an owner to a walker and if that walker is taken out by the person who is not the owner, it warns in the discord.";
+		messageEn += "\n" + prefix + "lowalkerinfo (id) = Shows the information of a specific walker";
+		messageEn += "```";
+		msg.channel.send(messageEn);
 	} else if (command === 'loinfo') {
 		mostrarInfo(msg);
 	}
@@ -129,6 +146,35 @@ function addWalkerPass(msg,args) {
 	}
 }
 
+function walkerInfo(msg,args) {
+	if (!args.length && args.length != 2) {
+		msg.reply("Para ver la información de un walker pon " + prefix + "lowalkerinfo id \n```Ejemplo: "+ prefix +"lowalkerinfo 721480717```");
+	} else {
+		let walkerId = parseInt(args[0]);
+		try {
+			pool.query("SELECT * FROM walkers where walkerID = " + walkerId, (err, result) => {
+				if (result != null && Object.entries(result).length > 0) {
+					for (var walker in result) {
+						let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
+						message.addField("Walker ID", result[walker].walkerID, true);
+						message.addField("Last User", result[walker].lastUser, true);
+						if (result[walker].ownerUser === "null") {
+							message.addField("Owner", "Not defined", true);
+						} else {
+							message.addField("Owner", result[walker].ownerUser, true);
+						}
+						msg.channel.send(message);
+					}
+				} else {
+					msg.channel.send("No hay ningún walker con esa id \n There is no walker with that id");
+				}
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	}
+}
+
 function walkerAlarm(newWalker, msg) {
 	try {
 		pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
@@ -136,9 +182,8 @@ function walkerAlarm(newWalker, msg) {
 			if (result != null && Object.entries(result).length > 0) {
 				for (var walker in result) {
 					if (result[walker].ownerUser === "null") {
-						message.addField("Owner", result[walker].ownerUser, true);
 					} else if (result[walker].ownerUser =! newWalker.lastUser) {
-						msg.channel.send("@everyone Alert the walker with owner has been used");
+						msg.channel.send("@everyone \nAlerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used");
 					}
 				}
 			}
@@ -157,14 +202,14 @@ function listAllWalkers(msg) {
 				message.addField("Walker ID", result[walker].walkerID, true);
 				message.addField("Last User", result[walker].lastUser, true);
 				if (result[walker].ownerUser === "null") {
-					message.addField("Owner", result[walker].ownerUser, true);
-				} else {
 					message.addField("Owner", "Not defined", true);
+				} else {
+					message.addField("Owner", result[walker].ownerUser, true);
 				}
 				msg.channel.send(message);
 			}
 		} else {
-			msg.channel.send("No walkers added since this discord");
+			msg.channel.send("No se han añadido walkers desde este discord \nNo walkers added since this discord");
 		}
 	});
 }
