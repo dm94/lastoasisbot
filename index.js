@@ -9,6 +9,14 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
+var pool = mysql.createPool({
+		host: config.mysqldbHost,
+		user: config.mysqldbUser,
+		password: config.mysqldbPass,
+		database: config.mysqldbDatabase,
+		connectionLimit: 5
+	});
+	
 client.login(config.discordToken);
 const prefix = config.discordPrefix;
 
@@ -122,39 +130,28 @@ function addWalkerPass(msg,args) {
 }
 
 function walkerAlarm(newWalker, msg) {
-	var pool = mysql.createPool({
-		host: config.mysqldbHost,
-		user: config.mysqldbUser,
-		password: config.mysqldbPass,
-		database: config.mysqldbDatabase,
-		connectionLimit: 5
-	});
-	pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
-		if (err) console.log(err);
-		if (Object.entries(result).length > 0) {
-			for (var walker in result) {
-				if (result[walker].ownerUser === "null") {
-					message.addField("Owner", result[walker].ownerUser, true);
-				} else if (result[walker].ownerUser =! newWalker.lastUser) {
-					msg.channel.send("@everyone Alert the walker with owner has been used");
+	try {
+		pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
+			if (err) console.log(err);
+			if (result != null && Object.entries(result).length > 0) {
+				for (var walker in result) {
+					if (result[walker].ownerUser === "null") {
+						message.addField("Owner", result[walker].ownerUser, true);
+					} else if (result[walker].ownerUser =! newWalker.lastUser) {
+						msg.channel.send("@everyone Alert the walker with owner has been used");
+					}
 				}
 			}
-		}
-	});
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 function listAllWalkers(msg) {
-	var pool = mysql.createPool({
-		host: config.mysqldbHost,
-		user: config.mysqldbUser,
-		password: config.mysqldbPass,
-		database: config.mysqldbDatabase,
-		connectionLimit: 5
-	});
-	
 	pool.query("SELECT * FROM walkers where discorid = " + msg.guild.id, (err, result) => {
 		if (err) console.log(err);
-		if (Object.entries(result).length > 0) {
+		if (result != null && Object.entries(result).length > 0) {
 			for (var walker in result) {
 				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
 				message.addField("Walker ID", result[walker].walkerID, true);
@@ -169,48 +166,36 @@ function listAllWalkers(msg) {
 		} else {
 			msg.channel.send("No walkers added since this discord");
 		}
-		pool.end();
 	});
 }
 
 function insertNewWalker(newWalker,discordid) {
-	var pool = mysql.createPool({
-		host: config.mysqldbHost,
-		user: config.mysqldbUser,
-		password: config.mysqldbPass,
-		database: config.mysqldbDatabase,
-		connectionLimit: 5
-	});
-	
-	pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
-		if (err) console.log(err);
-		if (Object.entries(result).length > 0) {
-			let sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"' where walkerID = "+ newWalker.walkerID;
-			execSQL(sql);
-			console.log("Walker actualizado");
-		} else {
-			let sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "')";
-			execSQL(sql);
-			console.log("Nuevo walker insertado");
-		}
-		pool.end();
-	});
-	
+	try {
+		pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
+			if (err) console.log(err);
+			if (result != null && Object.entries(result).length > 0) {
+				let sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"' where walkerID = "+ newWalker.walkerID;
+				execSQL(sql);
+				console.log("Walker actualizado");
+			} else {
+				let sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "')";
+				execSQL(sql);
+				console.log("Nuevo walker insertado");
+			}
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 function execSQL(sql) {
-	var pool = mysql.createPool({
-		host: config.mysqldbHost,
-		user: config.mysqldbUser,
-		password: config.mysqldbPass,
-		database: config.mysqldbDatabase,
-		connectionLimit: 5
-	});
-	
-	pool.query(sql, (err, result) => {
-		if (err) console.log(err);
-		pool.end();
-	});
+	try {
+		pool.query(sql, (err, result) => {
+			if (err) console.log(err);
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 function mostrarInfo(msg) {
