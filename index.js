@@ -140,9 +140,10 @@ function addWalkerPass(msg,args) {
 		msg.reply("Para agregar un walker pon " + prefix + "loaddwalker id dueño \n```Ejemplo: "+ prefix +"loaddwalker 721480717 Dm94Dani```");
 	} else {
 		let walkerId = parseInt(args[0]);
-		let sql = "update walkers set ownerUser = '"+args[1]+"' where walkerID = "+ walkerId;
+		let owner = msg.content.substring(msg.content.indexOf(args[1])).trim();
+		let sql = "update walkers set ownerUser = '"+owner+"' where walkerID = "+ walkerId;
 		execSQL(sql);
-		msg.reply("Walker agregado \n```ID del waker: "+args[0]+"\nDueño: "+args[1]+" ```");
+		msg.reply("Walker agregado \n```ID del waker: "+walkerId+"\nDueño: "+owner+" ```");
 	}
 }
 
@@ -166,7 +167,7 @@ function walkerInfo(msg,args) {
 						msg.channel.send(message);
 					}
 				} else {
-					msg.channel.send("No hay ningún walker con esa id \n There is no walker with that id");
+					msg.channel.send("ID: "+ walkerId +"\nNo hay ningún walker con esa id \n There is no walker with that id");
 				}
 			});
 		} catch (error) {
@@ -183,7 +184,7 @@ function walkerAlarm(newWalker, msg) {
 				for (var walker in result) {
 					if (result[walker].ownerUser === "null") {
 					} else if (result[walker].ownerUser =! newWalker.lastUser) {
-						msg.channel.send("@everyone \nAlerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used");
+						msg.reply("@everyone \nAlerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used");
 					}
 				}
 			}
