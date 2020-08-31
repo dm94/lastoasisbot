@@ -141,7 +141,7 @@ function addWalkerPass(msg,args) {
 	} else {
 		let walkerId = parseInt(args[0]);
 		let owner = msg.content.substring(msg.content.indexOf(args[1])).trim();
-		let sql = "update walkers set ownerUser = '"+owner+"' where walkerID = "+ walkerId;
+		let sql = "update walkers set ownerUser = '"+owner+"' where walkerID = "+ walkerId + " and discorid like '" + msg.guild.id + "'";
 		execSQL(sql);
 		msg.reply("Walker agregado \n```ID del waker: "+walkerId+"\nDueño: "+owner+" ```");
 	}
@@ -153,7 +153,7 @@ function walkerInfo(msg,args) {
 	} else {
 		let walkerId = parseInt(args[0]);
 		try {
-			pool.query("SELECT * FROM walkers where walkerID = " + walkerId, (err, result) => {
+			pool.query("SELECT * FROM walkers where walkerID = " + walkerId + " and discorid like '" + msg.guild.id + "'", (err, result) => {
 				if (result != null && Object.entries(result).length > 0) {
 					for (var walker in result) {
 						let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
