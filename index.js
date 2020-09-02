@@ -22,6 +22,7 @@ const prefix = config.discordPrefix;
 
 client.on('ready', () => {
 	client.user.setActivity('!lohelp', { type: 'STREAMING', url: 'https://www.twitch.tv/dm94dani' });
+	makeDB();
 });
 
 client.on('message', msg => {
@@ -87,6 +88,11 @@ client.on('message', msg => {
 		mostrarInfo(msg);
 	}
 });
+
+function makeDB() {
+	let sql = "CREATE TABLE IF NOT EXISTS walkers ( walkerID int(30) NOT NULL, discorid varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL, name varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, ownerUser varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, lastUser varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, isBeingUsed tinyint(1) DEFAULT NULL, isPublic tinyint(1) DEFAULT NULL, description varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL, location varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL, PRIMARY KEY (walkerID)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+	execSQL(sql);
+}
 
 function getNecessaryMaterials(item,msg,multiplier) {
 	var message = multiplier + "x " + item;
