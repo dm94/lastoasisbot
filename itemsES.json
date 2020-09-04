@@ -16971,6 +16971,10 @@
   {
     "name": "Walker Packing Compartment",
     "category": "walkers/tools",
+    "cost": {
+       "name" : "Fragmentos",
+       "count" : 50
+    },
     "crafting": [
       {
         "ingredients": [
@@ -16989,6 +16993,36 @@
           {
             "name": "Vid Rupu",
             "count": 10
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Exoskeleton",
+    "category": "buildings/construction/weapons",
+    "cost": {
+       "name" : "Placa",
+       "count" : 4
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Madera de secuoya roja",
+            "count": 45
+          },
+          {
+            "name": "Escama de quitina",
+            "count": 15
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 5
+          },
+          {
+            "name": "Esconderse",
+            "count": 30
           }
         ]
       }
