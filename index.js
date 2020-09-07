@@ -52,6 +52,8 @@ client.on('message', msg => {
 		walkerInfo(msg,args);
 	} else if (command === 'lolistwalkers') {
 		listAllWalkers(msg);
+	} else if (command === 'lowalkersearchbyname') {
+		listAllWalkersByName(msg);
 	} else if (command === 'locraft') {
 		console.log(new Date() + " " + msg);
 		if (!args.length) {
@@ -73,6 +75,7 @@ client.on('message', msg => {
 		messageEs += "\n" + prefix + "lolistwalkers = Muestra todos los walkers añadidos desde este discord.";
 		messageEs += "\n" + prefix + "loaddwalker (id) (dueño) = Permite asignar un dueño a un walker y si ese walker lo saca la persona que no es el dueño avisa en el discord.";
 		messageEs += "\n" + prefix + "lowalkerinfo (id) = Muestra la información de un walker en concreto";
+		messageEs += "\n" + prefix + "lowalkersearchbyname (name) = Muestra todos los walkers con ese nombre";
 		messageEs += "```";
 		msg.channel.send(messageEs);
 		
@@ -82,6 +85,7 @@ client.on('message', msg => {
 		messageEn += "\n" + prefix + "lolistwalkers = Shows all the walkers added since this discord.";
 		messageEn += "\n" + prefix + "loaddwalker (id) (owner) = It allows to assign an owner to a walker and if that walker is taken out by the person who is not the owner, it warns in the discord.";
 		messageEn += "\n" + prefix + "lowalkerinfo (id) = Shows the information of a specific walker";
+		messageEn += "\n" + prefix + "lowalkersearchbyname (name) = Shows all walkers with that name";
 		messageEn += "```";
 		msg.channel.send(messageEn);
 	} else if (command === 'loinfo') {
@@ -162,10 +166,12 @@ function walkerInfo(msg,args) {
 			pool.query("SELECT * FROM walkers where walkerID = " + walkerId + " and discorid like '" + msg.guild.id + "'", (err, result) => {
 				if (result != null && Object.entries(result).length > 0) {
 					for (var walker in result) {
+						var date = new Date(result[walker].datelastuse);
 						let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
 						message.addField("Walker ID", result[walker].walkerID, true);
 						message.addField("Last User", result[walker].lastUser, true);
-						if (result[walker].ownerUser === "null") {
+						message.addField("Last use", date.getDate() + "-" + (parseInt(date.getMonth())+1) + "-" + date.getFullYear(), true);
+						if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
 							message.addField("Owner", "Not defined", true);
 						} else {
 							message.addField("Owner", result[walker].ownerUser, true);
@@ -205,10 +211,37 @@ function listAllWalkers(msg) {
 		if (err) console.log(err);
 		if (result != null && Object.entries(result).length > 0) {
 			for (var walker in result) {
+				var date = new Date(result[walker].datelastuse);
 				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
 				message.addField("Walker ID", result[walker].walkerID, true);
 				message.addField("Last User", result[walker].lastUser, true);
-				if (result[walker].ownerUser === "null") {
+				message.addField("Last use", date.getDate() + "-" + (parseInt(date.getMonth())+1) + "-" + date.getFullYear(), true);
+				if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
+					message.addField("Owner", "Not defined", true);
+				} else {
+					message.addField("Owner", result[walker].ownerUser, true);
+				}
+				msg.channel.send(message);
+			}
+		} else {
+			msg.channel.send("No se han añadido walkers desde este discord \nNo walkers added since this discord");
+		}
+	});
+}
+
+function listAllWalkersByName(msg) {
+	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbyname")+20).trim();
+
+	pool.query("SELECT * FROM walkers where discorid = " + msg.guild.id + " and name like '%"+name+"%'", (err, result) => {
+		if (err) console.log(err);
+		if (result != null && Object.entries(result).length > 0) {
+			for (var walker in result) {
+				var date = new Date(result[walker].datelastuse);
+				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
+				message.addField("Walker ID", result[walker].walkerID, true);
+				message.addField("Last User", result[walker].lastUser, true);
+				message.addField("Last use", date.getDate() + "-" + (parseInt(date.getMonth())+1) + "-" + date.getFullYear(), true);
+				if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
 					message.addField("Owner", "Not defined", true);
 				} else {
 					message.addField("Owner", result[walker].ownerUser, true);
@@ -225,12 +258,13 @@ function insertNewWalker(newWalker,discordid) {
 	try {
 		pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
 			if (err) console.log(err);
+			var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
 			if (result != null && Object.entries(result).length > 0) {
-				let sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"' where walkerID = "+ newWalker.walkerID;
+				let sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"', datelastuse='"+date+"' where walkerID = "+ newWalker.walkerID;
 				execSQL(sql);
 				console.log("Walker actualizado");
 			} else {
-				let sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "')";
+				let sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser, datelastuse) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "', '"+date+"')";
 				execSQL(sql);
 				console.log("Nuevo walker insertado");
 			}
