@@ -54,6 +54,10 @@ client.on('message', msg => {
 		listAllWalkers(msg);
 	} else if (command === 'lowalkersearchbyname') {
 		listAllWalkersByName(msg);
+	} else if (command === 'lowalkersearchbyowner') {
+		listAllWalkersByOwner(msg);
+	} else if (command === 'lowalkersearchbylastuser') {
+		listAllWalkersByLastUser(msg);
 	} else if (command === 'locraft') {
 		console.log(new Date() + " " + msg);
 		if (!args.length) {
@@ -75,7 +79,9 @@ client.on('message', msg => {
 		messageEs += "\n" + prefix + "lolistwalkers = Muestra todos los walkers añadidos desde este discord.";
 		messageEs += "\n" + prefix + "loaddwalker (id) (dueño) = Permite asignar un dueño a un walker y si ese walker lo saca la persona que no es el dueño avisa en el discord.";
 		messageEs += "\n" + prefix + "lowalkerinfo (id) = Muestra la información de un walker en concreto";
-		messageEs += "\n" + prefix + "lowalkersearchbyname (name) = Muestra todos los walkers con ese nombre";
+		messageEs += "\n" + prefix + "lowalkersearchbyname (nombre) = Muestra todos los walkers con ese nombre";
+		messageEs += "\n" + prefix + "lowalkersearchbyowner (nombre) = Muestra todos los walkers con ese dueño";
+		messageEs += "\n" + prefix + "lowalkersearchbylastuser (nombre) = Muestra todos los walkers que ha usado esa persona";
 		messageEs += "```";
 		msg.channel.send(messageEs);
 		
@@ -86,6 +92,8 @@ client.on('message', msg => {
 		messageEn += "\n" + prefix + "loaddwalker (id) (owner) = It allows to assign an owner to a walker and if that walker is taken out by the person who is not the owner, it warns in the discord.";
 		messageEn += "\n" + prefix + "lowalkerinfo (id) = Shows the information of a specific walker";
 		messageEn += "\n" + prefix + "lowalkersearchbyname (name) = Shows all walkers with that name";
+		messageEn += "\n" + prefix + "lowalkersearchbyowner (name) = Show all walkers with that owner";
+		messageEn += "\n" + prefix + "lowalkersearchbylastuser (name) = Shows all the walkers that person has used";
 		messageEn += "```";
 		msg.channel.send(messageEn);
 	} else if (command === 'loinfo') {
@@ -207,51 +215,22 @@ function walkerAlarm(newWalker, msg) {
 }
 
 function listAllWalkers(msg) {
-	pool.query("SELECT * FROM walkers where discorid = " + msg.guild.id, (err, result) => {
-		if (err) console.log(err);
-		if (result != null && Object.entries(result).length > 0) {
-			for (var walker in result) {
-				var date = new Date(result[walker].datelastuse);
-				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
-				message.addField("Walker ID", result[walker].walkerID, true);
-				message.addField("Last User", result[walker].lastUser, true);
-				message.addField("Last use", date.getDate() + "-" + (parseInt(date.getMonth())+1) + "-" + date.getFullYear(), true);
-				if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
-					message.addField("Owner", "Not defined", true);
-				} else {
-					message.addField("Owner", result[walker].ownerUser, true);
-				}
-				msg.channel.send(message);
-			}
-		} else {
-			msg.channel.send("No se han añadido walkers desde este discord \nNo walkers added since this discord");
-		}
-	});
+	replyWalkerList(msg,"SELECT * FROM walkers where discorid = " + msg.guild.id);
 }
 
 function listAllWalkersByName(msg) {
 	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbyname")+20).trim();
+	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and name like '%"+name+"%'"));
+}
 
-	pool.query("SELECT * FROM walkers where discorid = " + msg.guild.id + " and name like '%"+name+"%'", (err, result) => {
-		if (err) console.log(err);
-		if (result != null && Object.entries(result).length > 0) {
-			for (var walker in result) {
-				var date = new Date(result[walker].datelastuse);
-				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
-				message.addField("Walker ID", result[walker].walkerID, true);
-				message.addField("Last User", result[walker].lastUser, true);
-				message.addField("Last use", date.getDate() + "-" + (parseInt(date.getMonth())+1) + "-" + date.getFullYear(), true);
-				if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
-					message.addField("Owner", "Not defined", true);
-				} else {
-					message.addField("Owner", result[walker].ownerUser, true);
-				}
-				msg.channel.send(message);
-			}
-		} else {
-			msg.channel.send("No se han añadido walkers desde este discord \nNo walkers added since this discord");
-		}
-	});
+function listAllWalkersByOwner(msg) {
+	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbyowner")+21).trim();
+	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and ownerUser like '%"+name+"%'"));
+}
+
+function listAllWalkersByLastUser(msg) {
+	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbylastuser")+24).trim();
+	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and lastUser like '%"+name+"%'"));
 }
 
 function insertNewWalker(newWalker,discordid) {
@@ -293,4 +272,27 @@ function mostrarInfo(msg) {
 		"\nTo add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584" +
 		"\nThe list of items comes from this repository: https://github.com/Last-Oasis-Crafter/lastoasis-crafting-calculator");
 	msg.channel.send(message);
+}
+
+function replyWalkerList(msg,sql) {
+	pool.query(sql, (err, result) => {
+		if (err) console.log(err);
+		if (result != null && Object.entries(result).length > 0) {
+			for (var walker in result) {
+				var date = new Date(result[walker].datelastuse);
+				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
+				message.addField("Walker ID", result[walker].walkerID, true);
+				message.addField("Last User", result[walker].lastUser, true);
+				message.addField("Last use", date.getDate() + "-" + (parseInt(date.getMonth())+1) + "-" + date.getFullYear(), true);
+				if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
+					message.addField("Owner", "Not defined", true);
+				} else {
+					message.addField("Owner", result[walker].ownerUser, true);
+				}
+				msg.channel.send(message);
+			}
+		} else {
+			msg.channel.send("No hay ningun walker \nThere are no walkers");
+		}
+	});
 }
