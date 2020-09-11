@@ -1,15 +1,21 @@
 {
-    "name": "LastOasis-Bot",
-    "main": "index.js",
-    "dependencies": {
-        "body-parser": "^1.19.0",
-        "discord.js": "^12.2.0",
-        "express": "^4.17.1",
-        "get-json": "^1.0.1",
-        "mysql": "^2.18.1"
-    },
-    "repository" : {
-        "type" : "git",
-        "url" : "https://github.com/dm94/lastoasisbot.git"
-    }
+  "name": "LastOasis-Bot",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "discord.js": "^12.2.0",
+    "express": "^4.17.1",
+    "get-json": "^1.0.1",
+    "mysql": "^2.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dm94/lastoasisbot.git"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
 }
