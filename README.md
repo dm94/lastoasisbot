@@ -14,6 +14,9 @@ Example: https://twitter.com/Dm94Dani/status/1293121001421705216
 * !lolistwalkers = Muestra todos los walkers añadidos desde este discord.
 * !loaddwalker (id) (dueño) = Permite asignar un dueño a un walker y si ese walker lo saca la persona que no es el dueño avisa en el discord.
 * !lowalkerinfo (id) = Muestra la información de un walker en concreto
+* !lowalkersearchbyname (nombre) = Muestra todos los walkers con ese nombre
+* !lowalkersearchbyowner (nombre) = Muestra todos los walkers con ese dueño
+* !lowalkersearchbylastuser (nombre) = Muestra todos los walkers que ha usado esa persona
 
 [EN]
 * !locraft = With this command you can see the materials needed to make an object. 
@@ -23,3 +26,6 @@ Example: https://twitter.com/Dm94Dani/status/1293121001421705216
 * !lolistwalkers = Shows all the walkers added since this discord.
 * !loaddwalker (id) (owner) = It allows to assign an owner to a walker and if that walker is taken out by the person who is not the owner, it warns in the discord.
 * !lowalkerinfo (id) = Shows the information of a specific walker
+* !lowalkersearchbyname (name) = Shows all walkers with that name
+* !lowalkersearchbyowner (name) = Show all walkers with that owner
+* !lowalkersearchbylastuser (name) = Shows all the walkers that person has used
