@@ -103,7 +103,9 @@ client.on('message', msg => {
 
 function makeDB() {
 	let sql = "CREATE TABLE IF NOT EXISTS walkers ( walkerID int(30) NOT NULL, discorid varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL, name varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, ownerUser varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, lastUser varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, isBeingUsed tinyint(1) DEFAULT NULL, isPublic tinyint(1) DEFAULT NULL, description varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL, location varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL, PRIMARY KEY (walkerID)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
-	execSQL(sql);
+	pool.query(sql, (err, result) => {
+		if (err) console.log(err);
+	});
 }
 
 function getNecessaryMaterials(item,msg,multiplier) {
@@ -159,8 +161,9 @@ function addWalkerPass(msg,args) {
 	} else {
 		let walkerId = parseInt(args[0]);
 		let owner = msg.content.substring(msg.content.indexOf(args[1])).trim();
-		let sql = "update walkers set ownerUser = '"+owner+"' where walkerID = "+ walkerId + " and discorid like '" + msg.guild.id + "'";
-		execSQL(sql);
+		pool.query("update walkers set ownerUser = ? where walkerID = ? and discorid like ?",[owner,walkerId,msg.guild.id], (err, result) => {
+			if (err) console.log(err);
+		});
 		msg.reply("Walker agregado \n```ID del waker: "+walkerId+"\nDueño: "+owner+" ```");
 	}
 }
@@ -171,7 +174,7 @@ function walkerInfo(msg,args) {
 	} else {
 		let walkerId = parseInt(args[0]);
 		try {
-			pool.query("SELECT * FROM walkers where walkerID = " + walkerId + " and discorid like '" + msg.guild.id + "'", (err, result) => {
+			pool.query("SELECT * FROM walkers where walkerID = ? and discorid like ?",[walkerId,msg.guild.id], (err, result) => {
 				if (result != null && Object.entries(result).length > 0) {
 					for (var walker in result) {
 						var date = new Date(result[walker].datelastuse);
@@ -198,7 +201,7 @@ function walkerInfo(msg,args) {
 
 function walkerAlarm(newWalker, msg) {
 	try {
-		pool.query("SELECT * FROM walkers where walkerID = " + newWalker.walkerID, (err, result) => {
+		pool.query("SELECT * FROM walkers where walkerID = ?", [newWalker.walkerID], (err, result) => {
 			if (err) console.log(err);
 			if (result != null && Object.entries(result).length > 0) {
 				for (var walker in result) {
@@ -220,17 +223,17 @@ function listAllWalkers(msg) {
 
 function listAllWalkersByName(msg) {
 	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbyname")+20).trim();
-	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and name like '%"+name+"%'"));
+	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and name like "+pool.escape("%"+name+"%")));
 }
 
 function listAllWalkersByOwner(msg) {
-	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbyowner")+21).trim();
-	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and ownerUser like '%"+name+"%'"));
+	var ownerUser = msg.content.substring(msg.content.indexOf("lowalkersearchbyowner")+21).trim();
+	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and ownerUser like " + pool.escape("%"+ownerUser+"%")));
 }
 
 function listAllWalkersByLastUser(msg) {
-	var name = msg.content.substring(msg.content.indexOf("lowalkersearchbylastuser")+24).trim();
-	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and lastUser like '%"+name+"%'"));
+	var lastUser = msg.content.substring(msg.content.indexOf("lowalkersearchbylastuser")+24).trim();
+	replyWalkerList(msg,("SELECT * FROM walkers where discorid = " + msg.guild.id + " and lastUser like "+pool.escape("%"+lastUser+"%")));
 }
 
 function insertNewWalker(newWalker,discordid) {
@@ -239,24 +242,16 @@ function insertNewWalker(newWalker,discordid) {
 			if (err) console.log(err);
 			var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
 			if (result != null && Object.entries(result).length > 0) {
-				let sql = "update walkers set discorid = '"+discordid+"', name = '"+newWalker.name+"', lastUser='"+newWalker.lastUser+"', datelastuse='"+date+"' where walkerID = "+ newWalker.walkerID;
-				execSQL(sql);
-				console.log("Walker actualizado");
+				pool.query("update walkers set discorid = ?, name = ?, lastUser=?, datelastuse=? where walkerID = ?",[discordid,newWalker.name,newWalker.lastUser,date,newWalker.walkerID], (err, result) => {
+					if (err) console.log(err);
+					console.log("Walker actualizado");
+				});
 			} else {
-				let sql = "INSERT INTO walkers (walkerID, discorid, name, lastUser, datelastuse) VALUES ("+ newWalker.walkerID + ", '"+ discordid +"', '" + newWalker.name + "', '" + newWalker.lastUser + "', '"+date+"')";
-				execSQL(sql);
-				console.log("Nuevo walker insertado");
+				pool.query("INSERT INTO walkers (walkerID, discorid, name, lastUser, datelastuse) VALUES (?, ?, ?, ?, ?)",[newWalker.walkerID,discordid,newWalker.name,newWalker.lastUser,date], (err, result) => {
+					if (err) console.log(err);
+					console.log("Nuevo walker insertado");
+				});
 			}
-		});
-	} catch (error) {
-		console.error(error);
-	}
-}
-
-function execSQL(sql) {
-	try {
-		pool.query(sql, (err, result) => {
-			if (err) console.log(err);
 		});
 	} catch (error) {
 		console.error(error);
