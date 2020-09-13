@@ -1,6 +1,6 @@
+var config = require('./config.json');
 const Discord = require('discord.js');
 const client = new Discord.Client();
-var config = require('./config.json');
 var getJSON = require('get-json');
 var mysql = require('mysql');
 var itemsES = require('./itemsES.json');
@@ -76,7 +76,7 @@ client.on('message', msg => {
 		let messageEs = ":flag_es: \n```";
 		messageEs += prefix + "locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \nEjemplo de uso: " + prefix + "locraft Cuerpo de Walker Cobra \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Cuerpo de Walker Cobra";
 		messageEs += "\n" + prefix + "loinfo = Muestra información del bot.";
-		messageEs += "\n" + prefix + "lolistwalkers = Muestra todos los walkers añadidos desde este discord.";
+		messageEs += "\n" + prefix + "lolistwalkers (página) = Muestra todos los walkers añadidos desde este discord. Cada página son 5 walkers";
 		messageEs += "\n" + prefix + "loaddwalker (id) (dueño) = Permite asignar un dueño a un walker y si ese walker lo saca la persona que no es el dueño avisa en el discord.";
 		messageEs += "\n" + prefix + "lowalkerinfo (id) = Muestra la información de un walker en concreto";
 		messageEs += "\n" + prefix + "lowalkersearchbyname (nombre) = Muestra todos los walkers con ese nombre";
@@ -88,7 +88,7 @@ client.on('message', msg => {
 		let messageEn = ":flag_gb: \n```";
 		messageEn += prefix + "locraft = With this command you can see the materials needed to make an object. \nExample of use: " + prefix + "locraft Barrier Base \nIf you want to see the materials to make 10: " + prefix + "locraft 10x Barrier Base ";
 		messageEn += "\n" + prefix + "loinfo = Displays bot information.";
-		messageEn += "\n" + prefix + "lolistwalkers = Shows all the walkers added since this discord.";
+		messageEn += "\n" + prefix + "lolistwalkers (page) = Shows all the walkers added since this discord. Each page is 5 walkers";
 		messageEn += "\n" + prefix + "loaddwalker (id) (owner) = It allows to assign an owner to a walker and if that walker is taken out by the person who is not the owner, it warns in the discord.";
 		messageEn += "\n" + prefix + "lowalkerinfo (id) = Shows the information of a specific walker";
 		messageEn += "\n" + prefix + "lowalkersearchbyname (name) = Shows all walkers with that name";
@@ -270,9 +270,14 @@ function mostrarInfo(msg) {
 }
 
 function replyWalkerList(msg,sql) {
+	var page = 1;
+	if (/(\d+)/.test(msg.content)) {
+		page = msg.content.match(/(\d+)/)[1];
+	}
 	pool.query(sql, (err, result) => {
 		if (err) console.log(err);
 		if (result != null && Object.entries(result).length > 0) {
+			var i = 0;
 			for (var walker in result) {
 				var date = new Date(result[walker].datelastuse);
 				let message = new Discord.MessageEmbed().setColor('#58ACFA').setTitle(result[walker].name);
@@ -284,7 +289,10 @@ function replyWalkerList(msg,sql) {
 				} else {
 					message.addField("Owner", result[walker].ownerUser, true);
 				}
-				msg.channel.send(message);
+				if (i>=((page-1)*5) && i<=(page*5)) {
+					msg.channel.send(message);
+				}
+				i++;
 			}
 		} else {
 			msg.channel.send("No hay ningun walker \nThere are no walkers");
