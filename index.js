@@ -71,7 +71,7 @@ client.on('message', msg => {
 		if (multiplier != 1) {
 			item = msg.content.substr(msg.content.indexOf('x')+1);
 		}
-		var materials = getNecessaryMaterials(item.trim().toLowerCase(),msg,multiplier);
+		getNecessaryMaterials(item.trim().toLowerCase(),msg,multiplier);
 	} else if (command === 'locommands' || command === 'lohelp') {
 		let messageEs = ":flag_es: \n```";
 		messageEs += prefix + "locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \nEjemplo de uso: " + prefix + "locraft Cuerpo de Walker Cobra \nSi quieres ver los materiales para hacer 10: " + prefix + "locraft 10x Cuerpo de Walker Cobra";
@@ -205,8 +205,7 @@ function walkerAlarm(newWalker, msg) {
 			if (err) console.log(err);
 			if (result != null && Object.entries(result).length > 0) {
 				for (var walker in result) {
-					if (result[walker].ownerUser === "null") {
-					} else if (result[walker].ownerUser =! newWalker.lastUser) {
+					if (result[walker].ownerUser != "null" && result[walker].ownerUser != newWalker.lastUser) {
 						msg.reply("@everyone \nAlerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used");
 					}
 				}
