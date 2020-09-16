@@ -2848,6 +2848,10 @@
   {
     "name": "Bomba incendiaria",
     "category": "items/ammo/ammunition/projectiles/catapult",
+    "cost": {
+       "name" : "Placas",
+       "count" : 3
+    },
     "crafting": [
       {
         "ingredients": [
@@ -3023,8 +3027,12 @@
     ]
   },
   {
-    "name": "Nube asfixiante",
+    "name": "Chalk Bomb",
     "category": "items/ammo/ammunition/projectiles/slingshot",
+    "cost": {
+       "name" : "Placas",
+       "count" : 4
+    },
     "crafting": [
       {
         "ingredients": [
@@ -17254,6 +17262,103 @@
             "count": 24
           }
         ]
+      }
+    ]
+  },
+  {
+    "name": "Aloe Goo Bomb",
+    "category": "items/ammo/ammunition/projectiles/slingshot",
+    "cost": {
+       "name" : "Placas",
+       "count" : 4
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Aloe vera",
+            "count": 18
+          },
+          {
+            "name": "Agua Purificada",
+            "count": 10
+          },
+          {
+            "name": "Baya",
+            "count": 2
+          },
+          {
+            "name": "Tela nomad",
+            "count": 1
+          }
+        ],
+        "station": "Fogata"
+      }
+    ]
+  },
+  {
+    "name": "Insect Bomb",
+    "category": "items/ammo/ammunition/projectiles/slingshot",
+    "cost": {
+       "name" : "Placas",
+       "count" : 3
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Arcilla",
+            "count": 3
+          },
+          {
+            "name": "Tela nomad",
+            "count": 1
+          },
+          {
+            "name": "Cera de abeja",
+            "count": 5
+          },
+          {
+            "name": "Insectos",
+            "count": 18
+          }
+        ],
+        "station": "Fogata"
+      }
+    ]
+  },
+  {
+    "name": "Cluster Bomb",
+    "category": "items/ammo/ammunition/projectiles/catapult",
+    "cost": {
+       "name" : "Placas",
+       "count" : 12
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Obsidiana",
+            "count": 30
+          },
+          {
+            "name": "Ceresina",
+            "count": 10
+          },
+          {
+            "name": "Carne de champiñón",
+            "count": 50
+          },
+          {
+            "name": "Lava Fuel",
+            "count": 1
+          },
+          {
+            "name": "Brea",
+            "count": 10
+          }
+        ],
+        "station": "Fogata"
       }
     ]
   }
