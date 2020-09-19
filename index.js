@@ -205,8 +205,9 @@ function walkerAlarm(newWalker, msg) {
 			if (err) console.log(err);
 			if (result != null && Object.entries(result).length > 0) {
 				for (var walker in result) {
-					if (result[walker].ownerUser != "null" && result[walker].ownerUser != newWalker.lastUser) {
-						msg.reply("@everyone \nAlerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used");
+					if (result[walker].ownerUser === "null" || !result[walker].ownerUser) {
+					} else if (result[walker].ownerUser != newWalker.lastUser){
+						msg.reply("@everyone Alerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used");
 					}
 				}
 			}
