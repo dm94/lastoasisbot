@@ -97,7 +97,7 @@ client.on('message', msg => {
 		messageEn += "```";
 		msg.channel.send(messageEn);
 	} else if (command === 'loinfo') {
-		mostrarInfo(msg);
+		showInfo(msg);
 	}
 });
 
@@ -257,14 +257,14 @@ function insertNewWalker(newWalker,discordid) {
 	}
 }
 
-function mostrarInfo(msg) {
+function showInfo(msg) {
 	var message = new Discord.MessageEmbed()
 		.setColor('#008FFF').setTitle("LO BOT")
 		.setURL('https://github.com/dm94/lastoasisbot')
 		.setAuthor('Dm94Dani', 'https://comunidadgzone.es/wp-content/uploads/2020/08/FENIX-dm94dani.png', 'https://github.com/dm94')
 		.setDescription("Discord Bot for Last Oasis" + 
 		"\nTo add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584" +
-		"\nThe list of items comes from this repository: https://github.com/Last-Oasis-Crafter/lastoasis-crafting-calculator");
+		"\nDm94Dani Discord: https://discord.gg/FcecRtZ");
 	msg.channel.send(message);
 }
 
