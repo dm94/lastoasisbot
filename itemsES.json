@@ -17361,5 +17361,849 @@
         "station": "Fogata"
       }
     ]
+  },
+  {
+    "name": "Cuerpo de Walker Panda",
+    "category": "walkers/panda",
+    "cost": {
+       "name" : "Placas",
+       "count" : 30
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Madera",
+            "count": 1360
+          },
+          {
+            "name": "Fibra",
+            "count": 600
+          },
+          {
+            "name": "Piedra",
+            "count": 350
+          },
+          {
+            "name": "Poste de madera",
+            "count": 121
+          },
+          {
+            "name": "Cuerda",
+            "count": 86
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 5
+          },
+          {
+            "name": "Vid Rupu",
+            "count": 110
+          },
+          {
+            "name": "Esquirla de cerámica",
+            "count": 35
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Legs",
+    "category": "walkers/Panda/parts/legs",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Madera",
+            "count": 650
+          },
+          {
+            "name": "Poste de Madera",
+            "count": 86
+          },
+          {
+            "name": "Ceresina",
+            "count": 93
+          }
+        ]
+      }
+    ]
   }
+  {
+    "name": "Panda Walker Legs Armored",
+    "category": "walkers/panda/parts/legs",
+    "cost": {
+       "name" : "Placas",
+       "count" : 3
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Madera",
+            "count": 620
+          },
+          {
+            "name": "Poste de Madera",
+            "count": 276
+          },
+          {
+            "name": "Astilla de hueso",
+            "count": 49
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 16
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 185
+          },
+          {
+            "name": "Esquirla de cerámica",
+            "count": 65
+          },
+          {
+            "name": "Brea",
+            "count": 8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Legs Heavy",
+    "category": "walkers/panda/parts/legs",
+    "cost": {
+       "name" : "Placas",
+       "count" : 6
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Reforzar tablón",
+            "count": 79
+          },
+          {
+            "name": "Escama de quitina",
+            "count": 18
+          },
+          {
+            "name": "Brea",
+            "count": 12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Heavy",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 10
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Poste de Madera",
+            "count": 91
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 16
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 32
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 25
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Large",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 15
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Reforzar tablón",
+            "count": 88
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 75
+          },
+          {
+            "name": "Esconderse",
+            "count": 142
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Medium",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 10
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Poste de Madera",
+            "count": 121
+          },
+          {
+            "name": "Esconderse",
+            "count": 83
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 14
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Raider",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 25
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Reforzar tablón",
+            "count": 92
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 85
+          },
+          {
+            "name": "Material de hierro",
+            "count": 64
+          },
+          {
+            "name": "Esconderse",
+            "count": 142
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Rugged",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 10
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Reforzar tablón",
+            "count": 83
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 71
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 31
+          },
+          {
+            "name": "Esconderse",
+            "count": 116
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Skirmish",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 15
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Reforzar tablón",
+            "count": 91
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 79
+          },
+          {
+            "name": "Esconderse",
+            "count": 137
+          },
+          {
+            "name": "Material de hierro",
+            "count": 29
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings Small",
+    "category": "walkers/panda/parts/wings",
+    "cost": {
+       "name" : "Placas",
+       "count" : 5
+    },
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Poste de Madera",
+            "count": 65
+          },
+          {
+            "name": "Cuerda",
+            "count": 31
+          },
+          {
+            "name": "Tela nomad",
+            "count": 8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Panda Walker Wings",
+    "category": "walkers/panda/parts/wings",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Madera",
+            "count": 130
+          },
+          {
+            "name": "Tejido de fibra",
+            "count": 63
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Capacidad de carga - Mejora de rango 2",
+    "category": "walkers/panda/upgrades/tier2",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Astilla de hueso",
+            "count": 38
+          },
+          {
+            "name": "Fibra",
+            "count": 250
+          },
+          {
+            "name": "Madera",
+            "count": 188
+          },
+          {
+            "name": "Piedra",
+            "count": 25
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Durabilidad - Mejora de rango 2",
+    "category": "walkers/panda/upgrades/tier2",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Astilla de hueso",
+            "count": 75
+          },
+          {
+            "name": "Tejido de Fibra",
+            "count": 38
+          },
+          {
+            "name": "Piel rupu",
+            "count": 65
+          },
+          {
+            "name": "Escama de quiitina",
+            "count": 5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Almacenamiento de mecanismos - Mejora de rango 2",
+    "category": "walkers/panda/upgrades/tier2",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Astilla de hueso",
+            "count": 20
+          },
+          {
+            "name": "Fibra",
+            "count": 250
+          },
+          {
+            "name": "Madera",
+            "count": 200
+          },
+          {
+            "name": "Piedra",
+            "count": 25
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Mobility - Mejora de rango 2",
+    "category": "walkers/panda/upgrades/tier2",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Astilla de hueso",
+            "count": 50
+          },
+          {
+            "name": "Vid Rupu",
+            "count": 75
+          },
+          {
+            "name": "Ceresina",
+            "count": 25
+          },
+          {
+            "name": "Madera",
+            "count": 75
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Capacidad energética - Mejora de rango 2",
+    "category": "walkers/panda/upgrades/tier2",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Astilla de hueso",
+            "count": 38
+          },
+          {
+            "name": "Fibra",
+            "count": 163
+          },
+          {
+            "name": "Madera",
+            "count": 150
+          },
+          {
+            "name": "Cuerda",
+            "count": 30
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Depósito de agua - Mejora de rango 2",
+    "category": "walkers/panda/upgrades/tier2",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Astilla de hueso",
+            "count": 25
+          },
+          {
+            "name": "Fibra",
+            "count": 250
+          },
+          {
+            "name": "Esconderse",
+            "count": 38
+          },
+          {
+            "name": "Madera",
+            "count": 38
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Capacidad de carga - Mejora de rango 3",
+    "category": "walkers/panda/upgrades/tier3",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Esquirla de cerámica",
+            "count": 63
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 30
+          },
+          {
+            "name": "Poste de Madera",
+            "count": 88
+          },
+          {
+            "name": "Piedra",
+            "count": 200
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Durabilidad - Mejora de rango 3",
+    "category": "walkers/panda/upgrades/tier3",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Esquirla de cerámica",
+            "count": 113
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 125
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 10
+          },
+          {
+            "name": "Escama de quiitina",
+            "count": 25
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Almacenamiento de mecanismos - Mejora de rango 3",
+    "category": "walkers/panda/upgrades/tier3",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Esquirla de cerámica",
+            "count": 63
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 25
+          },
+          {
+            "name": "Ceresina",
+            "count": 100
+          },
+          {
+            "name": "Madera",
+            "count": 188
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Mobility - Mejora de rango 3",
+    "category": "walkers/panda/upgrades/tier3",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Esquirla de cerámica",
+            "count": 100
+          },
+          {
+            "name": "Reforzar tablón",
+            "count": 10
+          },
+          {
+            "name": "Ceresina",
+            "count": 200
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 13
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Capacidad energética - Mejora de rango 3",
+    "category": "walkers/panda/upgrades/tier3",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Esquirla de cerámica",
+            "count": 75
+          },
+          {
+            "name": "Vid Rupu",
+            "count": 88
+          },
+          {
+            "name": "Cuerda",
+            "count": 63
+          },
+          {
+            "name": "Madera",
+            "count": 200
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Depósito de agua - Mejora de rango 3",
+    "category": "walkers/panda/upgrades/tier3",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Esquirla de cerámica",
+            "count": 50
+          },
+          {
+            "name": "Esconderse",
+            "count": 113
+          },
+          {
+            "name": "Madera",
+            "count": 213
+          },
+          {
+            "name": "Tejido de Fibra",
+            "count": 88
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Capacidad de carga - Mejora de rango 4",
+    "category": "walkers/panda/upgrades/tier4",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Lingote de hierro",
+            "count": 25
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 70
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 30
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 150
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 63
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Durabilidad - Mejora de rango 4",
+    "category": "walkers/panda/upgrades/tier4",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Lingote de hierro",
+            "count": 70
+          },
+          {
+            "name": "Esquirla de cerámica",
+            "count": 300
+          },
+          {
+            "name": "Escama de quiitina",
+            "count": 88
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 150
+          },
+          {
+            "name": "Obsidiana",
+            "count": 13
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Almacenamiento de mecanismos - Mejora de rango 4",
+    "category": "walkers/panda/upgrades/tier4",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Lingote de hierro",
+            "count": 25
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 88
+          },
+          {
+            "name": "Reforzar tablón",
+            "count": 50
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 275
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 50
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Mobility - Mejora de rango 4",
+    "category": "walkers/panda/upgrades/tier4",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Lingote de hierro",
+            "count": 38
+          },
+          {
+            "name": "Reforzar tablón",
+            "count": 35
+          },
+          {
+            "name": "Seda de gusano",
+            "count": 50
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 65
+          },
+          {
+            "name": "Brea",
+            "count": 100
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Capacidad energética - Mejora de rango 4",
+    "category": "walkers/panda/upgrades/tier4",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Lingote de hierro",
+            "count": 38
+          },
+          {
+            "name": "Escama de quiitina",
+            "count": 95
+          },
+          {
+            "name": "Reforzar tablón",
+            "count": 25
+          },
+          {
+            "name": "Esquirla de cerámica",
+            "count": 125
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 300
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mejora del walker Panda - Depósito de agua - Mejora de rango 4",
+    "category": "walkers/panda/upgrades/tier4",
+    "crafting": [
+      {
+        "ingredients": [
+          {
+            "name": "Lingote de hierro",
+            "count": 20
+          },
+          {
+            "name": "Tela Nomad",
+            "count": 63
+          },
+          {
+            "name": "Madera de secuoya roja",
+            "count": 200
+          },
+          {
+            "name": "Mantequilla de la tribu rupu",
+            "count": 75
+          },
+          {
+            "name": "Adhesivo de hueso",
+            "count": 38
+          }
+        ]
+      }
+    ]
+  },
 ]
