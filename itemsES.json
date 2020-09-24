@@ -17009,7 +17009,7 @@
   },
   {
     "name": "Exoskeleton",
-    "category": "buildings/construction/weapons",
+    "category": "items/equipment/armor/personal/walker",
     "cost": {
        "name" : "Placa",
        "count" : 4

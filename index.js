@@ -124,6 +124,9 @@ function getNecessaryMaterials(item,msg,multiplier) {
 						message.addField(le[ing].name, le[ing].count*multiplier, true);
 					}
 				}
+				if (response[key].cost != null) {
+					message.setFooter("Cost: " + response[key].cost.count + " " + response[key].cost.name);
+				}
 			}
 			if (areItems) {
 				found = true;
@@ -146,6 +149,9 @@ function getNecessaryMaterials(item,msg,multiplier) {
 							areItems = true;
 							message.addField(le[ing].name, le[ing].count*multiplier, true);
 						}
+					}
+					if (response[key].cost != null) {
+						message.setFooter("Coste: " + response[key].cost.count + " " + response[key].cost.name);
 					}
 				}
 				if (areItems) {
