@@ -3,7 +3,6 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 var getJSON = require('get-json');
 var mysql = require('mysql');
-var itemsES = require('./itemsES.json');
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
@@ -134,24 +133,27 @@ function getNecessaryMaterials(item,msg,multiplier) {
 	});
 	if (!found) {
 		//To show the items in Spanish
-		for (var key in itemsES) {
-			let areItems = false;
-			let objetitem = itemsES[key].name.toLowerCase();
-			if (objetitem.includes(item)) {
-				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Aquí tienes los materiales necesarios");
-				var ingredie = itemsES[key].crafting;
-				for (var i = 0; i < ingredie.length; i++) {
-					let le = ingredie[i].ingredients;
-					for (var ing in le) {
-						areItems = true;
-						message.addField(le[ing].name, le[ing].count*multiplier, true);
+		getJSON("https://raw.githubusercontent.com/dm94/lastoasisbot/master/itemsES_min.json", function(error, response){
+			for (var key in response) {
+				let areItems = false;
+				let objetitem = response[key].name.toLowerCase();
+				if (objetitem.includes(item)) {
+					message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Aquí tienes los materiales necesarios");
+					var ingredie = response[key].crafting;
+					for (var i = 0; i < ingredie.length; i++) {
+						let le = ingredie[i].ingredients;
+						for (var ing in le) {
+							areItems = true;
+							message.addField(le[ing].name, le[ing].count*multiplier, true);
+						}
 					}
 				}
+				if (areItems) {
+					found = true;
+					msg.channel.send(message);
+				}
 			}
-			if (areItems) {
-				msg.channel.send(message);
-			}
-		}
+		});
 	}
 }
 
