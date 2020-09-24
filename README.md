@@ -4,6 +4,7 @@ Discord Bot for Last Oasis
 To add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584
 
 The list of items in English comes from this file: https://github.com/Last-Oasis-Crafter/lastoasis-crafting-calculator/blob/master/src/items.json
+
 Example: https://twitter.com/Dm94Dani/status/1293121001421705216
 
 [ES]
