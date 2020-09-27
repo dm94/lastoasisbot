@@ -115,7 +115,7 @@ function getNecessaryMaterials(item,msg,multiplier) {
 			let areItems = false;
 			let objetitem = response[key].name.toLowerCase();
 			if (objetitem.includes(item)) {
-				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Here are the necessary materials");
+				message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + response[key].name).setDescription("Here are the necessary materials");
 				var ingredie = response[key].crafting;
 				for (var i = 0; i < ingredie.length; i++) {
 					let le = ingredie[i].ingredients;
@@ -141,7 +141,7 @@ function getNecessaryMaterials(item,msg,multiplier) {
 				let areItems = false;
 				let objetitem = response[key].name.toLowerCase();
 				if (objetitem.includes(item)) {
-					message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + objetitem).setDescription("Aquí tienes los materiales necesarios");
+					message = new Discord.MessageEmbed().setColor('#FFE400').setTitle(multiplier + "x " + response[key].name).setDescription("Aquí tienes los materiales necesarios");
 					var ingredie = response[key].crafting;
 					for (var i = 0; i < ingredie.length; i++) {
 						let le = ingredie[i].ingredients;

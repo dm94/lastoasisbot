@@ -4026,7 +4026,7 @@
     ]
   },
   {
-    "name": "Botella improvisada",
+    "name": "Botella improvisada (20)",
     "category": "items/Almacenamiento de mecanismos/bottles",
     "crafting": [
       {
@@ -4048,7 +4048,7 @@
     ]
   },
   {
-    "name": "Botella improvisada",
+    "name": "Botella improvisada (5)",
     "category": "items/Almacenamiento de mecanismos/bottles",
     "crafting": [
       {
@@ -4552,7 +4552,7 @@
     ]
   },
   {
-    "name": "Hacha rompepiedras de mano",
+    "name": "Hacha rompepiedras de mano (Buena)",
     "category": "items/weapons",
     "crafting": [
       {
@@ -5632,7 +5632,7 @@
     ]
   },
   {
-    "name": "Hacha de batalla de hueso",
+    "name": "Hacha de batalla de hueso larga",
     "category": "items/weapons/tools/axes",
     "crafting": [
       {
