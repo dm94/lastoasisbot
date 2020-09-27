@@ -1,4 +1,4 @@
-# lastoasisbot
+# Last Oasis Discord bot
 Discord Bot for Last Oasis
 
 To add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584
