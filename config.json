@@ -1,8 +1,0 @@
-{
-	"discordPrefix" : "!",
-	"discordToken" : "",
-	"mysqldbUser" : "",
-	"mysqldbPass" : "",
-	"mysqldbHost" : "",
-	"mysqldbDatabase" : ""
-}

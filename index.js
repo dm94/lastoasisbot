@@ -1,4 +1,4 @@
-var config = require('./config.json');
+require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var getJSON = require('get-json');
@@ -9,15 +9,15 @@ client.on('ready', () => {
 });
 
 var pool = mysql.createPool({
-		host: config.mysqldbHost,
-		user: config.mysqldbUser,
-		password: config.mysqldbPass,
-		database: config.mysqldbDatabase,
+		host: process.env.MYSQL_DB_HOST,
+		user: process.env.MYSQL_DB_USER,
+		password: process.env.MYSQL_DB_PASS,
+		database: process.env.MYSQL_DB_DATABASE,
 		connectionLimit: 5
 	});
-	
-client.login(config.discordToken);
-const prefix = config.discordPrefix;
+
+client.login(process.env.DISCORD_TOKEN);
+const prefix = process.env.DISCORD_PREFIX;
 
 client.on('ready', () => {
 	client.user.setActivity('!lohelp', { type: 'STREAMING', url: 'https://www.twitch.tv/dm94dani' });
