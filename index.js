@@ -136,7 +136,7 @@ function getNecessaryMaterials(item,msg,multiplier) {
 	});
 	if (!found) {
 		//To show the items in Spanish
-		getJSON("https://raw.githubusercontent.com/dm94/lastoasisbot/master/itemsES_min.json", function(error, response){
+		getJSON("https://raw.githubusercontent.com/dm94/stiletto-web/master/public/json/itemsES_min.json", function(error, response){
 			for (var key in response) {
 				let areItems = false;
 				let objetitem = response[key].name.toLowerCase();
