@@ -64,6 +64,12 @@ client.on("message", (msg) => {
     listAllWalkersByOwner(msg);
   } else if (command === "lowalkersearchbylastuser") {
     listAllWalkersByLastUser(msg);
+  } else if (command === "loaddflots") {
+    addFlots(msg, args);
+  } else if (command === "loremoveflots") {
+    loRemoveFlots(msg, args);
+  } else if (command === "lotransactions") {
+    historyFlots(msg);
   } else if (command === "locraft") {
     console.log(new Date() + " " + msg);
     if (!args.length) {
@@ -116,6 +122,18 @@ client.on("message", (msg) => {
       "\n" +
       prefix +
       "lowalkersearchbylastuser (nombre) = Muestra todos los walkers que ha usado esa persona";
+    messageEs +=
+      "\n" +
+      prefix +
+      "loaddflots cantidad descripcion = Añade flots a tu historial de transaciones";
+    messageEs +=
+      "\n" +
+      prefix +
+      "loremoveflots cantidad descripcion = Quita flots a tu historial de transaciones";
+    messageEs +=
+      "\n" +
+      prefix +
+      "lotransactions = Te muestra el historial de transaciones";
     messageEs += "```";
     msg.channel.send(messageEs);
 
@@ -152,6 +170,16 @@ client.on("message", (msg) => {
       "\n" +
       prefix +
       "lowalkersearchbylastuser (name) = Shows all the walkers that person has used";
+    messageEn +=
+      "\n" +
+      prefix +
+      "loaddflots cantidad descripcion = Add flots to your transaction history";
+    messageEn +=
+      "\n" +
+      prefix +
+      "loremoveflots cantidad descripcion = Remove flots from your transaction history";
+    messageEn +=
+      "\n" + prefix + "lotransactions = Shows you the history of transactions";
     messageEn += "```";
     msg.channel.send(messageEn);
   } else if (command === "loinfo") {
@@ -407,6 +435,127 @@ function listAllWalkersByLastUser(msg) {
       msg.guild.id +
       " and lastUser like " +
       pool.escape("%" + lastUser + "%")
+  );
+}
+
+function addFlots(msg, args) {
+  if (!args.length && args.length != 3) {
+    msg.reply(
+      "To add flots write the following" +
+        prefix +
+        "loaddflots quantity description \n```Example: " +
+        prefix +
+        "loaddflots 2000 Mision```"
+    );
+  } else {
+    try {
+      pool.query(
+        "SELECT * FROM flots where discordID = ? order by transactionID DESC",
+        [msg.author.id],
+        (err, result) => {
+          var balance = 0;
+          if (err) console.log(err);
+          if (result != null && Object.entries(result).length > 0) {
+            balance = result[0].balance;
+          }
+          let quantity = parseInt(args[0]);
+          balance = balance + quantity;
+          insertQuantity(balance, msg, args);
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+function loRemoveFlots(msg, args) {
+  if (!args.length && args.length != 3) {
+    msg.reply(
+      "To remove flots write the following" +
+        prefix +
+        "loremoveflots quantity description \n```Example: " +
+        prefix +
+        "loremoveflots 2000 Mision```"
+    );
+  } else {
+    try {
+      pool.query(
+        "SELECT * FROM flots where discordID = ? order by transactionID DESC",
+        [msg.author.id],
+        (err, result) => {
+          var balance = 0;
+          if (err) console.log(err);
+          if (result != null && Object.entries(result).length > 0) {
+            balance = result[0].balance;
+          }
+          let quantity = parseInt(args[0]);
+          balance = balance - quantity;
+          insertQuantity(balance, msg, args);
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+function insertQuantity(balance, msg, args) {
+  let quantity = parseInt(args[0]);
+  let description = msg.content.substring(msg.content.indexOf(args[1])).trim();
+  var date = new Date().toISOString();
+  pool.query(
+    "INSERT INTO flots (discordID, balance, quantity, dateofentry, description) VALUES (?, ?, ?, ?, ?)",
+    [msg.author.id, balance, quantity, date, description],
+    (err, result) => {
+      if (err) console.log(err);
+    }
+  );
+  msg.reply("```Balance: " + balance + " ```");
+}
+
+function historyFlots(msg) {
+  var page = 1;
+  if (/(\d+)/.test(msg.content)) {
+    page = msg.content.match(/(\d+)/)[1];
+  }
+  pool.query(
+    "SELECT * FROM flots where discordID = ? order by transactionID DESC",
+    [msg.author.id],
+    (err, result) => {
+      if (err) console.log(err);
+      if (result != null && Object.entries(result).length > 0) {
+        var i = 0;
+        let message = new Discord.MessageEmbed().setColor("#58ACFA");
+        for (var transaction in result) {
+          var date = new Date(result[transaction].dateofentry);
+          if (i == 0) {
+            message.setTitle("Balance: " + result[transaction].balance, true);
+          }
+          if (i >= (page - 1) * 5 && i <= page * 5) {
+            message.addField(
+              "Description",
+              result[transaction].description,
+              true
+            );
+            message.addField("Quantity", result[transaction].quantity, true);
+            message.addField(
+              "Date",
+              date.getDate() +
+                "-" +
+                (parseInt(date.getMonth()) + 1) +
+                "-" +
+                date.getFullYear(),
+              true
+            );
+          }
+          i++;
+        }
+        msg.channel.send(message);
+      } else {
+        msg.channel.send("No transactions");
+      }
+    }
   );
 }
 
