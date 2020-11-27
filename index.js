@@ -448,24 +448,8 @@ function addFlots(msg, args) {
         "loaddflots 2000 Mision```"
     );
   } else {
-    try {
-      pool.query(
-        "SELECT * FROM flots where discordID = ? order by transactionID DESC",
-        [msg.author.id],
-        (err, result) => {
-          var balance = 0;
-          if (err) console.log(err);
-          if (result != null && Object.entries(result).length > 0) {
-            balance = result[0].balance;
-          }
-          let quantity = parseInt(args[0]);
-          balance = balance + quantity;
-          insertQuantity(balance, msg, args);
-        }
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    let quantity = parseInt(args[0]);
+    insertQuantity(msg, args, quantity);
   }
 }
 
@@ -479,39 +463,41 @@ function loRemoveFlots(msg, args) {
         "loremoveflots 2000 Mision```"
     );
   } else {
-    try {
-      pool.query(
-        "SELECT * FROM flots where discordID = ? order by transactionID DESC",
-        [msg.author.id],
-        (err, result) => {
-          var balance = 0;
-          if (err) console.log(err);
-          if (result != null && Object.entries(result).length > 0) {
-            balance = result[0].balance;
-          }
-          let quantity = parseInt(args[0]);
-          balance = balance - quantity;
-          insertQuantity(balance, msg, args);
-        }
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    let quantity = parseInt(args[0]);
+    insertQuantity(msg, args, quantity * -1);
   }
 }
 
-function insertQuantity(balance, msg, args) {
-  let quantity = parseInt(args[0]);
-  let description = msg.content.substring(msg.content.indexOf(args[1])).trim();
-  var date = new Date().toISOString();
-  pool.query(
-    "INSERT INTO flots (discordID, balance, quantity, dateofentry, description) VALUES (?, ?, ?, ?, ?)",
-    [msg.author.id, balance, quantity, date, description],
-    (err, result) => {
-      if (err) console.log(err);
-    }
-  );
-  msg.reply("```Balance: " + balance + " ```");
+function insertQuantity(msg, args, quantity) {
+  try {
+    pool.query(
+      "SELECT * FROM flots where discordID = ? order by transactionID DESC",
+      [msg.author.id],
+      (err, result) => {
+        var balance = 0;
+        if (err) console.log(err);
+        if (result != null && Object.entries(result).length > 0) {
+          balance = result[0].balance;
+        }
+        balance = balance + quantity;
+
+        let description = msg.content
+          .substring(msg.content.indexOf(args[1]))
+          .trim();
+        var date = new Date().toISOString();
+        pool.query(
+          "INSERT INTO flots (discordID, balance, quantity, dateofentry, description) VALUES (?, ?, ?, ?, ?)",
+          [msg.author.id, balance, quantity, date, description],
+          (err, result) => {
+            if (err) console.log(err);
+          }
+        );
+        msg.reply("```Balance: " + balance + " ```");
+      }
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function historyFlots(msg) {
