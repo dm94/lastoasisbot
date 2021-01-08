@@ -87,7 +87,11 @@ client.on("message", (msg) => {
     if (multiplier != 1) {
       item = msg.content.substr(msg.content.indexOf("x") + 1);
     }
-    getNecessaryMaterials(item.trim().toLowerCase(), msg, multiplier);
+    try {
+      getNecessaryMaterials(item.trim().toLowerCase(), msg, multiplier);
+    } catch (error) {
+      console.log(error);
+    }
   } else if (command === "locommands" || command === "lohelp") {
     let messageEs = ":flag_es: \n```";
     messageEs +=
@@ -210,11 +214,17 @@ function getNecessaryMaterials(item, msg, multiplier) {
             .setTitle(multiplier + "x " + response[key].name)
             .setDescription("Here are the necessary materials");
           var ingredie = response[key].crafting;
-          for (var i = 0; i < ingredie.length; i++) {
-            let le = ingredie[i].ingredients;
-            for (var ing in le) {
-              areItems = true;
-              message.addField(le[ing].name, le[ing].count * multiplier, true);
+          if (ingredie != null) {
+            for (var i = 0; i < ingredie.length; i++) {
+              let le = ingredie[i].ingredients;
+              for (var ing in le) {
+                areItems = true;
+                message.addField(
+                  le[ing].name,
+                  le[ing].count * multiplier,
+                  true
+                );
+              }
             }
           }
           if (response[key].cost != null) {
@@ -247,15 +257,17 @@ function getNecessaryMaterials(item, msg, multiplier) {
               .setTitle(multiplier + "x " + response[key].name)
               .setDescription("Aquí tienes los materiales necesarios");
             var ingredie = response[key].crafting;
-            for (var i = 0; i < ingredie.length; i++) {
-              let le = ingredie[i].ingredients;
-              for (var ing in le) {
-                areItems = true;
-                message.addField(
-                  le[ing].name,
-                  le[ing].count * multiplier,
-                  true
-                );
+            if (ingredie != null) {
+              for (var i = 0; i < ingredie.length; i++) {
+                let le = ingredie[i].ingredients;
+                for (var ing in le) {
+                  areItems = true;
+                  message.addField(
+                    le[ing].name,
+                    le[ing].count * multiplier,
+                    true
+                  );
+                }
               }
             }
             if (response[key].cost != null) {
