@@ -139,7 +139,7 @@ client.on("message", (msg) => {
       prefix +
       "lotransactions = Te muestra el historial de transaciones";
     messageEs += "```";
-    msg.channel.send(messageEs);
+    sendChannelMessage(msg, messageEs);
 
     let messageEn = ":flag_gb: \n```";
     messageEn +=
@@ -185,7 +185,7 @@ client.on("message", (msg) => {
     messageEn +=
       "\n" + prefix + "lotransactions = Shows you the history of transactions";
     messageEn += "```";
-    msg.channel.send(messageEn);
+    sendChannelMessage(msg, messageEn);
   } else if (command === "loinfo") {
     showInfo(msg);
   }
@@ -238,7 +238,7 @@ function getNecessaryMaterials(item, msg, multiplier) {
         }
         if (areItems) {
           found = true;
-          msg.channel.send(message);
+          sendChannelMessage(msg, message);
         }
       }
     }
@@ -281,7 +281,7 @@ function getNecessaryMaterials(item, msg, multiplier) {
           }
           if (areItems) {
             found = true;
-            msg.channel.send(message);
+            sendChannelMessage(msg, message);
           }
         }
       }
@@ -359,10 +359,11 @@ function walkerInfo(msg, args) {
               } else {
                 message.addField("Owner", result[walker].ownerUser, true);
               }
-              msg.channel.send(message);
+              sendChannelMessage(msg, message);
             }
           } else {
-            msg.channel.send(
+            sendChannelMessage(
+              msg,
               "ID: " +
                 walkerId +
                 "\nNo hay ningún walker con esa id \n There is no walker with that id"
@@ -549,9 +550,9 @@ function historyFlots(msg) {
           }
           i++;
         }
-        msg.channel.send(message);
+        sendChannelMessage(msg, message);
       } else {
-        msg.channel.send("No transactions");
+        sendChannelMessage(msg, "No transactions");
       }
     }
   );
@@ -617,7 +618,15 @@ function showInfo(msg) {
         "\nTo add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584" +
         "\nDm94Dani Discord: https://discord.gg/FcecRtZ"
     );
-  msg.channel.send(message);
+  sendChannelMessage(msg, message);
+}
+
+function sendChannelMessage(msg, text) {
+  try {
+    msg.channel.send(text);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function replyWalkerList(msg, sql) {
@@ -651,12 +660,12 @@ function replyWalkerList(msg, sql) {
           message.addField("Owner", result[walker].ownerUser, true);
         }
         if (i >= (page - 1) * 5 && i <= page * 5) {
-          msg.channel.send(message);
+          sendChannelMessage(msg, message);
         }
         i++;
       }
     } else {
-      msg.channel.send("No hay ningun walker \nThere are no walkers");
+      sendChannelMessage(msg, "No hay ningun walker \nThere are no walkers");
     }
   });
 }
