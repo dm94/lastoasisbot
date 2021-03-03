@@ -200,6 +200,9 @@ function makeDB() {
 }
 
 function getNecessaryMaterials(item, msg, multiplier) {
+  if (item.length <= 0) {
+    return;
+  }
   var message = multiplier + "x " + item;
   var found = false;
   getJSON(
@@ -625,7 +628,7 @@ function sendChannelMessage(msg, text) {
   try {
     msg.channel.send(text);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
