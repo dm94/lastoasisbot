@@ -205,6 +205,7 @@ function getNecessaryMaterials(item, msg, multiplier) {
   }
   var message = multiplier + "x " + item;
   var found = false;
+  let itemsSent = 0;
   getJSON(
     "https://raw.githubusercontent.com/dm94/stiletto-web/master/public/json/items_min.json",
     function (error, response) {
@@ -239,13 +240,15 @@ function getNecessaryMaterials(item, msg, multiplier) {
             );
           }
         }
-        if (areItems) {
+        if (areItems && itemsSent <= 5) {
+          itemsSent++;
           found = true;
           sendChannelMessage(msg, message);
         }
       }
     }
   );
+  itemsSent = 0;
   if (!found) {
     //To show the items in Spanish
     getJSON(
@@ -282,7 +285,8 @@ function getNecessaryMaterials(item, msg, multiplier) {
               );
             }
           }
-          if (areItems) {
+          if (areItems && itemsSent <= 5) {
+            itemsSent++;
             found = true;
             sendChannelMessage(msg, message);
           }
