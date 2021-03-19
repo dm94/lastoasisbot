@@ -240,7 +240,7 @@ function getNecessaryMaterials(item, msg, multiplier) {
             );
           }
         }
-        if (areItems && itemsSent <= 5) {
+        if (areItems && itemsSent < 5) {
           itemsSent++;
           found = true;
           sendChannelMessage(msg, message);
@@ -285,7 +285,7 @@ function getNecessaryMaterials(item, msg, multiplier) {
               );
             }
           }
-          if (areItems && itemsSent <= 5) {
+          if (areItems && itemsSent < 5) {
             itemsSent++;
             found = true;
             sendChannelMessage(msg, message);
@@ -379,7 +379,7 @@ function walkerInfo(msg, args) {
         }
       );
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   }
 }
@@ -408,7 +408,7 @@ function walkerAlarm(newWalker, msg) {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -516,7 +516,7 @@ function insertQuantity(msg, args, quantity) {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -606,7 +606,7 @@ function insertNewWalker(newWalker, discordid) {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
