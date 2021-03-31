@@ -22,7 +22,7 @@ const prefix = process.env.DISCORD_PREFIX;
 client.on("ready", () => {
   client.user.setActivity("!lohelp", {
     type: "STREAMING",
-    url: "https://www.twitch.tv/dm94dani",
+    url: "https://www.stiletto.live/",
   });
   makeDB();
 });
