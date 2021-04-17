@@ -1,8 +1,8 @@
 require("dotenv").config();
 const Discord = require("discord.js");
-const client = new Discord.Client();
 var getJSON = require("get-json");
 var mysql = require("mysql");
+const client = new Discord.Client();
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -20,11 +20,14 @@ client.login(process.env.DISCORD_TOKEN);
 const prefix = process.env.DISCORD_PREFIX;
 
 client.on("ready", () => {
-  client.user.setActivity("!lohelp", {
-    type: "STREAMING",
-    url: "https://www.stiletto.live/",
-  });
-  makeDB();
+  client.user
+    .setPresence({
+      activity: { name: "!lohelp www.stiletto.live" },
+      status: "available",
+      url: "https://www.stiletto.live/",
+    })
+    .then(console.log)
+    .catch(console.log);
 });
 
 client.on("message", (msg) => {
@@ -190,14 +193,6 @@ client.on("message", (msg) => {
     showInfo(msg);
   }
 });
-
-function makeDB() {
-  let sql =
-    "CREATE TABLE IF NOT EXISTS walkers ( walkerID int(30) NOT NULL, discorid varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL, name varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, ownerUser varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, lastUser varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL, isBeingUsed tinyint(1) DEFAULT NULL, isPublic tinyint(1) DEFAULT NULL, description varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL, location varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL, PRIMARY KEY (walkerID)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
-  pool.query(sql, (err, result) => {
-    if (err) console.log(err);
-  });
-}
 
 function getNecessaryMaterials(item, msg, multiplier) {
   if (item.length <= 0) {
