@@ -409,10 +409,12 @@ function walkerAlarm(newWalker, msg) {
 
 function listAllWalkers(msg) {
   try {
-    replyWalkerList(
-      msg,
-      "SELECT * FROM walkers where discorid = " + msg.guild.id
-    );
+    if (msg.guild && msg.guild.id) {
+      replyWalkerList(
+        msg,
+        "SELECT * FROM walkers where discorid = " + msg.guild.id
+      );
+    }
   } catch (error) {
     sendChannelMessage(msg, "I do not have permissions to view server data");
   }
