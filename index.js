@@ -408,10 +408,14 @@ function walkerAlarm(newWalker, msg) {
 }
 
 function listAllWalkers(msg) {
-  replyWalkerList(
-    msg,
-    "SELECT * FROM walkers where discorid = " + msg.guild.id
-  );
+  try {
+    replyWalkerList(
+      msg,
+      "SELECT * FROM walkers where discorid = " + msg.guild.id
+    );
+  } catch (error) {
+    sendChannelMessage(msg, "I do not have permissions to view server data");
+  }
 }
 
 function listAllWalkersByName(msg) {
