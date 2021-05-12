@@ -1,4 +1,5 @@
 require("dotenv").config();
+var pjson = require("./package.json");
 const Discord = require("discord.js");
 var getJSON = require("get-json");
 var mysql = require("mysql");
@@ -26,7 +27,6 @@ client.on("ready", () => {
       status: "available",
       url: "https://www.stiletto.live/",
     })
-    .then(console.log)
     .catch(console.log);
 });
 
@@ -614,7 +614,7 @@ function insertNewWalker(newWalker, discordid) {
 function showInfo(msg) {
   var message = new Discord.MessageEmbed()
     .setColor("#008FFF")
-    .setTitle("LO BOT")
+    .setTitle(pjson.name + " v" + pjson.version)
     .setURL("https://github.com/dm94/lastoasisbot")
     .setAuthor(
       "Dm94Dani",
