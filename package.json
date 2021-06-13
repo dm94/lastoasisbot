@@ -1,6 +1,6 @@
 {
   "name": "LastOasis-Bot",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.19.0",

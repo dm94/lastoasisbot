@@ -77,7 +77,7 @@ client.on("message", (msg) => {
     console.log(new Date() + " " + msg);
     if (!args.length) {
       return msg.reply(
-        "Tienes que poner lo que quieres craftear y si quieres la cantidad para hacer. Para más info pon " +
+        "You have to write what you want to craft and if you want the quantity to make. For more info write " +
           prefix +
           "locommands"
       );
@@ -96,54 +96,6 @@ client.on("message", (msg) => {
       console.log(error);
     }
   } else if (command === "locommands" || command === "lohelp") {
-    let messageEs = ":flag_es: \n```";
-    messageEs +=
-      prefix +
-      "locraft = Con este comando puedes ver los materiales necesarios para hacer un objeto. \nEjemplo de uso: " +
-      prefix +
-      "locraft Cuerpo de Walker Cobra \nSi quieres ver los materiales para hacer 10: " +
-      prefix +
-      "locraft 10x Cuerpo de Walker Cobra";
-    messageEs += "\n" + prefix + "loinfo = Muestra información del bot.";
-    messageEs +=
-      "\n" +
-      prefix +
-      "lolistwalkers (página) = Muestra todos los walkers añadidos desde este discord. Cada página son 5 walkers";
-    messageEs +=
-      "\n" +
-      prefix +
-      "loaddwalker (id) (dueño) = Permite asignar un dueño a un walker y si ese walker lo saca la persona que no es el dueño avisa en el discord.";
-    messageEs +=
-      "\n" +
-      prefix +
-      "lowalkerinfo (id) = Muestra la información de un walker en concreto";
-    messageEs +=
-      "\n" +
-      prefix +
-      "lowalkersearchbyname (nombre) = Muestra todos los walkers con ese nombre";
-    messageEs +=
-      "\n" +
-      prefix +
-      "lowalkersearchbyowner (nombre) = Muestra todos los walkers con ese dueño";
-    messageEs +=
-      "\n" +
-      prefix +
-      "lowalkersearchbylastuser (nombre) = Muestra todos los walkers que ha usado esa persona";
-    messageEs +=
-      "\n" +
-      prefix +
-      "loaddflots cantidad descripcion = Añade flots a tu historial de transaciones";
-    messageEs +=
-      "\n" +
-      prefix +
-      "loremoveflots cantidad descripcion = Quita flots a tu historial de transaciones";
-    messageEs +=
-      "\n" +
-      prefix +
-      "lotransactions = Te muestra el historial de transaciones";
-    messageEs += "```";
-    sendChannelMessage(msg, messageEs);
-
     let messageEn = ":flag_gb: \n```";
     messageEn +=
       prefix +
@@ -180,11 +132,11 @@ client.on("message", (msg) => {
     messageEn +=
       "\n" +
       prefix +
-      "loaddflots cantidad descripcion = Add flots to your transaction history";
+      "loaddflots quantity description = Add flots to your transaction history";
     messageEn +=
       "\n" +
       prefix +
-      "loremoveflots cantidad descripcion = Remove flots from your transaction history";
+      "loremoveflots quantity description = Remove flots from your transaction history";
     messageEn +=
       "\n" + prefix + "lotransactions = Shows you the history of transactions";
     messageEn += "```";
@@ -199,7 +151,6 @@ function getNecessaryMaterials(item, msg, multiplier) {
     return;
   }
   var message = multiplier + "x " + item;
-  var found = false;
   let itemsSent = 0;
   getJSON(
     "https://raw.githubusercontent.com/dm94/stiletto-web/master/public/json/items_min.json",
@@ -237,66 +188,20 @@ function getNecessaryMaterials(item, msg, multiplier) {
         }
         if (areItems && itemsSent < 5) {
           itemsSent++;
-          found = true;
           sendChannelMessage(msg, message);
         }
       }
     }
   );
   itemsSent = 0;
-  if (!found) {
-    //To show the items in Spanish
-    getJSON(
-      "https://raw.githubusercontent.com/dm94/stiletto-web/master/public/json/itemsES_min.json",
-      function (error, response) {
-        for (var key in response) {
-          let areItems = false;
-          let objetitem = response[key].name.toLowerCase();
-          if (objetitem.includes(item)) {
-            message = new Discord.MessageEmbed()
-              .setColor("#FFE400")
-              .setTitle(multiplier + "x " + response[key].name)
-              .setDescription("Aquí tienes los materiales necesarios");
-            var ingredie = response[key].crafting;
-            if (ingredie != null) {
-              for (var i = 0; i < ingredie.length; i++) {
-                let le = ingredie[i].ingredients;
-                for (var ing in le) {
-                  areItems = true;
-                  message.addField(
-                    le[ing].name,
-                    le[ing].count * multiplier,
-                    true
-                  );
-                }
-              }
-            }
-            if (response[key].cost != null) {
-              message.setFooter(
-                "Coste: " +
-                  response[key].cost.count +
-                  " " +
-                  response[key].cost.name
-              );
-            }
-          }
-          if (areItems && itemsSent < 5) {
-            itemsSent++;
-            found = true;
-            sendChannelMessage(msg, message);
-          }
-        }
-      }
-    );
-  }
 }
 
 function addWalkerPass(msg, args) {
   if (!args.length && args.length != 3) {
     msg.reply(
-      "Para agregar un walker pon " +
+      "To add a walker write " +
         prefix +
-        "loaddwalker id dueño \n```Ejemplo: " +
+        "loaddwalker id owner \n```Example: " +
         prefix +
         "loaddwalker 721480717 Dm94Dani```"
     );
@@ -311,11 +216,7 @@ function addWalkerPass(msg, args) {
       }
     );
     msg.reply(
-      "Walker agregado \n```ID del waker: " +
-        walkerId +
-        "\nDueño: " +
-        owner +
-        " ```"
+      "Walker added \n```Walker ID: " + walkerId + "\nOwner: " + owner + " ```"
     );
   }
 }
@@ -323,9 +224,9 @@ function addWalkerPass(msg, args) {
 function walkerInfo(msg, args) {
   if (!args.length && args.length != 2) {
     msg.reply(
-      "Para ver la información de un walker pon " +
+      "To view the information of a walker write " +
         prefix +
-        "lowalkerinfo id \n```Ejemplo: " +
+        "lowalkerinfo id \n```Example: " +
         prefix +
         "lowalkerinfo 721480717```"
     );
@@ -366,9 +267,7 @@ function walkerInfo(msg, args) {
           } else {
             sendChannelMessage(
               msg,
-              "ID: " +
-                walkerId +
-                "\nNo hay ningún walker con esa id \n There is no walker with that id"
+              "ID: " + walkerId + "\n There is no walker with that id"
             );
           }
         }
@@ -394,9 +293,7 @@ function walkerAlarm(newWalker, msg) {
               ) &&
               result[walker].ownerUser != newWalker.lastUser
             ) {
-              msg.reply(
-                "@everyone Alerta alguien esta usando un walker que no es suyo \nAlert the walker with owner has been used"
-              );
+              msg.reply("@everyone Alert the walker with owner has been used");
             }
           }
         }
@@ -568,44 +465,46 @@ function historyFlots(msg) {
 
 function insertNewWalker(newWalker, discordid) {
   try {
-    pool.query(
-      "SELECT * FROM walkers where walkerID = " + newWalker.walkerID,
-      (err, result) => {
-        if (err) console.log(err);
-        var date = new Date().toISOString().slice(0, 19).replace("T", " ");
-        if (result != null && Object.entries(result).length > 0) {
-          pool.query(
-            "update walkers set discorid = ?, name = ?, lastUser=?, datelastuse=? where walkerID = ?",
-            [
-              discordid,
-              newWalker.name,
-              newWalker.lastUser,
-              date,
-              newWalker.walkerID,
-            ],
-            (err, result) => {
-              if (err) console.log(err);
-              console.log("Walker actualizado");
-            }
-          );
-        } else {
-          pool.query(
-            "INSERT INTO walkers (walkerID, discorid, name, lastUser, datelastuse) VALUES (?, ?, ?, ?, ?)",
-            [
-              newWalker.walkerID,
-              discordid,
-              newWalker.name,
-              newWalker.lastUser,
-              date,
-            ],
-            (err, result) => {
-              if (err) console.log(err);
-              console.log("Nuevo walker insertado");
-            }
-          );
+    if (newWalker.name) {
+      pool.query(
+        "SELECT * FROM walkers where walkerID = " + newWalker.walkerID,
+        (err, result) => {
+          if (err) console.log(err);
+          var date = new Date().toISOString().slice(0, 19).replace("T", " ");
+          if (result != null && Object.entries(result).length > 0) {
+            pool.query(
+              "update walkers set discorid = ?, name = ?, lastUser=?, datelastuse=? where walkerID = ?",
+              [
+                discordid,
+                newWalker.name,
+                newWalker.lastUser,
+                date,
+                newWalker.walkerID,
+              ],
+              (err, result) => {
+                if (err) console.log(err);
+                console.log("Walker updated");
+              }
+            );
+          } else {
+            pool.query(
+              "INSERT INTO walkers (walkerID, discorid, name, lastUser, datelastuse) VALUES (?, ?, ?, ?, ?)",
+              [
+                newWalker.walkerID,
+                discordid,
+                newWalker.name,
+                newWalker.lastUser,
+                date,
+              ],
+              (err, result) => {
+                if (err) console.log(err);
+                console.log("New walker insert");
+              }
+            );
+          }
         }
-      }
-    );
+      );
+    }
   } catch (error) {
     console.log(error);
   }
@@ -673,7 +572,7 @@ function replyWalkerList(msg, sql) {
         i++;
       }
     } else {
-      sendChannelMessage(msg, "No hay ningun walker \nThere are no walkers");
+      sendChannelMessage(msg, "There are no walkers");
     }
   });
 }
