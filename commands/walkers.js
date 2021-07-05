@@ -24,7 +24,6 @@ walkerCommands.lolistwalkers = async (msg) => {
   let response = await othersFunctions.apiRequest(options);
 
   if (response != null && response.length > 0) {
-    console.log(response);
     response.forEach((walker) => {
       walkerCommands.sendWalkerInfo(msg, walker);
     });
@@ -204,7 +203,6 @@ walkerCommands.sendWalkerInfo = (msg, walker) => {
 };
 
 walkerCommands.insertNewWalker = (newWalker, discordid) => {
-  console.log(newWalker);
   const options = {
     method: "post",
     url: process.env.APP_API_URL + "/bot/walkers",
