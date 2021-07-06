@@ -24,6 +24,7 @@ controller.updateConfiguration = async (guildId) => {
       clanlog: true,
       kick: false,
       readypvp: false,
+      walkeralarm: false,
     },
     headers: {
       apiKey: process.env.APP_API_KEY,

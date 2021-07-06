@@ -193,12 +193,49 @@ walkerCommands.sendWalkerInfo = (msg, walker) => {
     if (walker.description != null && walker.description) {
       message.addField("Description", walker.description);
     }
-    if (walker.description != null && walker.description) {
+    if (walker.isReady != null && walker.isReady) {
       message.addField("Ready", ":white_check_mark:");
     } else {
       message.addField("Ready", ":x:");
     }
     othersFunctions.sendChannelMessage(msg, message);
+  }
+};
+
+walkerCommands.setnotreadypvp = async (walkerid, msg) => {
+  const options = {
+    method: "get",
+    url: process.env.APP_API_URL + "/bot/walkers",
+    params: {
+      discordid: msg.guild.id,
+      walkerid: walkerid,
+    },
+    headers: {
+      apiKey: process.env.APP_API_KEY,
+    },
+  };
+
+  let response = await othersFunctions.apiRequest(options);
+
+  if (response != null && response.length > 0) {
+    response.forEach((walker) => {
+      if (
+        walker.walker_use != null &&
+        walker.walker_use === "PVP" &&
+        walker.isReady != null &&
+        walker.isReady
+      ) {
+        console.log("Set not ready pvp" + walkerid);
+        const optionsUpdate = {
+          method: "put",
+          url: process.env.APP_API_URL + "/bot/walkers/" + walkerid,
+          headers: {
+            apiKey: process.env.APP_API_KEY,
+          },
+        };
+        othersFunctions.apiRequest(optionsUpdate);
+      }
+    });
   }
 };
 

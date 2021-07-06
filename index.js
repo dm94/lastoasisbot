@@ -30,6 +30,7 @@ client.on("ready", () => {
 client.on("message", (msg) => {
   const guildConfig = botConfigurations[msg.guild.id];
 
+  console.log(guildConfig);
   if (guildConfig != null) {
     if (
       guildConfig.readclanlog &&
@@ -48,14 +49,17 @@ client.on("message", (msg) => {
       if (/(?:with walker\s``)(.+)(?:``\s)/.test(msg.content)) {
         walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
       }
-      walkerCommands.walkerAlarm(
-        {
-          walkerID: walkerId,
-          lastUser: lastUser,
-          name: walkerName,
-        },
-        msg
-      );
+
+      if (guildConfig.walkerAlarm) {
+        walkerCommands.walkerAlarm(
+          {
+            walkerID: walkerId,
+            lastUser: lastUser,
+            name: walkerName,
+          },
+          msg
+        );
+      }
       walkerCommands.insertNewWalker(
         {
           walkerID: walkerId,
@@ -64,6 +68,18 @@ client.on("message", (msg) => {
         },
         msg.guild.id
       );
+
+      if (guildConfig.setnotreadypvp) {
+        walkerCommands.setnotreadypvp(walkerId, msg);
+      }
+    }
+
+    if (msg.content.includes("kicked") && msg.author.bot) {
+      if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
+        lastUser = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
+
+        console.log("Kicked: " + lastUser);
+      }
     }
   } else {
     configuration.updateConfiguration(msg.guild.id);
