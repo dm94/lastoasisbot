@@ -30,7 +30,6 @@ client.on("ready", () => {
 client.on("message", (msg) => {
   const guildConfig = botConfigurations[msg.guild.id];
 
-  console.log(guildConfig);
   if (guildConfig != null) {
     if (
       guildConfig.readclanlog &&

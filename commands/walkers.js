@@ -253,6 +253,7 @@ walkerCommands.insertNewWalker = (newWalker, discordid) => {
       apiKey: process.env.APP_API_KEY,
     },
   };
+  console.log("Added walker: " + newWalker.walkerID);
   othersFunctions.apiRequest(options);
 };
 
