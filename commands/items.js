@@ -5,7 +5,7 @@ const Axios = require("axios");
 const othersFunctions = require("../helpers/others");
 
 itemsCommands.locraft = (msg, args, prefix) => {
-  console.log(new Date() + " " + msg);
+  console.log(new Date() + " " + msg.content);
   if (!args.length) {
     return msg.reply(
       "You have to write what you want to craft and if you want the quantity to make. For more info write " +

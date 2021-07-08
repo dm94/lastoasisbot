@@ -32,7 +32,7 @@ client.on("message", (msg) => {
 
   if (guildConfig != null) {
     if (
-      guildConfig.readclanlog &&
+      (guildConfig.readclanlog || guildConfig.readclanlog == 1) &&
       msg.content.includes("traveled") &&
       msg.author.bot
     ) {
@@ -49,7 +49,7 @@ client.on("message", (msg) => {
         walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
       }
 
-      if (guildConfig.walkerAlarm) {
+      if (guildConfig.walkerAlarm || guildConfig.walkerAlarm == 1) {
         walkerCommands.walkerAlarm(
           {
             walkerID: walkerId,
@@ -68,7 +68,7 @@ client.on("message", (msg) => {
         msg.guild.id
       );
 
-      if (guildConfig.setnotreadypvp) {
+      if (guildConfig.setnotreadypvp || guildConfig.setnotreadypvp == 1) {
         walkerCommands.setnotreadypvp(walkerId, msg);
       }
     }
