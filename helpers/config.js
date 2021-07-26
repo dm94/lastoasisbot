@@ -7,9 +7,6 @@ controller.getConfigurations = async () => {
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/bot/config",
-    headers: {
-      apiKey: process.env.APP_API_KEY,
-    },
   };
 
   return await othersFunctions.apiRequest(options);
@@ -25,9 +22,6 @@ controller.updateConfiguration = async (guildId) => {
       kick: false,
       readypvp: false,
       walkeralarm: false,
-    },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
     },
   };
 

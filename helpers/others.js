@@ -11,6 +11,10 @@ controller.sendChannelMessage = (msg, text) => {
 };
 
 controller.apiRequest = async (options) => {
+  options.headers = {
+    apiKey: process.env.APP_API_KEY,
+    "Content-type": "charset=utf-8",
+  };
   return Axios.request(options)
     .then((response) => {
       return response.data;

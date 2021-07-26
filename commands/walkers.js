@@ -16,9 +16,6 @@ walkerCommands.lolistwalkers = async (msg) => {
       discordid: msg.guild.id,
       page: page,
     },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
-    },
   };
 
   let response = await othersFunctions.apiRequest(options);
@@ -49,9 +46,6 @@ walkerCommands.lowalkersearchbyname = async (msg) => {
       name: name,
       page: page,
     },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
-    },
   };
 
   let response = await othersFunctions.apiRequest(options);
@@ -81,9 +75,6 @@ walkerCommands.lowalkersearchbyowner = async (msg) => {
       owner: ownerUser,
       page: page,
     },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
-    },
   };
 
   let response = await othersFunctions.apiRequest(options);
@@ -112,9 +103,6 @@ walkerCommands.lowalkersearchbylastuser = async (msg) => {
       discordid: msg.guild.id,
       lastuser: lastUser,
       page: page,
-    },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
     },
   };
 
@@ -146,9 +134,6 @@ walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
       params: {
         discordid: msg.guild.id,
         walkerid: walkerId,
-      },
-      headers: {
-        apiKey: process.env.APP_API_KEY,
       },
     };
 
@@ -210,9 +195,6 @@ walkerCommands.setnotreadypvp = async (walkerid, msg) => {
       discordid: msg.guild.id,
       walkerid: walkerid,
     },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
-    },
   };
 
   let response = await othersFunctions.apiRequest(options);
@@ -229,9 +211,6 @@ walkerCommands.setnotreadypvp = async (walkerid, msg) => {
         const optionsUpdate = {
           method: "put",
           url: process.env.APP_API_URL + "/bot/walkers/" + walkerid,
-          headers: {
-            apiKey: process.env.APP_API_KEY,
-          },
         };
         othersFunctions.apiRequest(optionsUpdate);
       }
@@ -249,9 +228,6 @@ walkerCommands.insertNewWalker = (newWalker, discordid) => {
       name: newWalker.name,
       lastUser: newWalker.lastUser,
     },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
-    },
   };
   console.log("Added walker: " + newWalker.walkerID);
   othersFunctions.apiRequest(options);
@@ -264,9 +240,6 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
     params: {
       discordid: msg.guild.id,
       walkerid: newWalker.walkerID,
-    },
-    headers: {
-      apiKey: process.env.APP_API_KEY,
     },
   };
 

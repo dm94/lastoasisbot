@@ -13,6 +13,7 @@ client.on("ready", () => {
 client.login(process.env.DISCORD_TOKEN);
 const prefix = process.env.DISCORD_PREFIX;
 
+let lastConfigurationsUpdate = 0;
 let botConfigurations = [];
 
 client.on("ready", () => {
@@ -106,6 +107,13 @@ client.on("message", (msg) => {
   } else if (command === "loinfo") {
     genericCommands.loinfo(msg);
   }
+
+  if (
+    botConfigurations == null ||
+    lastConfigurationsUpdate <= Date.now() - 3600000
+  ) {
+    updateConfigurations();
+  }
 });
 
 async function updateConfigurations() {
@@ -121,4 +129,5 @@ async function updateConfigurations() {
       botConfigurations[guild.id] = config;
     }
   });
+  lastConfigurationsUpdate = Date.now();
 }
