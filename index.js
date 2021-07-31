@@ -4,6 +4,7 @@ const client = new Discord.Client();
 const genericCommands = require("./commands/generic");
 const itemsCommands = require("./commands/items");
 const walkerCommands = require("./commands/walkers");
+const clanCommands = require("./commands/clans");
 const configuration = require("./helpers/config");
 
 client.on("ready", () => {
@@ -33,7 +34,7 @@ client.on("message", (msg) => {
 
   if (guildConfig != null) {
     if (
-      (guildConfig.readclanlog || guildConfig.readclanlog == 1) &&
+      guildConfig.readclanlog == true &&
       msg.content.includes("traveled") &&
       msg.author.bot
     ) {
@@ -50,7 +51,7 @@ client.on("message", (msg) => {
         walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
       }
 
-      if (guildConfig.walkerAlarm || guildConfig.walkerAlarm == 1) {
+      if (guildConfig.walkerAlarm == true) {
         walkerCommands.walkerAlarm(
           {
             walkerID: walkerId,
@@ -69,16 +70,19 @@ client.on("message", (msg) => {
         msg.guild.id
       );
 
-      if (guildConfig.setnotreadypvp || guildConfig.setnotreadypvp == 1) {
+      if (guildConfig.setnotreadypvp == true) {
         walkerCommands.setnotreadypvp(walkerId, msg);
       }
     }
 
-    if (msg.content.includes("kicked") && msg.author.bot) {
+    if (
+      guildConfig.automatickick == true &&
+      msg.content.includes("kicked") &&
+      msg.author.bot
+    ) {
       if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
-        lastUser = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
-
-        console.log("Kicked: " + lastUser);
+        let user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
+        clanCommands.kickPlayer(msg, user);
       }
     }
   } else {
