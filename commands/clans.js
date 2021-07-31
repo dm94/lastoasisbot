@@ -15,7 +15,7 @@ clanCommands.kickMember = async (msg, user) => {
       },
     };
 
-    let response = othersFunctions.apiRequest(options);
+    let response = await othersFunctions.apiRequest(options);
 
     if (response != null) {
       othersFunctions.sendChannelMessage(msg, "Member kicked");
