@@ -23,36 +23,47 @@ genericCommands.loinfo = (msg) => {
 };
 
 genericCommands.lohelp = (msg, prefix) => {
-  let messageEn = ":flag_gb: \n```";
-  messageEn +=
+  let messageEn =
+    "```" +
     prefix +
     "locraft = With this command you can see the materials needed to make an object. \nExample of use: " +
     prefix +
     "locraft Barrier Base \nIf you want to see the materials to make 10: " +
     prefix +
-    "locraft 10x Barrier Base ";
-  messageEn += "\n" + prefix + "loinfo = Displays bot information.";
+    "locraft 10x Barrier Base ```";
+  messageEn += "```" + prefix + "loinfo = Displays bot information. ```";
+  messageEn +=
+    "```" +
+    prefix +
+    "lolistwalkers (page) = Shows all the walkers added since this discord. Each page is 5 walkers (Obsolete) ```";
+  messageEn +=
+    "```" +
+    prefix +
+    "lowalkerinfo (id) = Shows the information of a specific walker```";
+  messageEn +=
+    "```" +
+    prefix +
+    "lowalkersearchbyname (name) = Shows all walkers with that name (Obsolete)```";
+  messageEn +=
+    "```" +
+    prefix +
+    "lowalkersearchbyowner (name) = Show all walkers with that owner (Obsolete)```";
+  messageEn +=
+    "```" +
+    prefix +
+    "lowalkersearchbylastuser (name) = Shows all the walkers that person has used (Obsolete)```";
+  messageEn +=
+    "```" +
+    prefix +
+    "walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming";
   messageEn +=
     "\n" +
+    "An example of use: " +
     prefix +
-    "lolistwalkers (page) = Shows all the walkers added since this discord. Each page is 5 walkers";
+    "walkersearch -page=1 -name=walker -ready -pvp";
   messageEn +=
     "\n" +
-    prefix +
-    "lowalkerinfo (id) = Shows the information of a specific walker";
-  messageEn +=
-    "\n" +
-    prefix +
-    "lowalkersearchbyname (name) = Shows all walkers with that name";
-  messageEn +=
-    "\n" +
-    prefix +
-    "lowalkersearchbyowner (name) = Show all walkers with that owner";
-  messageEn +=
-    "\n" +
-    prefix +
-    "lowalkersearchbylastuser (name) = Shows all the walkers that person has used";
-  messageEn += "```";
+    "This will bring out all the walkers that are called walker are pvp and ready```";
   othersFunctions.sendChannelMessage(msg, messageEn);
 };
 

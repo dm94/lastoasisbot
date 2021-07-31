@@ -100,6 +100,8 @@ client.on("message", (msg) => {
     walkerCommands.lowalkersearchbyowner(msg);
   } else if (command === "lowalkersearchbylastuser") {
     walkerCommands.lowalkersearchbylastuser(msg);
+  } else if (command === "walkersearch") {
+    walkerCommands.walkersearch(msg, prefix);
   } else if (command === "locraft") {
     itemsCommands.locraft(msg, args, prefix);
   } else if (command === "locommands" || command === "lohelp") {
