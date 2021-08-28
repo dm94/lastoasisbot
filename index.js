@@ -27,67 +27,75 @@ client.on("ready", () => {
     .catch(console.log);
 
   updateConfigurations();
+
+  console.log("Servers:");
+  client.guilds.cache.forEach((guild) => {
+    console.log(`${guild.name} | ${guild.id}`);
+  });
 });
 
 client.on("message", (msg) => {
-  const guildConfig = botConfigurations[msg.guild.id];
+  let guildConfig = null;
+  if (msg.guild.id) {
+    guildConfig = botConfigurations[msg.guild.id];
 
-  if (guildConfig != null) {
-    if (
-      guildConfig.readclanlog == true &&
-      msg.content.includes("traveled") &&
-      msg.author.bot
-    ) {
-      let walkerId = 0;
-      let walkerName = "";
-      let lastUser = "";
-      if (/\((\d+)\)/.test(msg.content)) {
-        walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
-      }
-      if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
-        lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
-      }
-      if (/(?:with walker\s``)(.+)(?:``\s)/.test(msg.content)) {
-        walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
-      }
+    if (guildConfig != null) {
+      if (
+        guildConfig.readclanlog == true &&
+        msg.content.includes("traveled") &&
+        msg.author.bot
+      ) {
+        let walkerId = 0;
+        let walkerName = "";
+        let lastUser = "";
+        if (/\((\d+)\)/.test(msg.content)) {
+          walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
+        }
+        if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
+          lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
+        }
+        if (/(?:with walker\s``)(.+)(?:``\s)/.test(msg.content)) {
+          walkerName = msg.content.match(/(?:with walker\s``)(.+)(?:``\s)/)[1];
+        }
 
-      if (guildConfig.walkerAlarm == true) {
-        walkerCommands.walkerAlarm(
+        if (guildConfig.walkerAlarm == true) {
+          walkerCommands.walkerAlarm(
+            {
+              walkerID: walkerId,
+              lastUser: lastUser,
+              name: walkerName,
+            },
+            msg
+          );
+        }
+        walkerCommands.insertNewWalker(
           {
             walkerID: walkerId,
             lastUser: lastUser,
             name: walkerName,
           },
-          msg
+          msg.guild.id
         );
-      }
-      walkerCommands.insertNewWalker(
-        {
-          walkerID: walkerId,
-          lastUser: lastUser,
-          name: walkerName,
-        },
-        msg.guild.id
-      );
 
-      if (guildConfig.setnotreadypvp == true) {
-        walkerCommands.setnotreadypvp(walkerId, msg);
+        if (guildConfig.setnotreadypvp == true) {
+          walkerCommands.setnotreadypvp(walkerId, msg);
+        }
       }
-    }
 
-    if (
-      guildConfig.automatickick == true &&
-      msg.content.includes("kicked") &&
-      msg.author.bot
-    ) {
-      if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
-        let user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
-        clanCommands.kickPlayer(msg, user);
+      if (
+        guildConfig.automatickick == true &&
+        msg.content.includes("kicked") &&
+        msg.author.bot
+      ) {
+        if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
+          let user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
+          clanCommands.kickPlayer(msg, user);
+        }
       }
+    } else {
+      configuration.updateConfiguration(msg.guild.id);
+      updateConfigurations();
     }
-  } else {
-    configuration.updateConfiguration(msg.guild.id);
-    updateConfigurations();
   }
 
   if (!msg.content.startsWith(prefix) && msg.author.bot) return;
