@@ -76,10 +76,7 @@ genericCommands.lohelp = (msg, prefix) => {
     "\n" +
     "An example of use: " +
     prefix +
-    "tradesearch -page=1 -type=demand -type=cattail -region=eu";
-  messageEn +=
-    "\n" +
-    "This will bring out all the walkers that are called walker are pvp and ready```";
+    "tradesearch -page=1 -type=demand -type=cattail -region=eu```";
   messageEn +=
     "```" +
     prefix +

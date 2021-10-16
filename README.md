@@ -23,5 +23,4 @@ Example: https://twitter.com/Dm94Dani/status/1293121001421705216
   This will bring out all the walkers that are called walker are pvp and ready
 - !tradesearch = To perform a search for trades, has different filters: -page=, -type=, -resource=, -region=
   An example of use: !tradesearch -page=1 -type=demand -type=cattail -region=eu
-  This will bring out all the walkers that are called walker are pvp and ready
 - !loconfig = Shows all the info for the bot config (Only for admins)
