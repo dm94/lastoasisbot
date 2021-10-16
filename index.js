@@ -1,10 +1,12 @@
 require("dotenv").config();
 const Discord = require("discord.js");
+const { Permissions } = require("discord.js");
 const client = new Discord.Client();
 const genericCommands = require("./commands/generic");
 const itemsCommands = require("./commands/items");
 const walkerCommands = require("./commands/walkers");
 const clanCommands = require("./commands/clans");
+const tradesCommands = require("./commands/trades");
 const configuration = require("./helpers/config");
 
 client.on("ready", () => {
@@ -13,9 +15,6 @@ client.on("ready", () => {
 
 client.login(process.env.DISCORD_TOKEN);
 const prefix = process.env.DISCORD_PREFIX;
-
-let lastConfigurationsUpdate = 0;
-let botConfigurations = [];
 
 client.on("ready", () => {
   client.user
@@ -26,18 +25,13 @@ client.on("ready", () => {
     })
     .catch(console.log);
 
-  updateConfigurations();
-
-  console.log("Servers:");
-  client.guilds.cache.forEach((guild) => {
-    console.log(`${guild.name} | ${guild.id}`);
-  });
+  configuration.updateConfigurations(client);
 });
 
 client.on("message", (msg) => {
   let guildConfig = null;
   if (msg.guild.id) {
-    guildConfig = botConfigurations[msg.guild.id];
+    guildConfig = configuration.getConfiguration(msg.guild.id);
 
     if (guildConfig != null) {
       if (
@@ -93,8 +87,7 @@ client.on("message", (msg) => {
         }
       }
     } else {
-      configuration.updateConfiguration(msg.guild.id);
-      updateConfigurations();
+      configuration.createConfiguration(msg.guild.id);
     }
   }
 
@@ -116,32 +109,19 @@ client.on("message", (msg) => {
     walkerCommands.walkersearch(msg, prefix);
   } else if (command === "locraft") {
     itemsCommands.locraft(msg, args, prefix);
+  } else if (command === "lorecipe") {
+    itemsCommands.lorecipe(msg, args, prefix);
+  } else if (command === "tradesearch") {
+    tradesCommands.tradesearch(msg, prefix);
   } else if (command === "locommands" || command === "lohelp") {
     genericCommands.lohelp(msg, prefix);
   } else if (command === "loinfo") {
     genericCommands.loinfo(msg);
-  }
-
-  if (
-    botConfigurations == null ||
-    lastConfigurationsUpdate <= Date.now() - 3600000
-  ) {
-    updateConfigurations();
+  } else if (msg.member.hasPermission("ADMINISTRATOR")) {
+    if (command === "loconfig") {
+      configuration.loconfig(msg, prefix, guildConfig);
+    } else if (command === "loconfigupdate") {
+      configuration.loconfigupdate(msg, prefix, guildConfig);
+    }
   }
 });
-
-async function updateConfigurations() {
-  let allConfigurations = await configuration.getConfigurations();
-  client.guilds.cache.forEach((guild) => {
-    let config = null;
-    if (allConfigurations) {
-      config = allConfigurations.find(
-        (server) => server.serverdiscordid == guild.id
-      );
-    }
-    if (config) {
-      botConfigurations[guild.id] = config;
-    }
-  });
-  lastConfigurationsUpdate = Date.now();
-}

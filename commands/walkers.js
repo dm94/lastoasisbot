@@ -4,7 +4,7 @@ require("dotenv").config();
 const Discord = require("discord.js");
 const othersFunctions = require("../helpers/others");
 
-walkerCommands.walkersearch = async (msg, prefix) => {
+walkerCommands.walkersearch = async () => {
   let args = msg.content.slice(prefix.length).trim().split(" -");
   let page = 1;
   let params = {
@@ -14,23 +14,17 @@ walkerCommands.walkersearch = async (msg, prefix) => {
   args.forEach((arg) => {
     if (arg.startsWith("page=")) {
       page = parseInt(arg.slice(6));
-    }
-    if (arg.startsWith("name=")) {
+    } else if (arg.startsWith("name=")) {
       params.name = arg.slice(6).trim();
-    }
-    if (arg.startsWith("owner=")) {
+    } else if (arg.startsWith("owner=")) {
       params.owner = arg.slice(7).trim();
-    }
-    if (arg.startsWith("lastuser=")) {
+    } else if (arg.startsWith("lastuser=")) {
       params.lastuser = arg.slice(10).trim();
-    }
-    if (arg.startsWith("ready")) {
+    } else if (arg.startsWith("ready")) {
       params.ready = 1;
-    }
-    if (arg.startsWith("pvp")) {
+    } else if (arg.startsWith("pvp")) {
       params.use = "pvp";
-    }
-    if (arg.startsWith("farming")) {
+    } else if (arg.startsWith("farming")) {
       params.use = "farming";
     }
   });

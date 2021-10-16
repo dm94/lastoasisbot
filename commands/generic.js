@@ -35,6 +35,10 @@ genericCommands.lohelp = (msg, prefix) => {
   messageEn +=
     "```" +
     prefix +
+    "lorecipe (code) = Displays the list of recipes for that code```";
+  messageEn +=
+    "```" +
+    prefix +
     "lolistwalkers (page) = Shows all the walkers added since this discord. Each page is 5 walkers (Obsolete) ```";
   messageEn +=
     "```" +
@@ -64,6 +68,22 @@ genericCommands.lohelp = (msg, prefix) => {
   messageEn +=
     "\n" +
     "This will bring out all the walkers that are called walker are pvp and ready```";
+  messageEn +=
+    "```" +
+    prefix +
+    "tradesearch = To perform a search for trades, has different filters: -page=, -type=, -resource=, -region=";
+  messageEn +=
+    "\n" +
+    "An example of use: " +
+    prefix +
+    "tradesearch -page=1 -type=demand -type=cattail -region=eu";
+  messageEn +=
+    "\n" +
+    "This will bring out all the walkers that are called walker are pvp and ready```";
+  messageEn +=
+    "```" +
+    prefix +
+    "loconfig = Shows all the info for the bot config (Only for admins)```";
   othersFunctions.sendChannelMessage(msg, messageEn);
 };
 
