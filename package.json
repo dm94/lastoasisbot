@@ -1,6 +1,6 @@
 {
   "name": "lastoasis-bot",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.23.0",

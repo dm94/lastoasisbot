@@ -13,7 +13,9 @@ walkerCommands.walkersearch = async () => {
 
   args.forEach((arg) => {
     if (arg.startsWith("page=")) {
-      page = parseInt(arg.slice(6));
+      try {
+        page = parseInt(arg.slice(6));
+      } catch (error) {}
     } else if (arg.startsWith("name=")) {
       params.name = arg.slice(6).trim();
     } else if (arg.startsWith("owner=")) {
@@ -162,7 +164,7 @@ walkerCommands.lowalkersearchbylastuser = async (msg) => {
 };
 
 walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
-  if (!args.length && args.length != 2) {
+  if (args.length != 2) {
     msg.reply(
       "To view the information of a walker write " +
         prefix +
@@ -171,7 +173,10 @@ walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
         "lowalkerinfo 721480717```"
     );
   } else {
-    let walkerId = parseInt(args[0]);
+    let walkerId = 0;
+    try {
+      walkerId = parseInt(args[0]);
+    } catch (error) {}
     const options = {
       method: "get",
       url: process.env.APP_API_URL + "/bot/walkers",

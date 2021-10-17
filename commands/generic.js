@@ -80,6 +80,15 @@ genericCommands.lohelp = (msg, prefix) => {
   messageEn +=
     "```" +
     prefix +
+    "createtrade = To create a trade, has different parameters: -type=Supply|Demand, -resource=, -region=EU|NA|OCE|RUSSIA|SEA|SA, -quality, -price, -amount";
+  messageEn +=
+    "\n" +
+    "An example of use: " +
+    prefix +
+    "createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200```";
+  messageEn +=
+    "```" +
+    prefix +
     "loconfig = Shows all the info for the bot config (Only for admins)```";
   othersFunctions.sendChannelMessage(msg, messageEn);
 };

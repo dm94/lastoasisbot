@@ -7,10 +7,7 @@ let lastConfigurationsUpdate = 0;
 let botConfigurations = [];
 
 controller.getConfiguration = (guildID) => {
-  if (
-    botConfigurations == null ||
-    lastConfigurationsUpdate <= Date.now() - 3600000
-  ) {
+  if (lastConfigurationsUpdate <= Date.now() - 3600000) {
     controller.updateConfigurations();
   }
 
@@ -181,18 +178,20 @@ controller.createConfiguration = async (guildId) => {
 
 controller.updateConfigurations = async (client) => {
   let allConfigurations = await controller.getConfigurations();
-  client.guilds.cache.forEach((guild) => {
-    let config = null;
-    if (allConfigurations) {
-      config = allConfigurations.find(
-        (server) => server.serverdiscordid == guild.id
-      );
-    }
-    if (config) {
-      botConfigurations[guild.id] = config;
-    }
-  });
-  lastConfigurationsUpdate = Date.now();
+  if (client) {
+    client.guilds.cache.forEach((guild) => {
+      let config = null;
+      if (allConfigurations) {
+        config = allConfigurations.find(
+          (server) => server.serverdiscordid == guild.id
+        );
+      }
+      if (config) {
+        botConfigurations[guild.id] = config;
+      }
+    });
+    lastConfigurationsUpdate = Date.now();
+  }
 };
 
 module.exports = controller;

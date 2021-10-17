@@ -48,7 +48,7 @@ itemsCommands.lorecipe = async (msg, args, prefix) => {
   let response = await othersFunctions.apiRequest(options);
   if (response != null && response.items != null) {
     let allItems = JSON.parse(response.items);
-    const items = await getAllItems();
+    const items = await itemsCommands.getAllItems();
     allItems.forEach((item) => {
       let itemData = items.find(
         (data) => item.name != null && data.name === item.name
@@ -66,7 +66,7 @@ async function getNecessaryMaterials(itemName, msg, multiplier) {
   }
   let itemsSent = 0;
 
-  const items = await getAllItems();
+  const items = await itemsCommands.getAllItems();
   let itemsfilters = items.filter((item) =>
     item.name.toLowerCase().includes(itemName)
   );
@@ -99,7 +99,7 @@ function setItemInfo(msg, item, multiplier) {
   othersFunctions.sendChannelMessage(msg, message);
 }
 
-function getAllItems() {
+itemsCommands.getAllItems = async () => {
   if (allItems != null && itemsLastCheck >= Date.now() - 3600000) {
     return allItems;
   } else {
@@ -115,6 +115,6 @@ function getAllItems() {
         console.log(error);
       });
   }
-}
+};
 
 module.exports = itemsCommands;

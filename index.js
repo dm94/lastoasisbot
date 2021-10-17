@@ -43,7 +43,9 @@ client.on("message", (msg) => {
         let walkerName = "";
         let lastUser = "";
         if (/\((\d+)\)/.test(msg.content)) {
-          walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
+          try {
+            walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
+          } catch (error) {}
         }
         if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
           lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
@@ -113,6 +115,8 @@ client.on("message", (msg) => {
     itemsCommands.lorecipe(msg, args, prefix);
   } else if (command === "tradesearch") {
     tradesCommands.tradesearch(msg, prefix);
+  } else if (command === "createtrade") {
+    tradesCommands.createtrade(msg, prefix);
   } else if (command === "locommands" || command === "lohelp") {
     genericCommands.lohelp(msg, prefix);
   } else if (command === "loinfo") {
