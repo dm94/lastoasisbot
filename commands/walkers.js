@@ -4,7 +4,7 @@ require("dotenv").config();
 const Discord = require("discord.js");
 const othersFunctions = require("../helpers/others");
 
-walkerCommands.walkersearch = async () => {
+walkerCommands.walkersearch = async (msg, prefix) => {
   let args = msg.content.slice(prefix.length).trim().split(" -");
   let page = 1;
   let params = {
