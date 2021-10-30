@@ -28,6 +28,8 @@ walkerCommands.walkersearch = async (msg, prefix) => {
       params.use = "pvp";
     } else if (arg.startsWith("farming")) {
       params.use = "farming";
+    } else if (arg.startsWith("desc=")) {
+      params.desc = arg.slice(6).trim();
     }
   });
 

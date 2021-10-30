@@ -59,7 +59,7 @@ genericCommands.lohelp = (msg, prefix) => {
   messageEn +=
     "```" +
     prefix +
-    "walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming";
+    "walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming, -desc";
   messageEn +=
     "\n" +
     "An example of use: " +
