@@ -22,14 +22,16 @@ walkerCommands.walkersearch = async (msg, prefix) => {
       params.owner = arg.slice(7).trim();
     } else if (arg.startsWith("lastuser=")) {
       params.lastuser = arg.slice(10).trim();
+    } else if (arg.startsWith("desc=")) {
+      params.desc = arg.slice(6).trim();
+    } else if (arg.startsWith("type=")) {
+      params.type = arg.slice(6).trim();
     } else if (arg.startsWith("ready")) {
       params.ready = 1;
     } else if (arg.startsWith("pvp")) {
       params.use = "pvp";
     } else if (arg.startsWith("farming")) {
       params.use = "farming";
-    } else if (arg.startsWith("desc=")) {
-      params.desc = arg.slice(6).trim();
     }
   });
 

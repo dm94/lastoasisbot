@@ -59,12 +59,12 @@ genericCommands.lohelp = (msg, prefix) => {
   messageEn +=
     "```" +
     prefix +
-    "walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming, -desc";
+    "walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming, -desc, -type";
   messageEn +=
     "\n" +
     "An example of use: " +
     prefix +
-    "walkersearch -page=1 -name=walker -ready -pvp";
+    "walkersearch -page=1 -name=walker -type=falco -ready -pvp";
   messageEn +=
     "\n" +
     "This will bring out all the walkers that are called walker are pvp and ready```";
