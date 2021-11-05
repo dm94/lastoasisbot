@@ -3,11 +3,9 @@ const controller = {};
 const Axios = require("axios");
 
 controller.sendChannelMessage = (msg, text) => {
-  try {
-    msg.channel.send(text);
-  } catch (error) {
+  msg.channel.send(text).catch((error) => {
     console.log(error);
-  }
+  });
 };
 
 controller.apiRequest = async (options) => {
