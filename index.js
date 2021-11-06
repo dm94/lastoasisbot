@@ -91,44 +91,51 @@ client.on("message", (msg) => {
             clanCommands.kickPlayer(msg, user);
           }
         }
+
+        if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+
+        const args = msg.content.slice(prefix.length).trim().split(" ");
+        const command = args.shift().toLowerCase();
+
+        if (command === "lowalkerinfo") {
+          walkerCommands.lowalkerinfo(msg, args, prefix);
+        } else if (command === "lolistwalkers") {
+          walkerCommands.lolistwalkers(msg);
+        } else if (command === "lowalkersearchbyname") {
+          walkerCommands.lowalkersearchbyname(msg);
+        } else if (command === "lowalkersearchbyowner") {
+          walkerCommands.lowalkersearchbyowner(msg);
+        } else if (command === "lowalkersearchbylastuser") {
+          walkerCommands.lowalkersearchbylastuser(msg);
+        } else if (command === "walkersearch") {
+          walkerCommands.walkersearch(msg, prefix);
+        } else if (command === "locraft") {
+          itemsCommands.locraft(msg, args, prefix);
+        } else if (command === "lorecipe") {
+          itemsCommands.lorecipe(msg, args, prefix);
+        } else if (command === "tradesearch") {
+          tradesCommands.tradesearch(msg, prefix);
+        } else if (command === "createtrade") {
+          tradesCommands.createtrade(msg, prefix);
+        } else if (command === "locommands" || command === "lohelp") {
+          genericCommands.lohelp(msg, prefix);
+        } else if (command === "loinfo") {
+          genericCommands.loinfo(msg);
+        } else if (command === "loconfig") {
+          if (msg.member.hasPermission("ADMINISTRATOR")) {
+            configuration.loconfig(msg, prefix, guildConfig);
+          } else {
+            msg.reply("You do not have permissions to use this command");
+          }
+        } else if (command === "loconfigupdate") {
+          if (msg.member.hasPermission("ADMINISTRATOR")) {
+            configuration.loconfigupdate(msg, prefix, guildConfig);
+          } else {
+            msg.reply("You do not have permissions to use this command");
+          }
+        }
       } else {
         configuration.createConfiguration(msg.guild.id);
-      }
-    }
-
-    if (!msg.content.startsWith(prefix) && msg.author.bot) return;
-    const args = msg.content.slice(prefix.length).trim().split(" ");
-    const command = args.shift().toLowerCase();
-
-    if (command === "lowalkerinfo") {
-      walkerCommands.lowalkerinfo(msg, args, prefix);
-    } else if (command === "lolistwalkers") {
-      walkerCommands.lolistwalkers(msg);
-    } else if (command === "lowalkersearchbyname") {
-      walkerCommands.lowalkersearchbyname(msg);
-    } else if (command === "lowalkersearchbyowner") {
-      walkerCommands.lowalkersearchbyowner(msg);
-    } else if (command === "lowalkersearchbylastuser") {
-      walkerCommands.lowalkersearchbylastuser(msg);
-    } else if (command === "walkersearch") {
-      walkerCommands.walkersearch(msg, prefix);
-    } else if (command === "locraft") {
-      itemsCommands.locraft(msg, args, prefix);
-    } else if (command === "lorecipe") {
-      itemsCommands.lorecipe(msg, args, prefix);
-    } else if (command === "tradesearch") {
-      tradesCommands.tradesearch(msg, prefix);
-    } else if (command === "createtrade") {
-      tradesCommands.createtrade(msg, prefix);
-    } else if (command === "locommands" || command === "lohelp") {
-      genericCommands.lohelp(msg, prefix);
-    } else if (command === "loinfo") {
-      genericCommands.loinfo(msg);
-    } else if (msg.member.hasPermission("ADMINISTRATOR")) {
-      if (command === "loconfig") {
-        configuration.loconfig(msg, prefix, guildConfig);
-      } else if (command === "loconfigupdate") {
-        configuration.loconfigupdate(msg, prefix, guildConfig);
       }
     }
   } catch (e) {

@@ -34,22 +34,22 @@ controller.loconfig = (msg, prefix, guildConfig) => {
   message.addField("Language", guildConfig.botlanguaje, true);
   message.addField(
     "Read discord clan log",
-    guildConfig.readclanlog == true,
+    guildConfig.readclanlog == true ? ":white_check_mark:" : ":x:",
     true
   );
   message.addField(
     "Automatic kick members from the clan",
-    guildConfig.automatickick == true,
+    guildConfig.automatickick == true ? ":white_check_mark:" : ":x:",
     false
   );
   message.addField(
     "Automatically if a PVP walker is used it is marked as not ready.",
-    guildConfig.setnotreadypvp == true,
+    guildConfig.setnotreadypvp == true ? ":white_check_mark:" : ":x:",
     false
   );
   message.addField(
     "Warns if someone brings out a walker they don't own.",
-    guildConfig.walkeralarm == true,
+    guildConfig.walkeralarm == true ? ":white_check_mark:" : ":x:",
     false
   );
 
