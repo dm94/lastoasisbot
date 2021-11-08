@@ -30,6 +30,10 @@ commands.tradesearch = async (msg, prefix) => {
 
   params.page = page;
 
+  commands.tradeSearchWithParams(msg.channel, params);
+};
+
+commands.tradeSearchWithParams = async (channel, params) => {
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/trades",
@@ -40,12 +44,15 @@ commands.tradesearch = async (msg, prefix) => {
 
   if (response != null && Array.isArray(response)) {
     if (response.length < 1) {
-      othersFunctions.sendChannelMessage(msg, "No trades with that filters");
+      othersFunctions.sendChannelMessage(
+        channel,
+        "No trades with that filters"
+      );
       return;
     }
-    response.forEach((trade) => sentTradeinfo(msg, trade));
+    response.forEach((trade) => sentTradeinfo(channel, trade));
   } else {
-    othersFunctions.sendChannelMessage(msg, "No trades with that filters");
+    othersFunctions.sendChannelMessage(channel, "No trades with that filters");
   }
 };
 
@@ -54,7 +61,7 @@ commands.createtrade = async (msg, prefix) => {
 
   if (args.length < 2) {
     othersFunctions.sendChannelMessage(
-      msg,
+      msg.channel,
       "You have to add more data. Example: " +
         prefix +
         "createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200"
@@ -90,7 +97,7 @@ commands.createtrade = async (msg, prefix) => {
         params.resource = item.name;
       } else {
         othersFunctions.sendChannelMessage(
-          msg,
+          msg.channel,
           "No resource with this name has been found"
         );
         return;
@@ -122,6 +129,10 @@ commands.createtrade = async (msg, prefix) => {
     }
   });
 
+  commands.createTradeWithParams(msg.channel, params);
+};
+
+commands.createTradeWithParams = async (channel, params) => {
   const options = {
     method: "post",
     url: process.env.APP_API_URL + "/bot/trades",
@@ -130,32 +141,32 @@ commands.createtrade = async (msg, prefix) => {
 
   let response = await othersFunctions.apiRequest(options);
   if (response != null && response.Success != null) {
-    othersFunctions.sendChannelMessage(msg, response.Success);
+    othersFunctions.sendChannelMessage(channel, response.Success);
   } else {
     othersFunctions.sendChannelMessage(
-      msg,
+      channel,
       "The trade could not be created, please try again."
     );
   }
 };
 
-function sentTradeinfo(msg, trade) {
+function sentTradeinfo(channel, trade) {
   let message = new Discord.MessageEmbed()
     .setColor("#FFE400")
     .setTitle(trade.type + " // " + trade.region);
 
   if (trade.price != null && trade.price != 0) {
-    message.addField("Price in flots", trade.price, true);
+    message.addField("Price in flots", trade.price.toString(), true);
   }
   if (trade.amount != null && trade.amount != 0) {
-    message.addField("Quantity", trade.amount, true);
+    message.addField("Quantity", trade.amount.toString(), true);
   }
   if (trade.quality != null && trade.quality != 0) {
-    message.addField("Quality", trade.quality, true);
+    message.addField("Quality", trade.quality.toString(), true);
   }
   message.setFooter("Discord: " + trade.discordtag);
 
-  othersFunctions.sendChannelMessage(msg, message);
+  othersFunctions.sendChannelEmbed(channel, message);
 }
 
 module.exports = commands;

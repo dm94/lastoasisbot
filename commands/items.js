@@ -24,7 +24,11 @@ itemsCommands.locraft = (msg, args, prefix) => {
     item = msg.content.substr(msg.content.indexOf("x") + 1);
   }
   try {
-    getNecessaryMaterials(item.trim().toLowerCase(), msg, multiplier);
+    itemsCommands.getNecessaryMaterials(
+      msg.channel,
+      item.trim().toLowerCase(),
+      multiplier
+    );
   } catch (error) {
     console.log(error);
   }
@@ -39,7 +43,10 @@ itemsCommands.lorecipe = async (msg, args, prefix) => {
     );
   }
   let code = msg.content.substr(msg.content.indexOf("lorecipe") + 8).trim();
+  itemsCommands.sendRecipe(msg.channel, code);
+};
 
+itemsCommands.sendRecipe = async (channel, code) => {
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/recipes/" + code,
@@ -54,15 +61,18 @@ itemsCommands.lorecipe = async (msg, args, prefix) => {
         (data) => item.name != null && data.name === item.name
       );
       if (itemData) {
-        setItemInfo(msg, itemData, item.count ? item.count : 1);
+        setItemInfo(channel, itemData, item.count ? item.count : 1);
       }
     });
   }
 };
 
-async function getNecessaryMaterials(itemName, msg, multiplier) {
+itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
   if (itemName.length <= 0) {
     return;
+  }
+  if (!multiplier) {
+    multiplier = 1;
   }
   let itemsSent = 0;
 
@@ -73,12 +83,12 @@ async function getNecessaryMaterials(itemName, msg, multiplier) {
   itemsfilters.forEach((item) => {
     if (itemsSent < 5) {
       itemsSent++;
-      setItemInfo(msg, item, multiplier);
+      setItemInfo(channel, item, multiplier);
     }
   });
-}
+};
 
-function setItemInfo(msg, item, multiplier) {
+function setItemInfo(channel, item, multiplier) {
   let message = new Discord.MessageEmbed()
     .setColor("#FFE400")
     .setTitle(multiplier + "x " + item.name)
@@ -89,14 +99,18 @@ function setItemInfo(msg, item, multiplier) {
       let le = ingredie[i].ingredients;
       for (var ing in le) {
         areItems = true;
-        message.addField(le[ing].name, le[ing].count * multiplier, true);
+        message.addField(
+          le[ing].name,
+          (le[ing].count * multiplier).toString(),
+          true
+        );
       }
     }
   }
   if (item.cost != null) {
     message.setFooter("Cost: " + item.cost.count + " " + item.cost.name);
   }
-  othersFunctions.sendChannelMessage(msg, message);
+  othersFunctions.sendChannelEmbed(channel, message);
 }
 
 itemsCommands.getAllItems = async () => {

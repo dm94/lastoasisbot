@@ -2,8 +2,14 @@ const controller = {};
 
 const Axios = require("axios");
 
-controller.sendChannelMessage = (msg, text) => {
-  msg.channel.send(text).catch((error) => {
+controller.sendChannelMessage = (channel, text) => {
+  channel.send(text).catch((error) => {
+    console.log(error);
+  });
+};
+
+controller.sendChannelEmbed = (channel, embed) => {
+  channel.send({ embeds: [embed] }).catch((error) => {
     console.log(error);
   });
 };

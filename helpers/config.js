@@ -27,34 +27,7 @@ controller.getConfigurations = async () => {
 };
 
 controller.loconfig = (msg, prefix, guildConfig) => {
-  let message = new Discord.MessageEmbed()
-    .setColor("#58ACFA")
-    .setTitle("Bot Config");
-
-  message.addField("Language", guildConfig.botlanguaje, true);
-  message.addField(
-    "Read discord clan log",
-    guildConfig.readclanlog == true ? ":white_check_mark:" : ":x:",
-    true
-  );
-  message.addField(
-    "Automatic kick members from the clan",
-    guildConfig.automatickick == true ? ":white_check_mark:" : ":x:",
-    false
-  );
-  message.addField(
-    "Automatically if a PVP walker is used it is marked as not ready.",
-    guildConfig.setnotreadypvp == true ? ":white_check_mark:" : ":x:",
-    false
-  );
-  message.addField(
-    "Warns if someone brings out a walker they don't own.",
-    guildConfig.walkeralarm == true ? ":white_check_mark:" : ":x:",
-    false
-  );
-
-  othersFunctions.sendChannelMessage(msg, message);
-
+  controller.sendConfigInfo(msg.channel, guildConfig);
   let messageEn =
     prefix +
     "loconfigupdate = To update the bot configuration. Use this parameters with her value. Only For Admins \n" +
@@ -70,7 +43,46 @@ controller.loconfig = (msg, prefix, guildConfig) => {
     prefix +
     "loconfigupdate -language=EN -clanlog=true -kick=false -readypvp=false -walkeralarm=false```";
 
-  othersFunctions.sendChannelMessage(msg, messageEn);
+  othersFunctions.sendChannelMessage(msg.channel, messageEn);
+};
+
+controller.sendConfigInfo = (channel, guildConfig) => {
+  let message = new Discord.MessageEmbed()
+    .setColor("#58ACFA")
+    .setTitle("Bot Config");
+
+  console.log(guildConfig);
+  message.addField("Language", guildConfig.botlanguaje, true);
+  message.addField(
+    "Read discord clan log",
+    guildConfig.readclanlog && guildConfig.readclanlog != "0"
+      ? ":white_check_mark:"
+      : ":x:",
+    true
+  );
+  message.addField(
+    "Automatic kick members from the clan",
+    guildConfig.automatickick && guildConfig.automatickick != "0"
+      ? ":white_check_mark:"
+      : ":x:",
+    false
+  );
+  message.addField(
+    "Automatically if a PVP walker is used it is marked as not ready.",
+    guildConfig.setnotreadypvp && guildConfig.setnotreadypvp != "0"
+      ? ":white_check_mark:"
+      : ":x:",
+    false
+  );
+  message.addField(
+    "Warns if someone brings out a walker they don't own.",
+    guildConfig.walkeralarm && guildConfig.walkeralarm != "0"
+      ? ":white_check_mark:"
+      : ":x:",
+    false
+  );
+
+  othersFunctions.sendChannelEmbed(channel, message);
 };
 
 controller.loconfigupdate = async (msg, prefix, guildConfig) => {
@@ -134,7 +146,10 @@ controller.loconfigupdate = async (msg, prefix, guildConfig) => {
       }
     }
   });
+  controller.updateConfig(msg.channel, guildId, params);
+};
 
+controller.updateConfig = async (channel, guildId, params) => {
   const options = {
     method: "put",
     url: process.env.APP_API_URL + "/bot/config/" + guildId,
@@ -147,9 +162,9 @@ controller.loconfigupdate = async (msg, prefix, guildConfig) => {
     readclanlog: params.clanlog,
     automatickick: params.kick,
     setnotreadypvp: params.readypvp,
-    walkerAlarm: params.walkeralarm,
+    walkeralarm: params.walkeralarm,
   };
-  othersFunctions.sendChannelMessage(msg, "Config updated");
+  othersFunctions.sendChannelMessage(channel, "Config updated");
 };
 
 controller.createConfiguration = async (guildId) => {
@@ -172,7 +187,7 @@ controller.createConfiguration = async (guildId) => {
     readclanlog: params.clanlog,
     automatickick: params.kick,
     setnotreadypvp: params.readypvp,
-    walkerAlarm: params.walkeralarm,
+    walkeralarm: params.walkeralarm,
   };
 };
 

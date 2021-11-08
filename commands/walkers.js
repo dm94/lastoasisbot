@@ -37,6 +37,10 @@ walkerCommands.walkersearch = async (msg, prefix) => {
 
   params.page = page;
 
+  walkerCommands.walkerSearchWithParams(msg.channel, params);
+};
+
+walkerCommands.walkerSearchWithParams = async (channel, params) => {
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/bot/walkers",
@@ -47,10 +51,10 @@ walkerCommands.walkersearch = async (msg, prefix) => {
 
   if (response != null && response.length > 0) {
     response.forEach((walker) => {
-      walkerCommands.sendWalkerInfo(msg, walker);
+      walkerCommands.sendWalkerInfo(channel, walker);
     });
   } else {
-    othersFunctions.sendChannelMessage(msg, "No walker found");
+    othersFunctions.sendChannelMessage(channel, "No walker found");
   }
 };
 
@@ -59,24 +63,12 @@ walkerCommands.lolistwalkers = async (msg) => {
   if (/(\s\d+)/.test(msg.content)) {
     page = msg.content.match(/(\s\d+)/)[1];
   }
-  const options = {
-    method: "get",
-    url: process.env.APP_API_URL + "/bot/walkers",
-    params: {
-      discordid: msg.guild.id,
-      page: page,
-    },
+  let params = {
+    discordid: msg.guild.id,
+    page: page,
   };
 
-  let response = await othersFunctions.apiRequest(options);
-
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      walkerCommands.sendWalkerInfo(msg, walker);
-    });
-  } else {
-    othersFunctions.sendChannelMessage(msg, "No walker found");
-  }
+  walkerCommands.walkerSearchWithParams(msg.channel, params);
 };
 
 walkerCommands.lowalkersearchbyname = async (msg) => {
@@ -88,25 +80,13 @@ walkerCommands.lowalkersearchbyname = async (msg) => {
     .substring(msg.content.indexOf("lowalkersearchbyname") + 20)
     .trim();
 
-  const options = {
-    method: "get",
-    url: process.env.APP_API_URL + "/bot/walkers",
-    params: {
-      discordid: msg.guild.id,
-      name: name,
-      page: page,
-    },
+  let params = {
+    discordid: msg.guild.id,
+    name: name,
+    page: page,
   };
 
-  let response = await othersFunctions.apiRequest(options);
-
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      walkerCommands.sendWalkerInfo(msg, walker);
-    });
-  } else {
-    othersFunctions.sendChannelMessage(msg, "No walker found");
-  }
+  walkerCommands.walkerSearchWithParams(msg.channel, params);
 };
 
 walkerCommands.lowalkersearchbyowner = async (msg) => {
@@ -117,25 +97,13 @@ walkerCommands.lowalkersearchbyowner = async (msg) => {
   let ownerUser = msg.content
     .substring(msg.content.indexOf("lowalkersearchbyowner") + 21)
     .trim();
-  const options = {
-    method: "get",
-    url: process.env.APP_API_URL + "/bot/walkers",
-    params: {
-      discordid: msg.guild.id,
-      owner: ownerUser,
-      page: page,
-    },
+
+  let params = {
+    discordid: msg.guild.id,
+    owner: ownerUser,
+    page: page,
   };
-
-  let response = await othersFunctions.apiRequest(options);
-
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      walkerCommands.sendWalkerInfo(msg, walker);
-    });
-  } else {
-    othersFunctions.sendChannelMessage(msg, "No walker found");
-  }
+  walkerCommands.walkerSearchWithParams(msg.channel, params);
 };
 
 walkerCommands.lowalkersearchbylastuser = async (msg) => {
@@ -146,25 +114,13 @@ walkerCommands.lowalkersearchbylastuser = async (msg) => {
   let lastUser = msg.content
     .substring(msg.content.indexOf("lowalkersearchbylastuser") + 24)
     .trim();
-  const options = {
-    method: "get",
-    url: process.env.APP_API_URL + "/bot/walkers",
-    params: {
-      discordid: msg.guild.id,
-      lastuser: lastUser,
-      page: page,
-    },
+
+  let params = {
+    discordid: msg.guild.id,
+    lastuser: lastUser,
+    page: page,
   };
-
-  let response = await othersFunctions.apiRequest(options);
-
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      walkerCommands.sendWalkerInfo(msg, walker);
-    });
-  } else {
-    othersFunctions.sendChannelMessage(msg, "No walker found");
-  }
+  walkerCommands.walkerSearchWithParams(msg.channel, params);
 };
 
 walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
@@ -181,34 +137,25 @@ walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
     try {
       walkerId = parseInt(args[0]);
     } catch (error) {}
-    const options = {
-      method: "get",
-      url: process.env.APP_API_URL + "/bot/walkers",
-      params: {
-        discordid: msg.guild.id,
-        walkerid: walkerId,
-      },
-    };
 
-    let response = await othersFunctions.apiRequest(options);
-
-    if (response != null && response.length > 0) {
-      response.forEach((walker) => {
-        walkerCommands.sendWalkerInfo(msg, walker);
-      });
-    } else {
-      othersFunctions.sendChannelMessage(msg, "No walker found");
-    }
+    walkerCommands.sendWalkerInfoFromID(msg.channel, walkerId, msg.guild.id);
   }
 };
 
-walkerCommands.sendWalkerInfo = (msg, walker) => {
+walkerCommands.sendWalkerInfoFromID = async (channel, walkerId, guildId) => {
+  walkerCommands.walkerSearchWithParams(channel, {
+    discordid: guildId,
+    walkerid: walkerId,
+  });
+};
+
+walkerCommands.sendWalkerInfo = (channel, walker) => {
   if (walker != null) {
     let date = new Date(walker.datelastuse);
     let message = new Discord.MessageEmbed()
       .setColor("#58ACFA")
       .setTitle(walker.name);
-    message.addField("Walker ID", walker.walkerID, true);
+    message.addField("Walker ID", walker.walkerID.toString(), true);
     message.addField("Last User", walker.lastUser, true);
     message.addField(
       "Last use",
@@ -236,7 +183,7 @@ walkerCommands.sendWalkerInfo = (msg, walker) => {
     } else {
       message.addField("Ready", ":x:");
     }
-    othersFunctions.sendChannelMessage(msg, message);
+    othersFunctions.sendChannelEmbed(channel, message);
   }
 };
 
@@ -305,13 +252,13 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
         walker.ownerUser != newWalker.lastUser
       ) {
         othersFunctions.sendChannelMessage(
-          msg,
+          msg.channel,
           "@everyone Alert the walker with owner has been used"
         );
       }
     });
   } else {
-    othersFunctions.sendChannelMessage(msg, "No walker found");
+    othersFunctions.sendChannelMessage(msg.channel, "No walker found");
   }
 };
 

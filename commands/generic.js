@@ -1,11 +1,25 @@
 const genericCommands = {};
 
-const Discord = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 const othersFunctions = require("../helpers/others");
 const pjson = require("../package.json");
 
 genericCommands.loinfo = (msg) => {
-  var message = new Discord.MessageEmbed()
+  othersFunctions.sendChannelEmbed(
+    msg.channel,
+    genericCommands.getInfoContent()
+  );
+};
+
+genericCommands.lohelp = (msg, prefix) => {
+  othersFunctions.sendChannelMessage(
+    msg.channel,
+    genericCommands.getHelpContent(prefix)
+  );
+};
+
+genericCommands.getInfoContent = () => {
+  let message = new MessageEmbed()
     .setColor("#008FFF")
     .setTitle(pjson.name + " v" + pjson.version)
     .setURL("https://github.com/dm94/lastoasisbot")
@@ -16,13 +30,13 @@ genericCommands.loinfo = (msg) => {
     )
     .setDescription(
       "Discord Bot for Last Oasis" +
-        "\nTo add the bot to your discord: https://discordapp.com/oauth2/authorize?&client_id=715948052979908911&scope=bot&permissions=67584" +
+        "\nTo add the bot to your discord: https://discord.com/api/oauth2/authorize?client_id=715948052979908911&permissions=2147552256&scope=bot%20applications.commands" +
         "\nDm94Dani Discord: https://discord.gg/FcecRtZ"
     );
-  othersFunctions.sendChannelMessage(msg, message);
+  return message;
 };
 
-genericCommands.lohelp = (msg, prefix) => {
+genericCommands.getHelpContent = (prefix) => {
   let messageEn =
     "```" +
     prefix +
@@ -90,7 +104,7 @@ genericCommands.lohelp = (msg, prefix) => {
     "```" +
     prefix +
     "loconfig = Shows all the info for the bot config (Only for admins)```";
-  othersFunctions.sendChannelMessage(msg, messageEn);
+  return messageEn;
 };
 
 module.exports = genericCommands;
