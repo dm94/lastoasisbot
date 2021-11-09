@@ -189,33 +189,14 @@ walkerCommands.sendWalkerInfo = (channel, walker) => {
 
 walkerCommands.setnotreadypvp = async (walkerid, msg) => {
   const options = {
-    method: "get",
-    url: process.env.APP_API_URL + "/bot/walkers",
+    method: "put",
+    url: process.env.APP_API_URL + "/bot/walkers/" + msg.guild.id,
     params: {
-      discordid: msg.guild.id,
       walkerid: walkerid,
     },
   };
 
-  let response = await othersFunctions.apiRequest(options);
-
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      if (
-        walker.walker_use != null &&
-        walker.walker_use === "PVP" &&
-        walker.isReady != null &&
-        walker.isReady
-      ) {
-        console.log("Set not ready pvp" + walkerid);
-        const optionsUpdate = {
-          method: "put",
-          url: process.env.APP_API_URL + "/bot/walkers/" + walkerid,
-        };
-        othersFunctions.apiRequest(optionsUpdate);
-      }
-    });
-  }
+  othersFunctions.apiRequest(options);
 };
 
 walkerCommands.insertNewWalker = (newWalker, discordid) => {

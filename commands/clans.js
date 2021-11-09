@@ -8,7 +8,7 @@ clanCommands.kickMember = async (msg, user) => {
 
   if (discordid != null) {
     const options = {
-      method: "put",
+      method: "delete",
       url: process.env.APP_API_URL + "/bot/clans/" + discordid,
       params: {
         nick: user,
