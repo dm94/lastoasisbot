@@ -3,6 +3,7 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 const controller = {};
+const logger = require("./helpers/logger");
 
 const commands = [];
 const commandFiles = fs
@@ -18,22 +19,22 @@ const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_TOKEN);
 
 controller.registerSlashCommandsGlobal = async () => {
   try {
-    console.log("Started refreshing application (/) commands.");
+    logger.info("Started refreshing application (/) commands.");
 
     await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
       body: commands,
     });
 
-    console.log("Successfully reloaded application (/) commands.");
+    logger.info("Successfully reloaded application (/) commands.");
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
 controller.registerSlashCommands = async (guildId) => {
   try {
     if (guildId) {
-      console.log("Started refreshing application (/) commands.");
+      logger.info("Started refreshing application (/) commands.");
 
       await rest.put(
         Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId),
@@ -42,10 +43,10 @@ controller.registerSlashCommands = async (guildId) => {
         }
       );
 
-      console.log("Successfully reloaded application (/) commands.");
+      logger.info("Successfully reloaded application (/) commands.");
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 

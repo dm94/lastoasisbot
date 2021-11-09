@@ -1,16 +1,17 @@
 const controller = {};
 
 const Axios = require("axios");
+const logger = require("./logger");
 
 controller.sendChannelMessage = (channel, text) => {
   channel.send(text).catch((error) => {
-    console.log(error);
+    logger.error(error);
   });
 };
 
 controller.sendChannelEmbed = (channel, embed) => {
   channel.send({ embeds: [embed] }).catch((error) => {
-    console.log(error);
+    logger.error(error);
   });
 };
 
@@ -24,7 +25,7 @@ controller.apiRequest = async (options) => {
       return response.data;
     })
     .catch((error) => {
-      console.log(error);
+      logger.error(error);
       return null;
     });
 };

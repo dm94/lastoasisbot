@@ -210,7 +210,7 @@ walkerCommands.insertNewWalker = (newWalker, discordid) => {
       lastUser: newWalker.lastUser,
     },
   };
-  console.log("Added walker: " + newWalker.walkerID);
+
   othersFunctions.apiRequest(options);
 };
 

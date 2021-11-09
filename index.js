@@ -8,6 +8,7 @@ const clanCommands = require("./commands/clans");
 const tradesCommands = require("./commands/trades");
 const configuration = require("./helpers/config");
 const slashCommandsRegister = require("./slashCommandsRegister");
+const logger = require("./helpers/logger");
 
 const client = new Client({
   intents: [
@@ -18,7 +19,7 @@ const client = new Client({
 });
 
 client.on("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  logger.info(`Logged in as ${client.user.tag}!`);
 });
 
 client.login(process.env.DISCORD_TOKEN);
@@ -176,7 +177,6 @@ client.on("interactionCreate", async (interaction) => {
         readypvp: interaction.options.getBoolean("readypvp"),
         walkeralarm: interaction.options.getBoolean("walkeralarm"),
       };
-      console.log(params);
       await interaction.reply("Updating the bot configuration...");
       configuration.updateConfig(
         interaction.channel,
@@ -302,6 +302,6 @@ client.on("message", (msg) => {
       }
     }
   } catch (e) {
-    console.log(e);
+    logger.error(e);
   }
 });

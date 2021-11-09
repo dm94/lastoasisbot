@@ -1,5 +1,5 @@
 const itemsCommands = {};
-
+const logger = require("../helpers/logger");
 const Discord = require("discord.js");
 const Axios = require("axios");
 const othersFunctions = require("../helpers/others");
@@ -7,7 +7,7 @@ let itemsLastCheck = 0;
 let allItems = null;
 
 itemsCommands.locraft = (msg, args, prefix) => {
-  console.log(new Date() + " " + msg.content);
+  logger.info(msg.content);
   if (!args.length) {
     return msg.reply(
       "You have to write what you want to craft and if you want the quantity to make. For more info write " +
@@ -30,7 +30,7 @@ itemsCommands.locraft = (msg, args, prefix) => {
       multiplier
     );
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -126,7 +126,7 @@ itemsCommands.getAllItems = async () => {
         return allItems;
       })
       .catch((error) => {
-        console.log(error);
+        logger.error(error);
       });
   }
 };

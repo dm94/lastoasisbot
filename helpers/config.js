@@ -51,7 +51,6 @@ controller.sendConfigInfo = (channel, guildConfig) => {
     .setColor("#58ACFA")
     .setTitle("Bot Config");
 
-  console.log(guildConfig);
   message.addField("Language", guildConfig.botlanguaje, true);
   message.addField(
     "Read discord clan log",
