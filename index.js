@@ -188,6 +188,19 @@ client.on("interactionCreate", async (interaction) => {
         "You do not have permissions to use this command"
       );
     }
+  } else if (interaction.commandName === "linkserver") {
+    if (interaction.member.permissions.has("ADMINISTRATOR")) {
+      clanCommands.linkserver(
+        interaction.channel,
+        interaction.guildId,
+        interaction.member.id
+      );
+      await interaction.reply("Linking the server...");
+    } else {
+      await interaction.reply(
+        "You do not have permissions to use this command"
+      );
+    }
   }
 });
 
@@ -251,7 +264,7 @@ client.on("message", (msg) => {
         ) {
           if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
             let user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
-            clanCommands.kickPlayer(msg, user);
+            clanCommands.kickMember(msg, user);
           }
         }
 
@@ -293,6 +306,12 @@ client.on("message", (msg) => {
         } else if (command === "loconfigupdate") {
           if (msg.member.permissions.has("ADMINISTRATOR")) {
             configuration.loconfigupdate(msg, prefix, guildConfig);
+          } else {
+            msg.reply("You do not have permissions to use this command");
+          }
+        } else if (command === "linkserver") {
+          if (msg.member.permissions.has("ADMINISTRATOR")) {
+            clanCommands.linkserver(msg.channel, msg.guild.id, msg.author.id);
           } else {
             msg.reply("You do not have permissions to use this command");
           }

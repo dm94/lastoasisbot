@@ -26,3 +26,4 @@ Example: https://twitter.com/Dm94Dani/status/1293121001421705216
 - !createtrade = To create a trade, has different parameters: -type=Supply|Demand, -resource=, -region=EU|NA|OCE|RUSSIA|SEA|SA, -quality, -price, -amount
   An example of use: !createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200
 - !loconfig = Shows all the info for the bot config (Only for admins)
+- !linkserver = Link the discord server to the clan you are in. (Only for admins)

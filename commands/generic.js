@@ -104,6 +104,10 @@ genericCommands.getHelpContent = (prefix) => {
     "```" +
     prefix +
     "loconfig = Shows all the info for the bot config (Only for admins)```";
+  messageEn +=
+    "```" +
+    prefix +
+    "linkserver = Link the discord server to the clan you are in (Only for admins)```";
   return messageEn;
 };
 
