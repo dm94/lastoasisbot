@@ -6,6 +6,7 @@ const itemsCommands = require("./commands/items");
 const walkerCommands = require("./commands/walkers");
 const clanCommands = require("./commands/clans");
 const tradesCommands = require("./commands/trades");
+const techCommands = require("./commands/tech");
 const configuration = require("./helpers/config");
 const slashCommandsRegister = require("./slashCommandsRegister");
 const logger = require("./helpers/logger");
@@ -33,10 +34,10 @@ client.on("ready", () => {
   });
 
   configuration.updateConfigurations(client);
-  /* client.guilds.cache.forEach((guild) => {
+  /*client.guilds.cache.forEach((guild) => {
     slashCommandsRegister.registerSlashCommands(guild.id);
-  });
-  */
+  });*/
+
   slashCommandsRegister.registerSlashCommandsGlobal();
 });
 
@@ -201,6 +202,12 @@ client.on("interactionCreate", async (interaction) => {
         "You do not have permissions to use this command"
       );
     }
+  } else if (interaction.commandName === "skilltree") {
+    await interaction.reply("Looking for items");
+    techCommands.getWhoHasLearntIt(
+      interaction.channel,
+      interaction.options.getString("item").trim().toLowerCase()
+    );
   }
 });
 

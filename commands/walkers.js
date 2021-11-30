@@ -124,7 +124,7 @@ walkerCommands.lowalkersearchbylastuser = async (msg) => {
 };
 
 walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
-  if (args.length != 2) {
+  if (args.length != 1) {
     msg.reply(
       "To view the information of a walker write " +
         prefix +
