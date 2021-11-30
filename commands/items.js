@@ -77,9 +77,11 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
   let itemsSent = 0;
 
   const items = await itemsCommands.getAllItems();
-  let itemsfilters = items.filter((item) =>
-    item.name.toLowerCase().includes(itemName)
-  );
+  let itemsfilters = items.filter((it) => {
+    return itemName.split(" ").every((internalItem) => {
+      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+    });
+  });
   itemsfilters.forEach((item) => {
     if (itemsSent < 5) {
       itemsSent++;
