@@ -25,5 +25,7 @@ Example: https://twitter.com/Dm94Dani/status/1293121001421705216
   An example of use: !tradesearch -page=1 -type=demand -type=cattail -region=eu
 - !createtrade = To create a trade, has different parameters: -type=Supply|Demand, -resource=, -region=EU|NA|OCE|RUSSIA|SEA|SA, -quality, -price, -amount
   An example of use: !createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200
+- !skilltree = It will tell you which members of your clan have learned that item.
+  Example of use: !skilltree Desert Mule
 - !loconfig = Shows all the info for the bot config (Only for admins)
 - !linkserver = Link the discord server to the clan you are in. (Only for admins)

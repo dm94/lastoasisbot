@@ -34,11 +34,17 @@ client.on("ready", () => {
   });
 
   configuration.updateConfigurations(client);
-  /*client.guilds.cache.forEach((guild) => {
-    slashCommandsRegister.registerSlashCommands(guild.id);
-  });*/
 
-  slashCommandsRegister.registerSlashCommandsGlobal();
+  if (process.env.APP_DEV) {
+    client.guilds.cache.forEach((guild) => {
+      if (guild.name) {
+        console.log(guild.name);
+      }
+      slashCommandsRegister.registerSlashCommands(guild.id);
+    });
+  } else {
+    slashCommandsRegister.registerSlashCommandsGlobal();
+  }
 });
 
 client.on("interactionCreate", async (interaction) => {
@@ -206,7 +212,8 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply("Looking for items");
     techCommands.getWhoHasLearntIt(
       interaction.channel,
-      interaction.options.getString("item").trim().toLowerCase()
+      interaction.options.getString("item").trim().toLowerCase(),
+      interaction.guildId
     );
   }
 });
@@ -300,6 +307,15 @@ client.on("message", (msg) => {
           tradesCommands.tradesearch(msg, prefix);
         } else if (command === "createtrade") {
           tradesCommands.createtrade(msg, prefix);
+        } else if (command === "skilltree") {
+          try {
+            let item = msg.content.substr(msg.content.indexOf("skilltree") + 9);
+            techCommands.getWhoHasLearntIt(
+              msg.channel,
+              item.trim().toLowerCase(),
+              msg.guild.id
+            );
+          } catch (e) {}
         } else if (command === "locommands" || command === "lohelp") {
           genericCommands.lohelp(msg, prefix);
         } else if (command === "loinfo") {

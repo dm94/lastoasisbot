@@ -103,6 +103,12 @@ genericCommands.getHelpContent = (prefix) => {
   messageEn +=
     "```" +
     prefix +
+    "skilltree = It will tell you which members of your clan have learned that item. \nExample of use: " +
+    prefix +
+    "skilltree Desert Mule ```";
+  messageEn +=
+    "```" +
+    prefix +
     "loconfig = Shows all the info for the bot config (Only for admins)```";
   messageEn +=
     "```" +

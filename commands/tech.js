@@ -5,9 +5,8 @@ const Axios = require("axios");
 const itemsFunctions = require("../commands/items");
 const othersFunctions = require("../helpers/others");
 
-commands.getWhoHasLearntIt = async (channel, itemName) => {
+commands.getWhoHasLearntIt = async (channel, itemName, discordid) => {
   let allItems = await itemsFunctions.getAllItems();
-  let tree = "Vitamins";
 
   let item = allItems.find((it) => {
     return itemName.split(" ").every((internalItem) => {
@@ -16,8 +15,45 @@ commands.getWhoHasLearntIt = async (channel, itemName) => {
   });
 
   if (item != null) {
-    tree = commands.getTechTree(allItems, item.name);
-    othersFunctions.sendChannelMessage(channel, "TechTree: " + tree);
+    let tree = commands.getTechTree(allItems, item.name);
+    if (tree != null) {
+      const options = {
+        method: "get",
+        url: process.env.APP_API_URL + "/bot/" + discordid + "/tech",
+        params: {
+          tree: tree,
+          tech: item.name,
+        },
+      };
+
+      let response = await othersFunctions.apiRequest(options);
+      if (response != null) {
+        if (Array.isArray(response) && response.length > 0) {
+          let message = new Discord.MessageEmbed()
+            .setColor("#3A78EA")
+            .setTitle(item.name)
+            .setDescription("These are the people who have learned it")
+            .setURL("https://www.stiletto.live/tech/" + tree);
+          let respondeLenght = response.length;
+          for (let i = 0; i < respondeLenght; i++) {
+            if (response[i].discordtag != null) {
+              message.addField("Discord", response[i].discordtag, false);
+            }
+          }
+          othersFunctions.sendChannelEmbed(channel, message);
+        } else {
+          othersFunctions.sendChannelMessage(
+            channel,
+            "For this command to work the clan must be linked to this discord."
+          );
+        }
+      } else {
+        othersFunctions.sendChannelMessage(
+          channel,
+          "For this command to work the clan must be linked to this discord."
+        );
+      }
+    }
   } else {
     othersFunctions.sendChannelMessage(
       channel,
