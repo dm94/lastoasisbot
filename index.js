@@ -215,6 +215,13 @@ client.on("interactionCreate", async (interaction) => {
       interaction.options.getString("item").trim().toLowerCase(),
       interaction.guildId
     );
+  } else if (interaction.commandName === "learned") {
+    await interaction.reply("Looking for items");
+    techCommands.addTech(
+      interaction.channel,
+      interaction.options.getString("item").trim().toLowerCase(),
+      interaction.member.id
+    );
   }
 });
 
@@ -314,6 +321,15 @@ client.on("message", (msg) => {
               msg.channel,
               item.trim().toLowerCase(),
               msg.guild.id
+            );
+          } catch (e) {}
+        } else if (command === "learned") {
+          try {
+            let item = msg.content.substr(msg.content.indexOf("learned") + 7);
+            techCommands.addTech(
+              msg.channel,
+              item.trim().toLowerCase(),
+              msg.author.id
             );
           } catch (e) {}
         } else if (command === "locommands" || command === "lohelp") {
