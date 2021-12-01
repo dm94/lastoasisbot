@@ -109,6 +109,12 @@ genericCommands.getHelpContent = (prefix) => {
   messageEn +=
     "```" +
     prefix +
+    "learned = Add the item to the list of learned items. \nExample of use: " +
+    prefix +
+    "learned Desert Mule ```";
+  messageEn +=
+    "```" +
+    prefix +
     "loconfig = Shows all the info for the bot config (Only for admins)```";
   messageEn +=
     "```" +
