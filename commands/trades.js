@@ -74,7 +74,7 @@ commands.createtrade = async (msg, prefix) => {
   let params = {
     discordid: msg.author.id,
     type: "Supply",
-    resource: "Aloe",
+    resource: "Aloe Vera",
     amount: 0,
     quality: 0,
     region: "eu",

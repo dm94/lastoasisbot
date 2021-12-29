@@ -13,7 +13,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("resource")
-        .setDescription("Resource Name (Aloe, Wood...)")
+        .setDescription("Resource Name (Aloe Vera, Wood...)")
         .setRequired(false)
     )
     .addStringOption((option) =>

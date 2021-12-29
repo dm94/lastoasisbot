@@ -130,7 +130,7 @@ client.on("interactionCreate", async (interaction) => {
     let params = {
       discordid: interaction.member.id,
       type: "Supply",
-      resource: "Aloe",
+      resource: "Aloe Vera",
       amount: 0,
       quality: 0,
       region: "eu",
