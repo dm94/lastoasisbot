@@ -16,6 +16,13 @@ controller.sendChannelEmbed = (channel, embed) => {
 };
 
 controller.apiRequest = async (options) => {
+  if (!process.env.APP_API_KEY || !process.env.APP_API_URL) {
+    logger.error(
+      "You need to configure the APP_API_KEY and APP_API_URL to use this function."
+    );
+    return null;
+  }
+
   options.headers = {
     apiKey: process.env.APP_API_KEY,
     "Content-type": "charset=utf-8",

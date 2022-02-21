@@ -53,17 +53,23 @@ itemsCommands.sendRecipe = async (channel, code) => {
   };
 
   let response = await othersFunctions.apiRequest(options);
-  if (response != null && response.items != null) {
-    let allItems = JSON.parse(response.items);
-    const items = await itemsCommands.getAllItems();
-    allItems.forEach((item) => {
-      let itemData = items.find(
-        (data) => item.name != null && data.name === item.name
-      );
-      if (itemData) {
-        setItemInfo(channel, itemData, item.count ? item.count : 1);
-      }
-    });
+  if (response != null) {
+    if (response.items != null) {
+      let allItems = JSON.parse(response.items);
+      const items = await itemsCommands.getAllItems();
+      allItems.forEach((item) => {
+        let itemData = items.find(
+          (data) => item.name != null && data.name === item.name
+        );
+        if (itemData) {
+          setItemInfo(channel, itemData, item.count ? item.count : 1);
+        }
+      });
+    } else {
+      othersFunctions.sendChannelMessage(channel, "No items found");
+    }
+  } else {
+    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
   }
 };
 

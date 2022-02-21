@@ -49,12 +49,16 @@ walkerCommands.walkerSearchWithParams = async (channel, params) => {
 
   let response = await othersFunctions.apiRequest(options);
 
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      walkerCommands.sendWalkerInfo(channel, walker);
-    });
+  if (response != null) {
+    if (response.length > 0) {
+      response.forEach((walker) => {
+        walkerCommands.sendWalkerInfo(channel, walker);
+      });
+    } else {
+      othersFunctions.sendChannelMessage(channel, "No walker found");
+    }
   } else {
-    othersFunctions.sendChannelMessage(channel, "No walker found");
+    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
   }
 };
 
@@ -226,20 +230,24 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
 
   let response = await othersFunctions.apiRequest(options);
 
-  if (response != null && response.length > 0) {
-    response.forEach((walker) => {
-      if (
-        !(walker.ownerUser == null || !walker.ownerUser) &&
-        walker.ownerUser != newWalker.lastUser
-      ) {
-        othersFunctions.sendChannelMessage(
-          msg.channel,
-          "@everyone Alert the walker with owner has been used"
-        );
-      }
-    });
+  if (response != null) {
+    if (response.length > 0) {
+      response.forEach((walker) => {
+        if (
+          !(walker.ownerUser == null || !walker.ownerUser) &&
+          walker.ownerUser != newWalker.lastUser
+        ) {
+          othersFunctions.sendChannelMessage(
+            msg.channel,
+            "@everyone Alert the walker with owner has been used"
+          );
+        }
+      });
+    } else {
+      othersFunctions.sendChannelMessage(msg.channel, "No walker found");
+    }
   } else {
-    othersFunctions.sendChannelMessage(msg.channel, "No walker found");
+    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
   }
 };
 
