@@ -4,6 +4,7 @@ const logger = require("./logger");
 
 controller.updateStatistics = async (guildsCount, usersCount) => {
   controller.sendDiscordBotList(guildsCount, usersCount);
+  controller.sendTopGG(guildsCount);
 };
 
 /**
