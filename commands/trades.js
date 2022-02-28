@@ -170,7 +170,7 @@ function sentTradeinfo(channel, trade) {
   if (trade.quality != null && trade.quality != 0) {
     message.addField("Quality", trade.quality.toString(), true);
   }
-  message.setFooter("Discord: " + trade.discordtag);
+  message.setFooter({ text: "Discord: " + trade.discordtag });
 
   othersFunctions.sendChannelEmbed(channel, message);
 }

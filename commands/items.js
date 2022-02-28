@@ -158,7 +158,9 @@ function setItemInfo(channel, item, multiplier) {
     }
   }
   if (item.cost != null) {
-    message.setFooter("Cost: " + item.cost.count + " " + item.cost.name);
+    message.setFooter({
+      text: "Cost: " + item.cost.count + " " + item.cost.name,
+    });
   }
   othersFunctions.sendChannelEmbed(channel, message);
 }

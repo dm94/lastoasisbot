@@ -37,11 +37,9 @@ client.on("ready", () => {
 
   if (process.env.APP_DEV) {
     client.guilds.cache.forEach((guild) => {
-      if (guild.name) {
-        console.log(guild.name);
-      }
       slashCommandsRegister.registerSlashCommands(guild.id);
     });
+    console.log("Servers:" + client.guilds.cache.size);
   } else {
     slashCommandsRegister.registerSlashCommandsGlobal();
   }

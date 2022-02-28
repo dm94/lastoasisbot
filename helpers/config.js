@@ -2,6 +2,7 @@ const controller = {};
 const Discord = require("discord.js");
 require("dotenv").config();
 const othersFunctions = require("./others");
+const discordlists = require("./discordlists");
 
 let lastConfigurationsUpdate = 0;
 let botConfigurations = [];
@@ -205,6 +206,13 @@ controller.updateConfigurations = async (client) => {
       }
     });
     lastConfigurationsUpdate = Date.now();
+
+    let guildsCount =
+      client.guilds && client.guilds.cache ? client.guilds.cache.size : 0;
+    let usersCount =
+      client.users && client.users.cache ? client.users.cache.size : 0;
+
+    discordlists.updateStatistics(guildsCount, usersCount);
   }
 };
 
