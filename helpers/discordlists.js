@@ -33,7 +33,38 @@ controller.sendDiscordBotList = async (guildsCount, usersCount) => {
   };
   return Axios.request(options)
     .then((response) => {
-      console.log("discordbotlist updated", response);
+      console.log("discordbotlist updated");
+      return;
+    })
+    .catch((error) => {
+      logger.error(error);
+      return;
+    });
+};
+
+/**
+ * To add the list of servers here: https://top.gg
+ * @param {Number} guildsCount
+ */
+
+controller.sendTopGG = async (guildsCount) => {
+  if (!process.env.TOPGG_TOKEN) {
+    return;
+  }
+
+  const options = {
+    method: "post",
+    url: "https://top.gg/api/bots/" + process.env.DISCORD_CLIENT_ID + "/stats",
+    data: {
+      server_count: guildsCount,
+    },
+    headers: {
+      Authorization: process.env.TOPGG_TOKEN,
+    },
+  };
+  return Axios.request(options)
+    .then((response) => {
+      console.log("TopGG updated");
       return;
     })
     .catch((error) => {
