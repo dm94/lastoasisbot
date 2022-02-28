@@ -20,7 +20,7 @@ controller.sendDiscordBotList = async (guildsCount, usersCount) => {
   const options = {
     method: "post",
     url:
-      "https://discordbotlist.com/api/v1/bots" +
+      "https://discordbotlist.com/api/v1/bots/" +
       process.env.DISCORD_CLIENT_ID +
       "/stats",
     data: {
