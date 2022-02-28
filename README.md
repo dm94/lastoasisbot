@@ -1,4 +1,6 @@
 # Last Oasis Discord bot
+[![Discord Bots](https://top.gg/api/widget/servers/715948052979908911.svg)(https://top.gg/bot/715948052979908911)
+---
 
 Discord Bot for Last Oasis
 
