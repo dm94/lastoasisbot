@@ -19,13 +19,9 @@ const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_TOKEN);
 
 controller.registerSlashCommandsGlobal = async () => {
   try {
-    logger.info("Started refreshing application (/) commands.");
-
     await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
       body: commands,
     });
-
-    logger.info("Successfully reloaded application (/) commands.");
   } catch (error) {
     logger.error(error);
   }
@@ -34,16 +30,12 @@ controller.registerSlashCommandsGlobal = async () => {
 controller.registerSlashCommands = async (guildId) => {
   try {
     if (guildId) {
-      logger.info("Started refreshing application (/) commands.");
-
       await rest.put(
         Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId),
         {
           body: commands,
         }
       );
-
-      logger.info("Successfully reloaded application (/) commands.");
     }
   } catch (error) {
     logger.error(error);

@@ -31,10 +31,15 @@ controller.sendDiscordBotList = async (guildsCount, usersCount) => {
       Authorization: process.env.DISCORDBOTLIST_TOKEN,
     },
   };
-  return Axios.request(options).catch((error) => {
-    logger.error(error);
-    return;
-  });
+  return Axios.request(options)
+    .then((response) => {
+      console.log("discordbotlist updated", response);
+      return;
+    })
+    .catch((error) => {
+      logger.error(error);
+      return;
+    });
 };
 
 module.exports = controller;

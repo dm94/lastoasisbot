@@ -36,6 +36,7 @@ client.on("ready", () => {
   configuration.updateConfigurations(client);
 
   if (process.env.APP_DEV) {
+    logger.info("Dev Mode");
     client.guilds.cache.forEach((guild) => {
       slashCommandsRegister.registerSlashCommands(guild.id);
     });

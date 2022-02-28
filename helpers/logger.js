@@ -2,7 +2,7 @@ const winston = require("winston");
 const controller = {};
 
 const logger = winston.createLogger({
-  level: "info",
+  level: "error",
   format: winston.format.json(),
   defaultMeta: { date: Date() },
   transports: [
