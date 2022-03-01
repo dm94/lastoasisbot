@@ -193,7 +193,7 @@ controller.createConfiguration = async (guildId) => {
 
 controller.updateConfigurations = async (client) => {
   let allConfigurations = await controller.getConfigurations();
-  if (client) {
+  if (client && client.guilds && client.guilds.cache) {
     client.guilds.cache.forEach((guild) => {
       let config = null;
       if (allConfigurations) {
@@ -207,8 +207,7 @@ controller.updateConfigurations = async (client) => {
     });
     lastConfigurationsUpdate = Date.now();
 
-    let guildsCount =
-      client.guilds && client.guilds.cache ? client.guilds.cache.size : 0;
+    let guildsCount = client.guilds.cache.size;
     let usersCount =
       client.users && client.users.cache ? client.users.cache.size : 0;
 
