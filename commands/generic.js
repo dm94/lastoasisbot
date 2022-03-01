@@ -25,7 +25,7 @@ genericCommands.getInfoContent = () => {
     .setURL("https://github.com/dm94/lastoasisbot")
     .setAuthor(
       "Dm94Dani",
-      "https://comunidadgzone.es/wp-content/uploads/2020/08/FENIX-dm94dani.png",
+      "https://avatars.githubusercontent.com/u/7419213",
       "https://github.com/dm94"
     )
     .setDescription(
