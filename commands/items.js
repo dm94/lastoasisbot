@@ -19,9 +19,9 @@ itemsCommands.locraft = (msg, args, prefix) => {
   if (/(\d+)/.test(msg.content)) {
     multiplier = msg.content.match(/(\d+)/)[1];
   }
-  let item = msg.content.substr(msg.content.indexOf("locraft") + 7);
+  let item = msg.content.slice(msg.content.indexOf("locraft") + 7);
   if (multiplier != 1) {
-    item = msg.content.substr(msg.content.indexOf("x") + 1);
+    item = msg.content.slice(msg.content.indexOf("x") + 1);
   }
   try {
     itemsCommands.getNecessaryMaterials(
@@ -42,7 +42,7 @@ itemsCommands.lorecipe = async (msg, args, prefix) => {
         "lorecipe 616b3570c66aaa1b355a8fd2"
     );
   }
-  let code = msg.content.substr(msg.content.indexOf("lorecipe") + 8).trim();
+  let code = msg.content.slice(msg.content.indexOf("lorecipe") + 8).trim();
   itemsCommands.sendRecipe(msg.channel, code);
 };
 
@@ -158,9 +158,7 @@ function setItemInfo(channel, item, multiplier) {
     }
   }
   if (item.cost != null) {
-    message.setFooter({
-      text: "Cost: " + item.cost.count + " " + item.cost.name,
-    });
+    message.setFooter("Cost: " + item.cost.count + " " + item.cost.name);
   }
   othersFunctions.sendChannelEmbed(channel, message);
 }

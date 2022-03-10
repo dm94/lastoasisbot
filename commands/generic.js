@@ -23,11 +23,11 @@ genericCommands.getInfoContent = () => {
     .setColor("#008FFF")
     .setTitle(pjson.name + " v" + pjson.version)
     .setURL("https://github.com/dm94/lastoasisbot")
-    .setAuthor(
-      "Dm94Dani",
-      "https://avatars.githubusercontent.com/u/7419213",
-      "https://github.com/dm94"
-    )
+    .setAuthor({
+      name: "Dm94Dani",
+      iconURL: "https://avatars.githubusercontent.com/u/7419213",
+      url: "https://github.com/dm94",
+    })
     .setDescription(
       "Discord Bot for Last Oasis" +
         "\nTo add the bot to your discord: https://discord.com/api/oauth2/authorize?client_id=715948052979908911&permissions=2147552256&scope=bot%20applications.commands" +

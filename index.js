@@ -24,7 +24,7 @@ client.on("ready", () => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
-const prefix = process.env.DISCORD_PREFIX;
+const defaultPrefix = process.env.DISCORD_PREFIX;
 
 client.on("ready", () => {
   client.user.setPresence({
@@ -50,7 +50,7 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
   if (interaction.commandName === "lohelp") {
-    await interaction.reply(genericCommands.getHelpContent(prefix));
+    await interaction.reply(genericCommands.getHelpContent(defaultPrefix));
   } else if (interaction.commandName === "loinfo") {
     await interaction.reply({ embeds: [genericCommands.getInfoContent()] });
   } else if (interaction.commandName === "craft") {
@@ -224,7 +224,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.on("message", (msg) => {
+client.on("messageCreate", (msg) => {
   try {
     let guildConfig = null;
     if (msg.guild.id) {
@@ -288,6 +288,8 @@ client.on("message", (msg) => {
           }
         }
 
+        let prefix = defaultPrefix;
+
         if (!msg.content.startsWith(prefix) || msg.author.bot) return;
 
         const args = msg.content.slice(prefix.length).trim().split(" ");
@@ -315,7 +317,7 @@ client.on("message", (msg) => {
           tradesCommands.createtrade(msg, prefix);
         } else if (command === "skilltree") {
           try {
-            let item = msg.content.substr(msg.content.indexOf("skilltree") + 9);
+            let item = msg.content.slice(msg.content.indexOf("skilltree") + 9);
             techCommands.getWhoHasLearntIt(
               msg.channel,
               item.trim().toLowerCase(),
@@ -324,7 +326,7 @@ client.on("message", (msg) => {
           } catch (e) {}
         } else if (command === "learned") {
           try {
-            let item = msg.content.substr(msg.content.indexOf("learned") + 7);
+            let item = msg.content.slice(msg.content.indexOf("learned") + 7);
             techCommands.addTech(
               msg.channel,
               item.trim().toLowerCase(),

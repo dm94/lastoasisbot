@@ -43,7 +43,10 @@ clanCommands.linkserver = async (channel, serverid, memberid) => {
     if (response != null) {
       othersFunctions.sendChannelMessage(channel, "Linked server");
     } else {
-      othersFunctions.sendChannelMessage(channel, "Could not link server");
+      othersFunctions.sendChannelMessage(
+        channel,
+        "Could not link server. Remember that you have to be the clan leader or have permission to manage the bot in the clan."
+      );
     }
   }
 };
