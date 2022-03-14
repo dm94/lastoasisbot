@@ -144,12 +144,9 @@ function setItemInfo(channel, item, multiplier) {
       "https://api.stiletto.live/items/" + encodeURI(name.trim() + " icon.png")
     );
   let ingredie = item.crafting;
-  let output =
-    item.crafting[0] != null && item.crafting[0].output != null
-      ? item.crafting[0].output
-      : 1;
   if (ingredie != null) {
     for (var i = 0; i < ingredie.length; i++) {
+      let output = ingredie[i].output != null ? ingredie[i].output : 1;
       let le = ingredie[i].ingredients;
       for (var ing in le) {
         areItems = true;
@@ -162,7 +159,9 @@ function setItemInfo(channel, item, multiplier) {
     }
   }
   if (item.cost != null) {
-    message.setFooter("Cost: " + item.cost.count + " " + item.cost.name);
+    message.setFooter({
+      text: "Cost: " + item.cost.count + " " + item.cost.name,
+    });
   }
   othersFunctions.sendChannelEmbed(channel, message);
 }
