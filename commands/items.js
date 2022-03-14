@@ -144,6 +144,10 @@ function setItemInfo(channel, item, multiplier) {
       "https://api.stiletto.live/items/" + encodeURI(name.trim() + " icon.png")
     );
   let ingredie = item.crafting;
+  let output =
+    item.crafting[0] != null && item.crafting[0].output != null
+      ? item.crafting[0].output
+      : 1;
   if (ingredie != null) {
     for (var i = 0; i < ingredie.length; i++) {
       let le = ingredie[i].ingredients;
@@ -151,7 +155,7 @@ function setItemInfo(channel, item, multiplier) {
         areItems = true;
         message.addField(
           le[ing].name,
-          (le[ing].count * multiplier).toString(),
+          ((le[ing].count / output) * multiplier).toString(),
           true
         );
       }
