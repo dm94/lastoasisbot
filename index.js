@@ -162,7 +162,10 @@ client.on("interactionCreate", async (interaction) => {
     }
   } else if (interaction.commandName === "config") {
     if (interaction.member.permissions.has("ADMINISTRATOR")) {
-      let guildConfig = configuration.getConfiguration(interaction.guildId);
+      let guildConfig = configuration.getConfiguration(
+        interaction.guildId,
+        client
+      );
       if (guildConfig) {
         await interaction.reply("This is the bot configuration");
         configuration.sendConfigInfo(interaction.channel, guildConfig);
@@ -228,7 +231,7 @@ client.on("messageCreate", (msg) => {
   try {
     let guildConfig = null;
     if (msg.guild.id) {
-      guildConfig = configuration.getConfiguration(msg.guild.id);
+      guildConfig = configuration.getConfiguration(msg.guild.id, client);
 
       if (guildConfig != null) {
         if (

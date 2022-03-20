@@ -7,13 +7,13 @@ const discordlists = require("./discordlists");
 let lastConfigurationsUpdate = 0;
 let botConfigurations = [];
 
-controller.getConfiguration = (guildID) => {
-  if (lastConfigurationsUpdate <= Date.now() - 3600000) {
-    controller.updateConfigurations();
-  }
-
+controller.getConfiguration = (guildID, client) => {
   if (guildID != null) {
-    return botConfigurations[guildID];
+    if (lastConfigurationsUpdate <= Date.now() - 3600000) {
+      controller.updateConfigurations(client);
+    } else {
+      return botConfigurations[guildID];
+    }
   }
   return null;
 };
@@ -192,8 +192,8 @@ controller.createConfiguration = async (guildId) => {
 };
 
 controller.updateConfigurations = async (client) => {
-  let allConfigurations = await controller.getConfigurations();
   if (client && client.guilds && client.guilds.cache) {
+    let allConfigurations = await controller.getConfigurations();
     client.guilds.cache.forEach((guild) => {
       let config = null;
       if (allConfigurations) {
