@@ -19,9 +19,11 @@ itemsCommands.locraft = (msg, args, prefix) => {
   if (/(\d+)/.test(msg.content)) {
     multiplier = msg.content.match(/(\d+)/)[1];
   }
-  let item = msg.content.slice(msg.content.indexOf("locraft") + 7);
+  let item = msg.content.slice(msg.content.indexOf("locraft") + 7).trim();
   if (multiplier != 1) {
-    item = msg.content.slice(msg.content.indexOf("x") + 1);
+    item = msg.content
+      .slice(msg.content.indexOf(multiplier) + multiplier.length)
+      .trim();
   }
   try {
     itemsCommands.getNecessaryMaterials(
@@ -88,6 +90,14 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
       return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
     });
   });
+
+  if (itemsfilters.length < 1) {
+    itemsfilters = items.filter((it) => {
+      return itemName.split(" ").some((internalItem) => {
+        return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+      });
+    });
+  }
   itemsfilters.forEach((item) => {
     if (itemsSent < 5) {
       itemsSent++;
