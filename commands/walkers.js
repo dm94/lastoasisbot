@@ -269,14 +269,13 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
 walkerCommands.getWalkerListMessage = async (msg) => {
   let message = new MessageEmbed()
     .setColor("#58ACFA")
-    .setTitle("Walker Ready PVP List");
+    .setTitle("Walker Ready List");
 
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/bot/walkers",
     params: {
       discordid: msg.guild.id,
-      use: "pvp",
       ready: 1,
     },
   };
