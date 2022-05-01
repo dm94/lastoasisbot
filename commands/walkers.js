@@ -277,6 +277,7 @@ walkerCommands.getWalkerListMessage = async (msg) => {
     params: {
       discordid: msg.guild.id,
       ready: 1,
+      pageSize: 100,
     },
   };
 
