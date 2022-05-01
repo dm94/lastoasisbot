@@ -47,7 +47,7 @@ client.on("ready", () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
+  if (!interaction.isCommand() && !interaction.isButton()) return;
 
   if (interaction.commandName === "lohelp") {
     await interaction.reply(genericCommands.getHelpContent(defaultPrefix));
@@ -107,6 +107,17 @@ client.on("interactionCreate", async (interaction) => {
       : undefined;
     await interaction.reply("Looking for walkers...");
     walkerCommands.walkerSearchWithParams(interaction.channel, params);
+  } else if (interaction.commandName === "editwalker") {
+    let params = {};
+    params.walkerid = interaction.options.getInteger("walkerid");
+    params.ready = interaction.options.getBoolean("ready") ? 1 : 0;
+    await interaction.reply("Updating the walker...");
+    walkerCommands.editWalker(
+      interaction.guildId,
+      interaction.channel,
+      params,
+      true
+    );
   } else if (interaction.commandName === "tradesearch") {
     let params = {
       discordid: interaction.member.id,
@@ -224,6 +235,11 @@ client.on("interactionCreate", async (interaction) => {
       interaction.options.getString("item").trim().toLowerCase(),
       interaction.member.id
     );
+  } else if (interaction.isButton()) {
+    if (interaction.customId == "updateWalkerList") {
+      await interaction.deferUpdate();
+      walkerCommands.updateWalkerList(interaction);
+    }
   }
 });
 
@@ -355,6 +371,15 @@ client.on("messageCreate", (msg) => {
         } else if (command === "linkserver") {
           if (msg.member.permissions.has("ADMINISTRATOR")) {
             clanCommands.linkserver(msg.channel, msg.guild.id, msg.author.id);
+          } else {
+            msg.reply("You do not have permissions to use this command");
+          }
+        } else if (command === "createwalkerlist") {
+          if (
+            msg.member.permissions.has("ADMINISTRATOR") ||
+            (msg.member.id && msg.member.id == "82444319507615744")
+          ) {
+            walkerCommands.createWalkerList(msg);
           } else {
             msg.reply("You do not have permissions to use this command");
           }

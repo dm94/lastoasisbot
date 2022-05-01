@@ -1,7 +1,7 @@
 const walkerCommands = {};
 
 require("dotenv").config();
-const Discord = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const othersFunctions = require("../helpers/others");
 
 walkerCommands.walkersearch = async (msg, prefix) => {
@@ -156,9 +156,7 @@ walkerCommands.sendWalkerInfoFromID = async (channel, walkerId, guildId) => {
 walkerCommands.sendWalkerInfo = (channel, walker) => {
   if (walker != null) {
     let date = new Date(walker.datelastuse);
-    let message = new Discord.MessageEmbed()
-      .setColor("#58ACFA")
-      .setTitle(walker.name);
+    let message = new MessageEmbed().setColor("#58ACFA").setTitle(walker.name);
     message.addField("Walker ID", walker.walkerID.toString(), true);
     message.addField("Last User", walker.lastUser, true);
     message.addField(
@@ -182,7 +180,7 @@ walkerCommands.sendWalkerInfo = (channel, walker) => {
     if (walker.description != null && walker.description) {
       message.addField("Description", walker.description);
     }
-    if (walker.isReady != null && walker.isReady) {
+    if (walker.isReady != null && walker.isReady == "1") {
       message.addField("Ready", ":white_check_mark:");
     } else {
       message.addField("Ready", ":x:");
@@ -192,15 +190,32 @@ walkerCommands.sendWalkerInfo = (channel, walker) => {
 };
 
 walkerCommands.setnotreadypvp = async (walkerid, msg) => {
-  const options = {
-    method: "put",
-    url: process.env.APP_API_URL + "/bot/walkers/" + msg.guild.id,
-    params: {
-      walkerid: walkerid,
-    },
+  let params = {
+    walkerid: walkerid,
+    ready: 0,
   };
 
-  othersFunctions.apiRequest(options);
+  walkerCommands.editWalker(msg.guild.id, msg.channel, params, false);
+};
+
+walkerCommands.editWalker = async (
+  guildId,
+  channel,
+  params,
+  needAnswer = false
+) => {
+  const options = {
+    method: "put",
+    url: process.env.APP_API_URL + "/bot/walkers/" + guildId,
+    params: params,
+  };
+
+  let response = await othersFunctions.apiRequest(options);
+  if (needAnswer) {
+    if (response != null) {
+      othersFunctions.sendChannelMessage(channel, "Walker updated");
+    }
+  }
 };
 
 walkerCommands.insertNewWalker = (newWalker, discordid) => {
@@ -249,6 +264,88 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
   } else {
     othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
   }
+};
+
+walkerCommands.getWalkerListMessage = async (msg) => {
+  let message = new MessageEmbed()
+    .setColor("#58ACFA")
+    .setTitle("Walker Ready PVP List");
+
+  const options = {
+    method: "get",
+    url: process.env.APP_API_URL + "/bot/walkers",
+    params: {
+      discordid: msg.guild.id,
+      use: "pvp",
+      ready: 1,
+    },
+  };
+
+  let response = await othersFunctions.apiRequest(options);
+
+  if (response != null) {
+    if (response.length > 0) {
+      response.forEach((walker) => {
+        let date = new Date(walker.datelastuse);
+        let type = "Unknown";
+
+        if (walker.type != null && walker.type) {
+          type = walker.type;
+        }
+        message.addField(
+          walker.name,
+          `Type: ${type} - Last Use: ${
+            date.getDate() +
+            "-" +
+            (parseInt(date.getMonth()) + 1) +
+            "-" +
+            date.getFullYear()
+          } `,
+          false
+        );
+      });
+    } else {
+      message.addField("Walkers", "No walkers");
+    }
+  }
+
+  message.timestamp = new Date();
+  return message;
+};
+
+walkerCommands.updateWalkerList = async (interaction) => {
+  if (
+    interaction.message &&
+    interaction.message.createdTimestamp &&
+    new Date().getTime() - interaction.message.createdTimestamp > 600000
+  ) {
+    let message = await walkerCommands.getWalkerListMessage(
+      interaction.message
+    );
+    interaction.editReply({
+      content: "Can only be updated every 10 minutes",
+      embeds: [message],
+    });
+  }
+};
+
+walkerCommands.createWalkerList = async (msg) => {
+  let message = await walkerCommands.getWalkerListMessage(msg);
+
+  const row = new MessageActionRow().addComponents(
+    new MessageButton()
+      .setCustomId("updateWalkerList")
+      .setLabel("Update")
+      .setStyle("PRIMARY")
+  );
+
+  msg.channel
+    .send({
+      content: "Can only be updated every 5 minutes",
+      embeds: [message],
+      components: [row],
+    })
+    .catch(console.error);
 };
 
 module.exports = walkerCommands;
