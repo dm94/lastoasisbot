@@ -1,6 +1,6 @@
 {
   "name": "lastoasis-bot",
-  "version": "3.4.13",
+  "version": "3.4.14",
   "main": "index.js",
   "dependencies": {
     "@discordjs/rest": "0.4.1",

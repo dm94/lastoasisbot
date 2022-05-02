@@ -26,8 +26,8 @@ commands.getWhoHasLearntIt = async (channel, itemName, discordid) => {
       };
 
       let response = await othersFunctions.apiRequest(options);
-      if (response != null) {
-        if (Array.isArray(response) && response.length > 0) {
+      if (response.success) {
+        if (Array.isArray(response.data) && response.data.length > 0) {
           let message = new Discord.MessageEmbed()
             .setColor("#3A78EA")
             .setTitle(item.name)
@@ -36,10 +36,10 @@ commands.getWhoHasLearntIt = async (channel, itemName, discordid) => {
               "https://www.stiletto.live/item/" +
                 encodeURI(item.name.toLowerCase())
             );
-          let respondeLenght = response.length;
+          let respondeLenght = response.data.length;
           for (let i = 0; i < respondeLenght; i++) {
-            if (response[i].discordtag != null) {
-              message.addField("Discord", response[i].discordtag, false);
+            if (response.data[i].discordtag != null) {
+              message.addField("Discord", response.data[i].discordtag, false);
             }
           }
           othersFunctions.sendChannelEmbed(channel, message);
@@ -86,10 +86,10 @@ commands.addTech = async (channel, itemName, discordid) => {
       };
 
       let response = await othersFunctions.apiRequest(options);
-      if (response != null) {
+      if (response.success) {
         othersFunctions.sendChannelMessage(channel, "Learned: " + item.name);
       } else {
-        othersFunctions.sendChannelMessage(channel, "An error has occurred");
+        othersFunctions.sendChannelMessage(channel, response.data);
       }
     }
   } else {

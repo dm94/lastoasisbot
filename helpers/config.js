@@ -24,7 +24,13 @@ controller.getConfigurations = async () => {
     url: process.env.APP_API_URL + "/bot/config",
   };
 
-  return await othersFunctions.apiRequest(options);
+  let response = await othersFunctions.apiRequest(options);
+
+  if (response.success) {
+    return response.data;
+  } else {
+    return null;
+  }
 };
 
 controller.loconfig = (msg, prefix, guildConfig) => {

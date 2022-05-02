@@ -55,9 +55,9 @@ itemsCommands.sendRecipe = async (channel, code) => {
   };
 
   let response = await othersFunctions.apiRequest(options);
-  if (response != null) {
-    if (response.items != null) {
-      let allItems = JSON.parse(response.items);
+  if (response.success) {
+    if (response.data.items != null) {
+      let allItems = JSON.parse(response.data.items);
       const items = await itemsCommands.getAllItems();
       allItems.forEach((item) => {
         let itemData = items.find(
@@ -71,7 +71,7 @@ itemsCommands.sendRecipe = async (channel, code) => {
       othersFunctions.sendChannelMessage(channel, "No items found");
     }
   } else {
-    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
+    othersFunctions.sendChannelMessage(channel, response.data);
   }
 };
 

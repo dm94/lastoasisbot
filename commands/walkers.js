@@ -49,16 +49,16 @@ walkerCommands.walkerSearchWithParams = async (channel, params) => {
 
   let response = await othersFunctions.apiRequest(options);
 
-  if (response != null) {
-    if (response.length > 0) {
-      response.forEach((walker) => {
+  if (response.success) {
+    if (response.data.length > 0) {
+      response.data.forEach((walker) => {
         walkerCommands.sendWalkerInfo(channel, walker);
       });
     } else {
       othersFunctions.sendChannelMessage(channel, "No walker found");
     }
   } else {
-    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
+    othersFunctions.sendChannelMessage(channel, response.data);
   }
 };
 
@@ -212,8 +212,10 @@ walkerCommands.editWalker = async (
 
   let response = await othersFunctions.apiRequest(options);
   if (needAnswer) {
-    if (response != null) {
+    if (response.success) {
       othersFunctions.sendChannelMessage(channel, "Walker updated");
+    } else {
+      othersFunctions.sendChannelMessage(channel, response.data);
     }
   }
 };
@@ -245,9 +247,9 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
 
   let response = await othersFunctions.apiRequest(options);
 
-  if (response != null) {
-    if (response.length > 0) {
-      response.forEach((walker) => {
+  if (response.success) {
+    if (response.data.length > 0) {
+      response.data.forEach((walker) => {
         if (
           !(walker.ownerUser == null || !walker.ownerUser) &&
           walker.ownerUser != newWalker.lastUser
@@ -258,11 +260,7 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
           );
         }
       });
-    } else {
-      othersFunctions.sendChannelMessage(msg.channel, "No walker found");
     }
-  } else {
-    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
   }
 };
 
@@ -283,9 +281,9 @@ walkerCommands.getWalkerListMessage = async (msg) => {
 
   let response = await othersFunctions.apiRequest(options);
 
-  if (response != null) {
-    if (response.length > 0) {
-      response.forEach((walker) => {
+  if (response.success) {
+    if (response.data.length > 0) {
+      response.data.forEach((walker) => {
         let date = new Date(walker.datelastuse);
         let type = "Unknown";
 

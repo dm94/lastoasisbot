@@ -42,19 +42,19 @@ commands.tradeSearchWithParams = async (channel, params) => {
 
   let response = await othersFunctions.apiRequest(options);
 
-  if (response != null) {
-    if (Array.isArray(response)) {
-      if (response.length < 1) {
+  if (response.success) {
+    if (Array.isArray(response.data)) {
+      if (response.data.length < 1) {
         othersFunctions.sendChannelMessage(
           channel,
           "No trades with that filters"
         );
         return;
       }
-      response.forEach((trade) => sentTradeinfo(channel, trade));
+      response.data.forEach((trade) => sentTradeinfo(channel, trade));
     }
   } else {
-    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
+    othersFunctions.sendChannelMessage(channel, response.data);
   }
 };
 
@@ -142,17 +142,10 @@ commands.createTradeWithParams = async (channel, params) => {
   };
 
   let response = await othersFunctions.apiRequest(options);
-  if (response != null) {
-    if (response.Success != null) {
-      othersFunctions.sendChannelMessage(channel, response.Success);
-    } else {
-      othersFunctions.sendChannelMessage(
-        channel,
-        "The trade could not be created, please try again."
-      );
-    }
+  if (response.success) {
+    othersFunctions.sendChannelMessage(channel, "Trade Created");
   } else {
-    othersFunctions.sendChannelMessage(channel, "Unable to connect to the API");
+    othersFunctions.sendChannelMessage(channel, response.data);
   }
 };
 

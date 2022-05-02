@@ -17,13 +17,10 @@ clanCommands.kickMember = async (msg, user) => {
 
     let response = await othersFunctions.apiRequest(options);
 
-    if (response != null) {
+    if (response.success) {
       othersFunctions.sendChannelMessage(msg.channel, "Member kicked");
     } else {
-      othersFunctions.sendChannelMessage(
-        msg.channel,
-        "Error the member could not be kicked"
-      );
+      othersFunctions.sendChannelMessage(msg.channel, response.data);
     }
   }
 };
@@ -40,7 +37,7 @@ clanCommands.linkserver = async (channel, serverid, memberid) => {
 
     let response = await othersFunctions.apiRequest(options);
 
-    if (response != null) {
+    if (response.success) {
       othersFunctions.sendChannelMessage(channel, "Linked server");
     } else {
       othersFunctions.sendChannelMessage(

@@ -375,10 +375,7 @@ client.on("messageCreate", (msg) => {
             msg.reply("You do not have permissions to use this command");
           }
         } else if (command === "createwalkerlist") {
-          if (
-            msg.member.permissions.has("ADMINISTRATOR") ||
-            (msg.member.id && msg.member.id == "82444319507615744")
-          ) {
+          if (msg.member.permissions.has("ADMINISTRATOR")) {
             walkerCommands.createWalkerList(msg);
           } else {
             msg.reply("You do not have permissions to use this command");
