@@ -1,6 +1,6 @@
 # Last Oasis Discord bot
-[![Discord Bots](https://top.gg/api/widget/servers/715948052979908911.svg)](https://top.gg/bot/715948052979908911)
----
+
+## [![Discord Bots](https://top.gg/api/widget/servers/715948052979908911.svg)](https://top.gg/bot/715948052979908911)
 
 Discord Bot for Last Oasis
 
@@ -8,18 +8,14 @@ To add the bot to your discord: https://discord.com/api/oauth2/authorize?client_
 
 Example: https://twitter.com/Dm94Dani/status/1293121001421705216
 
-[EN]
+Currently all commands with ! are deprecated and / must be used.
 
 - !locraft = With this command you can see the materials needed to make an object.
   Example of use: !locraft Barrier Base
   If you want to see the materials to make 10: !locraft 10x Barrier Base
 - !loinfo = Displays bot information.
 - !lorecipe (code) = Displays the list of recipes for that code
-- !lolistwalkers (page) = Shows all the walkers added since this discord. Each page is 5 walkers (Obsolete)
 - !lowalkerinfo (id) = Shows the information of a specific walker
-- !lowalkersearchbyname (name) = Shows all walkers with that name (Obsolete)
-- !lowalkersearchbyowner (name) = Show all walkers with that owner (Obsolete)
-- !lowalkersearchbylastuser (name) = Shows all the walkers that person has used (Obsolete)
 - !walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming
   An example of use: !walkersearch -page=1 -name=walker -ready -pvp
   This will bring out all the walkers that are called walker are pvp and ready
@@ -31,5 +27,3 @@ Example: https://twitter.com/Dm94Dani/status/1293121001421705216
   Example of use: !skilltree Desert Mule
 - !learned = Add the item to the list of learned items.
   Example of use: !learned Desert Mule
-- !loconfig = Shows all the info for the bot config (Only for admins)
-- !linkserver = Link the discord server to the clan you are in. (Only for admins)

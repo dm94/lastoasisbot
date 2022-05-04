@@ -27,12 +27,6 @@ client.login(process.env.DISCORD_TOKEN);
 const defaultPrefix = process.env.DISCORD_PREFIX;
 
 client.on("ready", () => {
-  client.user.setPresence({
-    activity: { name: "!lohelp www.stiletto.live" },
-    status: "available",
-    url: "https://www.stiletto.live/",
-  });
-
   configuration.updateConfigurations(client);
 
   if (process.env.APP_DEV) {
@@ -221,6 +215,15 @@ client.on("interactionCreate", async (interaction) => {
         "You do not have permissions to use this command"
       );
     }
+  } else if (interaction.commandName === "createwalkerlist") {
+    if (interaction.member.permissions.has("ADMINISTRATOR")) {
+      await interaction.reply("Generating the list");
+      walkerCommands.createWalkerList(interaction);
+    } else {
+      await interaction.reply(
+        "You do not have permissions to use this command"
+      );
+    }
   } else if (interaction.commandName === "skilltree") {
     await interaction.reply("Looking for items");
     techCommands.getWhoHasLearntIt(
@@ -316,14 +319,6 @@ client.on("messageCreate", (msg) => {
 
         if (command === "lowalkerinfo") {
           walkerCommands.lowalkerinfo(msg, args, prefix);
-        } else if (command === "lolistwalkers") {
-          walkerCommands.lolistwalkers(msg);
-        } else if (command === "lowalkersearchbyname") {
-          walkerCommands.lowalkersearchbyname(msg);
-        } else if (command === "lowalkersearchbyowner") {
-          walkerCommands.lowalkersearchbyowner(msg);
-        } else if (command === "lowalkersearchbylastuser") {
-          walkerCommands.lowalkersearchbylastuser(msg);
         } else if (command === "walkersearch") {
           walkerCommands.walkersearch(msg, prefix);
         } else if (command === "locraft") {
@@ -334,52 +329,10 @@ client.on("messageCreate", (msg) => {
           tradesCommands.tradesearch(msg, prefix);
         } else if (command === "createtrade") {
           tradesCommands.createtrade(msg, prefix);
-        } else if (command === "skilltree") {
-          try {
-            let item = msg.content.slice(msg.content.indexOf("skilltree") + 9);
-            techCommands.getWhoHasLearntIt(
-              msg.channel,
-              item.trim().toLowerCase(),
-              msg.guild.id
-            );
-          } catch (e) {}
-        } else if (command === "learned") {
-          try {
-            let item = msg.content.slice(msg.content.indexOf("learned") + 7);
-            techCommands.addTech(
-              msg.channel,
-              item.trim().toLowerCase(),
-              msg.author.id
-            );
-          } catch (e) {}
         } else if (command === "locommands" || command === "lohelp") {
           genericCommands.lohelp(msg, prefix);
         } else if (command === "loinfo") {
           genericCommands.loinfo(msg);
-        } else if (command === "loconfig") {
-          if (msg.member.permissions.has("ADMINISTRATOR")) {
-            configuration.loconfig(msg, prefix, guildConfig);
-          } else {
-            msg.reply("You do not have permissions to use this command");
-          }
-        } else if (command === "loconfigupdate") {
-          if (msg.member.permissions.has("ADMINISTRATOR")) {
-            configuration.loconfigupdate(msg, prefix, guildConfig);
-          } else {
-            msg.reply("You do not have permissions to use this command");
-          }
-        } else if (command === "linkserver") {
-          if (msg.member.permissions.has("ADMINISTRATOR")) {
-            clanCommands.linkserver(msg.channel, msg.guild.id, msg.author.id);
-          } else {
-            msg.reply("You do not have permissions to use this command");
-          }
-        } else if (command === "createwalkerlist") {
-          if (msg.member.permissions.has("ADMINISTRATOR")) {
-            walkerCommands.createWalkerList(msg);
-          } else {
-            msg.reply("You do not have permissions to use this command");
-          }
         }
       } else {
         configuration.createConfiguration(msg.guild.id);

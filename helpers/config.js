@@ -214,10 +214,8 @@ controller.updateConfigurations = async (client) => {
     lastConfigurationsUpdate = Date.now();
 
     let guildsCount = client.guilds.cache.size;
-    let usersCount =
-      client.users && client.users.cache ? client.users.cache.size : 0;
 
-    discordlists.updateStatistics(guildsCount, usersCount);
+    discordlists.updateStatistics(guildsCount);
   }
 };
 

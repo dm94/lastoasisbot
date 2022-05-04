@@ -62,71 +62,6 @@ walkerCommands.walkerSearchWithParams = async (channel, params) => {
   }
 };
 
-walkerCommands.lolistwalkers = async (msg) => {
-  let page = 1;
-  if (/(\s\d+)/.test(msg.content)) {
-    page = msg.content.match(/(\s\d+)/)[1];
-  }
-  let params = {
-    discordid: msg.guild.id,
-    page: page,
-  };
-
-  walkerCommands.walkerSearchWithParams(msg.channel, params);
-};
-
-walkerCommands.lowalkersearchbyname = async (msg) => {
-  let page = 1;
-  if (/(\s\d+)/.test(msg.content)) {
-    page = msg.content.match(/(\s\d+)/)[1];
-  }
-  let name = msg.content
-    .substring(msg.content.indexOf("lowalkersearchbyname") + 20)
-    .trim();
-
-  let params = {
-    discordid: msg.guild.id,
-    name: name,
-    page: page,
-  };
-
-  walkerCommands.walkerSearchWithParams(msg.channel, params);
-};
-
-walkerCommands.lowalkersearchbyowner = async (msg) => {
-  let page = 1;
-  if (/(\s\d+)/.test(msg.content)) {
-    page = msg.content.match(/(\s\d+)/)[1];
-  }
-  let ownerUser = msg.content
-    .substring(msg.content.indexOf("lowalkersearchbyowner") + 21)
-    .trim();
-
-  let params = {
-    discordid: msg.guild.id,
-    owner: ownerUser,
-    page: page,
-  };
-  walkerCommands.walkerSearchWithParams(msg.channel, params);
-};
-
-walkerCommands.lowalkersearchbylastuser = async (msg) => {
-  let page = 1;
-  if (/(\s\d+)/.test(msg.content)) {
-    page = msg.content.match(/(\s\d+)/)[1];
-  }
-  let lastUser = msg.content
-    .substring(msg.content.indexOf("lowalkersearchbylastuser") + 24)
-    .trim();
-
-  let params = {
-    discordid: msg.guild.id,
-    lastuser: lastUser,
-    page: page,
-  };
-  walkerCommands.walkerSearchWithParams(msg.channel, params);
-};
-
 walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
   if (args.length != 1) {
     msg.reply(
@@ -264,7 +199,7 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
   }
 };
 
-walkerCommands.getWalkerListMessage = async (msg) => {
+walkerCommands.getWalkerListMessage = async (guildId) => {
   let message = new MessageEmbed()
     .setColor("#58ACFA")
     .setTitle("Walker Ready List");
@@ -273,7 +208,7 @@ walkerCommands.getWalkerListMessage = async (msg) => {
     method: "get",
     url: process.env.APP_API_URL + "/bot/walkers",
     params: {
-      discordid: msg.guild.id,
+      discordid: guildId,
       ready: 1,
       pageSize: 100,
     },
@@ -305,6 +240,8 @@ walkerCommands.getWalkerListMessage = async (msg) => {
     } else {
       message.addField("Walkers", "No walkers");
     }
+  } else {
+    message.addField("Walkers", "No walkers");
   }
 
   message.timestamp = new Date();
@@ -318,7 +255,7 @@ walkerCommands.updateWalkerList = async (interaction) => {
     new Date().getTime() - interaction.message.createdTimestamp > 600000
   ) {
     let message = await walkerCommands.getWalkerListMessage(
-      interaction.message
+      interaction.guildId
     );
     interaction.editReply({
       content: "Can only be updated every 10 minutes",
@@ -327,8 +264,8 @@ walkerCommands.updateWalkerList = async (interaction) => {
   }
 };
 
-walkerCommands.createWalkerList = async (msg) => {
-  let message = await walkerCommands.getWalkerListMessage(msg);
+walkerCommands.createWalkerList = async (interaction) => {
+  let message = await walkerCommands.getWalkerListMessage(interaction.guildId);
 
   const row = new MessageActionRow().addComponents(
     new MessageButton()
@@ -337,7 +274,7 @@ walkerCommands.createWalkerList = async (msg) => {
       .setStyle("PRIMARY")
   );
 
-  msg.channel
+  interaction.channel
     .send({
       content: "Can only be updated every 5 minutes",
       embeds: [message],

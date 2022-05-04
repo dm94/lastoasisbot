@@ -2,8 +2,8 @@ const controller = {};
 const Axios = require("axios");
 const logger = require("./logger");
 
-controller.updateStatistics = async (guildsCount, usersCount) => {
-  controller.sendDiscordBotList(guildsCount, usersCount);
+controller.updateStatistics = async (guildsCount) => {
+  controller.sendDiscordBotList(guildsCount);
   controller.sendTopGG(guildsCount);
   controller.sendDiscordBotsGG(guildsCount);
 };
@@ -14,7 +14,7 @@ controller.updateStatistics = async (guildsCount, usersCount) => {
  * @param {Number} usersCount
  */
 
-controller.sendDiscordBotList = async (guildsCount, usersCount) => {
+controller.sendDiscordBotList = async (guildsCount) => {
   if (!process.env.DISCORDBOTLIST_TOKEN) {
     return;
   }
@@ -26,7 +26,6 @@ controller.sendDiscordBotList = async (guildsCount, usersCount) => {
       process.env.DISCORD_CLIENT_ID +
       "/stats",
     data: {
-      users: usersCount,
       guilds: guildsCount,
     },
     headers: {

@@ -53,23 +53,7 @@ genericCommands.getHelpContent = (prefix) => {
   messageEn +=
     "```" +
     prefix +
-    "lolistwalkers (page) = Shows all the walkers added since this discord. Each page is 5 walkers (Obsolete) ```";
-  messageEn +=
-    "```" +
-    prefix +
     "lowalkerinfo (id) = Shows the information of a specific walker```";
-  messageEn +=
-    "```" +
-    prefix +
-    "lowalkersearchbyname (name) = Shows all walkers with that name (Obsolete)```";
-  messageEn +=
-    "```" +
-    prefix +
-    "lowalkersearchbyowner (name) = Show all walkers with that owner (Obsolete)```";
-  messageEn +=
-    "```" +
-    prefix +
-    "lowalkersearchbylastuser (name) = Shows all the walkers that person has used (Obsolete)```";
   messageEn +=
     "```" +
     prefix +
@@ -100,26 +84,6 @@ genericCommands.getHelpContent = (prefix) => {
     "An example of use: " +
     prefix +
     "createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200```";
-  messageEn +=
-    "```" +
-    prefix +
-    "skilltree = It will tell you which members of your clan have learned that item. \nExample of use: " +
-    prefix +
-    "skilltree Desert Mule ```";
-  messageEn +=
-    "```" +
-    prefix +
-    "learned = Add the item to the list of learned items. \nExample of use: " +
-    prefix +
-    "learned Desert Mule ```";
-  messageEn +=
-    "```" +
-    prefix +
-    "loconfig = Shows all the info for the bot config (Only for admins)```";
-  messageEn +=
-    "```" +
-    prefix +
-    "linkserver = Link the discord server to the clan you are in (Only for admins)```";
   return messageEn;
 };
 
