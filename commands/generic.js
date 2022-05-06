@@ -36,6 +36,12 @@ genericCommands.getInfoContent = () => {
   return message;
 };
 
+genericCommands.obsoleteCommand = (msg) => {
+  let message =
+    "``` This command is obsolete and no longer works. Use the slash commands with /. \n Example: /lohelp \n If you do not see these commands talk to Dm94Dani#6385 ```";
+  othersFunctions.sendChannelMessage(msg.channel, message);
+};
+
 genericCommands.getHelpContent = (prefix) => {
   let messageEn =
     "```" +

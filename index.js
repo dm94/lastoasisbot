@@ -333,6 +333,18 @@ client.on("messageCreate", (msg) => {
           genericCommands.lohelp(msg, prefix);
         } else if (command === "loinfo") {
           genericCommands.loinfo(msg);
+        } else if (
+          command === "lolistwalkers" ||
+          command === "lowalkersearchbyname" ||
+          command === "lowalkersearchbyowner" ||
+          command === "lowalkersearchbylastuser" ||
+          command === "skilltree" ||
+          command === "learned" ||
+          command === "loconfig" ||
+          command === "linkserver" ||
+          command === "loconfigupdate"
+        ) {
+          genericCommands.obsoleteCommand(msg);
         }
       } else {
         configuration.createConfiguration(msg.guild.id);
