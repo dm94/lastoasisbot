@@ -8,6 +8,7 @@ const clanCommands = require("./commands/clans");
 const tradesCommands = require("./commands/trades");
 const techCommands = require("./commands/tech");
 const configuration = require("./helpers/config");
+const clanPermissions = require("./helpers/permissions");
 const slashCommandsRegister = require("./slashCommandsRegister");
 const logger = require("./helpers/logger");
 
@@ -102,16 +103,29 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply("Looking for walkers...");
     walkerCommands.walkerSearchWithParams(interaction.channel, params);
   } else if (interaction.commandName === "editwalker") {
-    let params = {};
-    params.walkerid = interaction.options.getInteger("walkerid");
-    params.ready = interaction.options.getBoolean("ready") ? 1 : 0;
-    await interaction.reply("Updating the walker...");
-    walkerCommands.editWalker(
-      interaction.guildId,
-      interaction.channel,
-      params,
-      true
-    );
+    if (
+      interaction.member.permissions.has("ADMINISTRATOR") ||
+      (await clanPermissions.userHasPermissions(
+        interaction.guildId,
+        interaction.member.id,
+        "walkers"
+      ))
+    ) {
+      let params = {};
+      params.walkerid = interaction.options.getInteger("walkerid");
+      params.ready = interaction.options.getBoolean("ready") ? 1 : 0;
+      await interaction.reply("Updating the walker...");
+      walkerCommands.editWalker(
+        interaction.guildId,
+        interaction.channel,
+        params,
+        true
+      );
+    } else {
+      await interaction.reply(
+        "You do not have permissions to use this command"
+      );
+    }
   } else if (interaction.commandName === "tradesearch") {
     let params = {
       discordid: interaction.member.id,
@@ -166,7 +180,14 @@ client.on("interactionCreate", async (interaction) => {
       await interaction.reply("No resource with this name has been found");
     }
   } else if (interaction.commandName === "config") {
-    if (interaction.member.permissions.has("ADMINISTRATOR")) {
+    if (
+      interaction.member.permissions.has("ADMINISTRATOR") ||
+      (await clanPermissions.userHasPermissions(
+        interaction.guildId,
+        interaction.member.id,
+        "bot"
+      ))
+    ) {
       let guildConfig = configuration.getConfiguration(
         interaction.guildId,
         client
@@ -183,7 +204,14 @@ client.on("interactionCreate", async (interaction) => {
       );
     }
   } else if (interaction.commandName === "configupdate") {
-    if (interaction.member.permissions.has("ADMINISTRATOR")) {
+    if (
+      interaction.member.permissions.has("ADMINISTRATOR") ||
+      (await clanPermissions.userHasPermissions(
+        interaction.guildId,
+        interaction.member.id,
+        "bot"
+      ))
+    ) {
       let params = {
         languaje: interaction.options.getString("languaje"),
         clanlog: interaction.options.getBoolean("clanlog"),
@@ -203,7 +231,14 @@ client.on("interactionCreate", async (interaction) => {
       );
     }
   } else if (interaction.commandName === "linkserver") {
-    if (interaction.member.permissions.has("ADMINISTRATOR")) {
+    if (
+      interaction.member.permissions.has("ADMINISTRATOR") ||
+      (await clanPermissions.userHasPermissions(
+        interaction.guildId,
+        interaction.member.id,
+        "bot"
+      ))
+    ) {
       clanCommands.linkserver(
         interaction.channel,
         interaction.guildId,
@@ -216,7 +251,14 @@ client.on("interactionCreate", async (interaction) => {
       );
     }
   } else if (interaction.commandName === "createwalkerlist") {
-    if (interaction.member.permissions.has("ADMINISTRATOR")) {
+    if (
+      interaction.member.permissions.has("ADMINISTRATOR") ||
+      (await clanPermissions.userHasPermissions(
+        interaction.guildId,
+        interaction.member.id,
+        "walkers"
+      ))
+    ) {
       await interaction.reply("Generating the list");
       walkerCommands.createWalkerList(interaction);
     } else {
