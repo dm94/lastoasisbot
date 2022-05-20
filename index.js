@@ -20,6 +20,32 @@ const client = new Client({
   ],
 });
 
+let stats = {
+  help: 0,
+  info: 0,
+  craft: 0,
+  recipe: 0,
+  walkerinfo: 0,
+  walkersearch: 0,
+  editwalker: 0,
+  tradesearch: 0,
+  createtrade: 0,
+  config: 0,
+  configupdate: 0,
+  linkserver: 0,
+  createwalkerlist: 0,
+  skilltree: 0,
+  learned: 0,
+  lowalkerinfo: 0,
+  lowalkersearch: 0,
+  locraft: 0,
+  lorecipe: 0,
+  lotradesearch: 0,
+  locreatetrade: 0,
+  lohelp: 0,
+  obsolete: 0,
+};
+
 client.on("ready", () => {
   logger.info(`Logged in as ${client.user.tag}!`);
 });
@@ -46,10 +72,13 @@ client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand() && !interaction.isButton()) return;
 
     if (interaction.commandName === "lohelp") {
+      stats.help++;
       await interaction.reply(genericCommands.getHelpContent(defaultPrefix));
     } else if (interaction.commandName === "loinfo") {
+      stats.info++;
       await interaction.reply({ embeds: [genericCommands.getInfoContent()] });
     } else if (interaction.commandName === "craft") {
+      stats.craft++;
       await interaction.reply("Looking for items");
       itemsCommands.getNecessaryMaterials(
         interaction.channel,
@@ -59,12 +88,14 @@ client.on("interactionCreate", async (interaction) => {
           : 1
       );
     } else if (interaction.commandName === "recipe") {
+      stats.recipe++;
       await interaction.reply("Looking for items");
       itemsCommands.sendRecipe(
         interaction.channel,
         interaction.options.getString("code").trim()
       );
     } else if (interaction.commandName === "walkerinfo") {
+      stats.walkerinfo++;
       let walkerId = interaction.options.getString("id").trim();
       await interaction.reply("Looking for the walker with id: " + walkerId);
       walkerCommands.sendWalkerInfoFromID(
@@ -73,6 +104,7 @@ client.on("interactionCreate", async (interaction) => {
         interaction.guildId
       );
     } else if (interaction.commandName === "walkersearch") {
+      stats.walkersearch++;
       let params = {
         discordid: interaction.guildId,
       };
@@ -112,6 +144,7 @@ client.on("interactionCreate", async (interaction) => {
           "walkers"
         ))
       ) {
+        stats.editwalker++;
         let params = {};
         params.walkerid = interaction.options.getInteger("walkerid");
         params.ready = interaction.options.getBoolean("ready") ? 1 : 0;
@@ -128,6 +161,7 @@ client.on("interactionCreate", async (interaction) => {
         );
       }
     } else if (interaction.commandName === "tradesearch") {
+      stats.tradesearch++;
       let params = {
         discordid: interaction.member.id,
       };
@@ -146,6 +180,7 @@ client.on("interactionCreate", async (interaction) => {
       await interaction.reply("Looking for trades...");
       tradesCommands.tradeSearchWithParams(interaction.channel, params);
     } else if (interaction.commandName === "createtrade") {
+      stats.createtrade++;
       let params = {
         discordid: interaction.member.id,
         type: "Supply",
@@ -193,6 +228,7 @@ client.on("interactionCreate", async (interaction) => {
           "bot"
         ))
       ) {
+        stats.config++;
         let guildConfig = configuration.getConfiguration(
           interaction.guildId,
           client
@@ -217,6 +253,7 @@ client.on("interactionCreate", async (interaction) => {
           "bot"
         ))
       ) {
+        stats.configupdate++;
         let params = {
           languaje: interaction.options.getString("languaje"),
           clanlog: interaction.options.getBoolean("clanlog"),
@@ -244,6 +281,7 @@ client.on("interactionCreate", async (interaction) => {
           "bot"
         ))
       ) {
+        stats.linkserver++;
         clanCommands.linkserver(
           interaction.channel,
           interaction.guildId,
@@ -264,6 +302,7 @@ client.on("interactionCreate", async (interaction) => {
           "walkers"
         ))
       ) {
+        stats.createwalkerlist++;
         await interaction.reply("Generating the list");
         walkerCommands.createWalkerList(interaction);
       } else {
@@ -272,6 +311,7 @@ client.on("interactionCreate", async (interaction) => {
         );
       }
     } else if (interaction.commandName === "skilltree") {
+      stats.skilltree++;
       await interaction.reply("Looking for items");
       techCommands.getWhoHasLearntIt(
         interaction.channel,
@@ -279,6 +319,7 @@ client.on("interactionCreate", async (interaction) => {
         interaction.guildId
       );
     } else if (interaction.commandName === "learned") {
+      stats.learned++;
       await interaction.reply("Looking for items");
       techCommands.addTech(
         interaction.channel,
@@ -367,21 +408,33 @@ client.on("messageCreate", (msg) => {
         const args = msg.content.slice(prefix.length).trim().split(" ");
         const command = args.shift().toLowerCase();
 
-        if (command === "lowalkerinfo") {
+        if (command === "lostats" && msg.author.id == "82444319507615744") {
+          msg.channel.send(JSON.stringify(stats)).catch((e) => {
+            console.log(e);
+          });
+        } else if (command === "lowalkerinfo") {
+          stats.lowalkerinfo++;
           walkerCommands.lowalkerinfo(msg, args, prefix);
         } else if (command === "walkersearch") {
+          stats.lowalkersearch++;
           walkerCommands.walkersearch(msg, prefix);
         } else if (command === "locraft") {
+          stats.locraft++;
           itemsCommands.locraft(msg, args, prefix);
         } else if (command === "lorecipe") {
+          stats.lorecipe++;
           itemsCommands.lorecipe(msg, args, prefix);
         } else if (command === "tradesearch") {
+          stats.tradesearch++;
           tradesCommands.tradesearch(msg, prefix);
         } else if (command === "createtrade") {
+          stats.createtrade++;
           tradesCommands.createtrade(msg, prefix);
         } else if (command === "locommands" || command === "lohelp") {
+          stats.lohelp++;
           genericCommands.lohelp(msg, prefix);
         } else if (command === "loinfo") {
+          stats.loinfo++;
           genericCommands.loinfo(msg);
         } else if (
           command === "lolistwalkers" ||
@@ -394,6 +447,7 @@ client.on("messageCreate", (msg) => {
           command === "linkserver" ||
           command === "loconfigupdate"
         ) {
+          stats.obsolete++;
           genericCommands.obsoleteCommand(msg);
         }
       } else {
