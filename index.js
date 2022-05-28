@@ -44,6 +44,7 @@ let stats = {
   locreatetrade: 0,
   lohelp: 0,
   obsolete: 0,
+  loinfo: 0,
 };
 
 client.on("ready", () => {
@@ -74,6 +75,11 @@ client.on("interactionCreate", async (interaction) => {
     if (interaction.commandName === "lohelp") {
       stats.help++;
       await interaction.reply(genericCommands.getHelpContent(defaultPrefix));
+    } else if (interaction.commandName === "vote") {
+      await interaction.reply(
+        "Help us grow by voting here: https://top.gg/bot/" +
+          process.env.DISCORD_CLIENT_ID
+      );
     } else if (interaction.commandName === "loinfo") {
       stats.info++;
       await interaction.reply({ embeds: [genericCommands.getInfoContent()] });
