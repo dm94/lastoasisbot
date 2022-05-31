@@ -151,7 +151,8 @@ function setItemInfo(channel, item, multiplier) {
       "https://www.stiletto.live/item/" + encodeURI(item.name.toLowerCase())
     )
     .setThumbnail(
-      "https://api.stiletto.live/items/" + encodeURI(name.trim() + " icon.png")
+      "https://resources.stiletto.live/items/" +
+        encodeURI(name.trim() + " icon.png")
     );
   let ingredie = item.crafting;
   if (ingredie != null) {

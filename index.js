@@ -316,6 +316,26 @@ client.on("interactionCreate", async (interaction) => {
           "You do not have permissions to use this command"
         );
       }
+    } else if (
+      interaction.commandName === "createsettlerslist" ||
+      interaction.commandName === "createalliancelist" ||
+      interaction.commandName === "createenemylist"
+    ) {
+      if (
+        interaction.member.permissions.has("ADMINISTRATOR") ||
+        (await clanPermissions.userHasPermissions(
+          interaction.guildId,
+          interaction.member.id,
+          "diplomacy"
+        ))
+      ) {
+        await interaction.reply("Generating the list");
+        clanCommands.createDiplomacyList(interaction);
+      } else {
+        await interaction.reply(
+          "You do not have permissions to use this command"
+        );
+      }
     } else if (interaction.commandName === "skilltree") {
       stats.skilltree++;
       await interaction.reply("Looking for items");
@@ -336,6 +356,9 @@ client.on("interactionCreate", async (interaction) => {
       if (interaction.customId == "updateWalkerList") {
         await interaction.deferUpdate();
         walkerCommands.updateWalkerList(interaction);
+      } else if (interaction.customId.includes("updateDiplomacyList-")) {
+        await interaction.deferUpdate();
+        clanCommands.updateDiplomacyList(interaction);
       }
     }
   } catch (e) {

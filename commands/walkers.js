@@ -276,7 +276,7 @@ walkerCommands.createWalkerList = async (interaction) => {
 
   interaction.channel
     .send({
-      content: "Can only be updated every 5 minutes",
+      content: "Can only be updated every 10 minutes",
       embeds: [message],
       components: [row],
     })
