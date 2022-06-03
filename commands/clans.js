@@ -162,7 +162,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
         let flagcolor = clan.flagcolor ? clan.flagcolor : "#000";
         let symbol = clan.symbol ? clan.symbol : "C1";
 
-        if (index > 8) {
+        if (index > 7) {
           extraClans.push(name);
         } else {
           embedsList.push(
