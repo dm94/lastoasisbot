@@ -125,6 +125,9 @@ walkerCommands.getWalkersEmbed = (walkers) => {
       embedList.push(embed);
     }
   });
+  if (embedList.length > 10) {
+    embedList = embedList.splice(0, 10);
+  }
   return embedList;
 };
 
@@ -258,14 +261,10 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
 };
 
 walkerCommands.getWalkerListMessage = async (guildId) => {
-  let embedsList = [];
-
-  embedsList.push(
-    new MessageEmbed()
-      .setColor("#58ACFA")
-      .setTitle("Walker Ready List")
-      .setTimestamp()
-  );
+  let message = new MessageEmbed()
+    .setColor("#58ACFA")
+    .setTitle("Walker Ready List")
+    .setTimestamp();
 
   const options = {
     method: "get",
@@ -281,20 +280,33 @@ walkerCommands.getWalkerListMessage = async (guildId) => {
 
   if (response.success) {
     if (response.data.length > 0) {
-      let embeds = walkerCommands.getWalkersEmbed(response.data);
-      embedsList = embedsList.concat(embeds);
+      response.data.forEach((walker) => {
+        let date = new Date(walker.datelastuse);
+        let type = "Unknown";
+
+        if (walker.type != null && walker.type) {
+          type = walker.type;
+        }
+        message.addField(
+          walker.name,
+          `Type: ${type} - Last Use: ${
+            date.getDate() +
+            "-" +
+            (parseInt(date.getMonth()) + 1) +
+            "-" +
+            date.getFullYear()
+          } `,
+          false
+        );
+      });
     } else {
-      embedsList.push(
-        new MessageEmbed().setColor("#f39c12").setTitle("No walkers")
-      );
+      message.addField("Walkers", "No walkers");
     }
   } else {
-    embedsList.push(
-      new MessageEmbed().setColor("#f39c12").setTitle("No walkers")
-    );
+    message.addField("Walkers", "No walkers");
   }
 
-  return embedsList;
+  return message;
 };
 
 walkerCommands.updateWalkerList = async (interaction) => {
@@ -303,11 +315,11 @@ walkerCommands.updateWalkerList = async (interaction) => {
     interaction.message.createdTimestamp &&
     new Date().getTime() - interaction.message.createdTimestamp > 600000
   ) {
-    let embeds = await walkerCommands.getWalkerListMessage(interaction.guildId);
+    let embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
     interaction
       .editReply({
         content: "Can only be updated every 10 minutes",
-        embeds: embeds,
+        embeds: [embed],
       })
       .catch((error) => logger.error(error));
   }
@@ -315,7 +327,7 @@ walkerCommands.updateWalkerList = async (interaction) => {
 
 walkerCommands.createWalkerList = async (interaction) => {
   await interaction.deferReply();
-  let embeds = await walkerCommands.getWalkerListMessage(interaction.guildId);
+  let embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
 
   const row = new MessageActionRow().addComponents(
     new MessageButton()
@@ -327,7 +339,7 @@ walkerCommands.createWalkerList = async (interaction) => {
   await interaction
     .editReply({
       content: "Can only be updated every 10 minutes",
-      embeds: embeds,
+      embeds: [embed],
       components: [row],
     })
     .catch((error) => logger.error(error));

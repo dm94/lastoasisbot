@@ -72,7 +72,7 @@ clanCommands.createDiplomacyList = async (interaction) => {
     diplomacyType = "2";
   }
 
-  let embeds = await clanCommands.getDiplomacyListMessage(
+  let message = await clanCommands.getDiplomacyListMessage(
     interaction.guildId,
     diplomacyType
   );
@@ -84,13 +84,9 @@ clanCommands.createDiplomacyList = async (interaction) => {
       .setStyle("PRIMARY")
   );
 
-  await interaction
-    .editReply({
-      content: "Can only be updated every 10 minutes",
-      embeds: embeds,
-      components: [row],
-    })
-    .catch((error) => logger.error(error));
+  message.components = [row];
+
+  await interaction.editReply(message).catch((error) => logger.error(error));
 };
 
 clanCommands.updateDiplomacyList = async (interaction) => {
@@ -108,20 +104,18 @@ clanCommands.updateDiplomacyList = async (interaction) => {
       diplomacyType = "2";
     }
 
-    let embeds = await clanCommands.getDiplomacyListMessage(
+    let message = await clanCommands.getDiplomacyListMessage(
       interaction.guildId,
       diplomacyType
     );
-    interaction
-      .editReply({
-        content: "Can only be updated every 10 minutes",
-        embeds: embeds,
-      })
-      .catch((error) => logger.error(error));
+    interaction.editReply(message).catch((error) => logger.error(error));
   }
 };
 
 clanCommands.getDiplomacyListMessage = async (guildId, type) => {
+  let message = {
+    content: "Can only be updated every 10 minutes",
+  };
   let embedsList = [];
 
   if (!guildId) {
@@ -161,18 +155,33 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
     if (response.data.length > 0) {
       let diplomacyList = response.data.filter((d) => d.typed == type);
 
-      diplomacyList.forEach((clan) => {
+      let extraClans = [];
+
+      diplomacyList.forEach((clan, index) => {
         let name = clan.name ? clan.name : "Clan";
         let flagcolor = clan.flagcolor ? clan.flagcolor : "#000";
         let symbol = clan.symbol ? clan.symbol : "C1";
 
-        embedsList.push(
-          new MessageEmbed().setColor(flagcolor).setAuthor({
-            name: name,
-            iconURL: `https://resources.stiletto.live/symbols/${symbol}.png`,
-          })
-        );
+        if (index > 8) {
+          extraClans.push(name);
+        } else {
+          embedsList.push(
+            new MessageEmbed().setColor(flagcolor).setAuthor({
+              name: name,
+              iconURL: `https://resources.stiletto.live/symbols/${symbol}.png`,
+            })
+          );
+        }
       });
+      if (extraClans.length > 0) {
+        let extraEmbed = new MessageEmbed()
+          .setColor(color)
+          .setTitle("More clans");
+        extraClans.forEach((clan) => {
+          extraEmbed.addField(clan, clan, false);
+        });
+        embedsList.push(extraEmbed);
+      }
     } else {
       embedsList.push(
         new MessageEmbed()
@@ -192,7 +201,9 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
     );
   }
 
-  return embedsList;
+  message.embeds = embedsList;
+
+  return message;
 };
 
 module.exports = clanCommands;

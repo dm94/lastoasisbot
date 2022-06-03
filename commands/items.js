@@ -57,9 +57,9 @@ itemsCommands.sendRecipe = async (channel, code) => {
   let response = await othersFunctions.apiRequest(options);
   if (response.success) {
     if (response.data.items != null) {
-      let allItems = JSON.parse(response.data.items);
+      let itemsResponse = JSON.parse(response.data.items);
       const items = await itemsCommands.getAllItems();
-      allItems.forEach((item) => {
+      itemsResponse.forEach((item) => {
         let itemData = items.find(
           (data) => item.name != null && data.name === item.name
         );
@@ -83,15 +83,10 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
     multiplier = 1;
   }
   let itemsSent = 0;
-
-  const items = await itemsCommands.getAllItems();
-  let itemsfilters = items.filter((it) => {
-    return itemName.split(" ").every((internalItem) => {
-      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
-    });
-  });
+  let itemsfilters = await itemsCommands.getItem(itemName);
 
   if (itemsfilters.length < 1) {
+    const items = await itemsCommands.getAllItems();
     itemsfilters = items.filter((it) => {
       return itemName.split(" ").some((internalItem) => {
         return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
