@@ -177,8 +177,9 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
         let extraEmbed = new MessageEmbed()
           .setColor(color)
           .setTitle("More clans");
+        let embedText = "";
         extraClans.forEach((clan) => {
-          extraEmbed.addField(clan, clan, false);
+          embedText = embedText + clan + "\n";
         });
         embedsList.push(extraEmbed);
       }
