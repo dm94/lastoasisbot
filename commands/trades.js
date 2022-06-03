@@ -58,23 +58,10 @@ commands.tradeSearchWithParams = async (channel, params) => {
   }
 };
 
-commands.createtrade = async (msg, prefix) => {
-  let args = msg.content.slice(prefix.length).trim().split(" -");
-
-  if (args.length < 2) {
-    othersFunctions.sendChannelMessage(
-      msg.channel,
-      "You have to add more data. Example: " +
-        prefix +
-        "createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200"
-    );
-    return;
-  }
-
-  let allItems = await itemsFunctions.getAllItems();
-
+commands.createtrade = async (interaction) => {
+  await interaction.deferReply({ ephemeral: true });
   let params = {
-    discordid: msg.author.id,
+    discordid: interaction.member.id,
     type: "Supply",
     resource: "Aloe Vera",
     amount: 0,
@@ -82,70 +69,50 @@ commands.createtrade = async (msg, prefix) => {
     region: "eu",
     price: 0,
   };
+  let allItems = await itemsFunctions.getAllItems();
+  let resourceName = interaction.options.getString("resource").toLowerCase();
+  let item = allItems.find((it) => it.name.toLowerCase() == resourceName);
+  if (item) {
+    params.resource = item.name;
+    params.region = interaction.options.getString("region")
+      ? interaction.options.getString("region").trim()
+      : "EU";
+    params.type = interaction.options.getString("type")
+      ? interaction.options.getString("type").trim()
+      : "Supply";
+    params.amount = interaction.options.getInteger("amount")
+      ? interaction.options.getInteger("amount")
+      : 0;
+    params.quality = interaction.options.getInteger("quality")
+      ? interaction.options.getInteger("quality")
+      : 0;
+    params.price = interaction.options.getInteger("price")
+      ? interaction.options.getInteger("price")
+      : 0;
 
-  args.forEach((arg) => {
-    let value = "";
-    if (arg.startsWith("type=")) {
-      value = arg.slice(5).trim().toLowerCase();
-      if (value == "demand") {
-        params.type = "Demand";
-      } else {
-        params.type = "Supply";
-      }
-    } else if (arg.startsWith("resource=")) {
-      value = arg.slice(9).trim().toLowerCase();
-      let item = allItems.find((item) => item.name.toLowerCase() == value);
-      if (item) {
-        params.resource = item.name;
-      } else {
-        othersFunctions.sendChannelMessage(
-          msg.channel,
-          "No resource with this name has been found"
-        );
-        return;
-      }
-    } else if (arg.startsWith("amount=")) {
-      try {
-        params.amount = parseInt(arg.slice(7).trim());
-      } catch (e) {}
-    } else if (arg.startsWith("region=")) {
-      value = arg.slice(7).trim().toUpperCase();
-      if (
-        value == "EU" ||
-        value == "NA" ||
-        value == "OCE" ||
-        value == "RUSSIA" ||
-        value == "SA" ||
-        value == "SEA"
-      ) {
-        params.region = value;
-      }
-    } else if (arg.startsWith("quality=")) {
-      try {
-        params.quality = parseInt(arg.slice(8).trim());
-      } catch (e) {}
-    } else if (arg.startsWith("price=")) {
-      try {
-        params.price = parseInt(arg.slice(6).trim());
-      } catch (e) {}
+    const options = {
+      method: "post",
+      url: process.env.APP_API_URL + "/bot/trades",
+      params: params,
+    };
+
+    let response = await othersFunctions.apiRequest(options);
+    if (response.success) {
+      await interaction.editReply({
+        content: "Trade Created",
+        ephemeral: true,
+      });
+    } else {
+      await interaction.editReply({
+        content: response.data,
+        ephemeral: true,
+      });
     }
-  });
-
-  commands.createTradeWithParams(msg.channel, params);
-};
-
-commands.createTradeWithParams = async (channel, params) => {
-  const options = {
-    method: "post",
-    url: process.env.APP_API_URL + "/bot/trades",
-    params: params,
-  };
-
-  let response = await othersFunctions.apiRequest(options);
-  if (response.success) {
-    othersFunctions.sendChannelMessage(channel, "Trade Created");
   } else {
-    othersFunctions.sendChannelMessage(channel, response.data);
+    await interaction.editReply({
+      content: "No resource with this name has been found",
+      ephemeral: true,
+    });
   }
 };
 

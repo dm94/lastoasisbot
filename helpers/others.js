@@ -4,13 +4,15 @@ const Axios = require("axios");
 const logger = require("./logger");
 
 controller.sendChannelMessage = (channel, text) => {
-  channel.send(text).catch((error) => {
-    logger.error(error);
-  });
+  controller.sendChannelData(channel, text);
 };
 
 controller.sendChannelEmbed = (channel, embed) => {
-  channel.send({ embeds: [embed] }).catch((error) => {
+  controller.sendChannelData(channel, { embeds: [embed] });
+};
+
+controller.sendChannelData = (channel, data) => {
+  channel.send(data).catch((error) => {
     logger.error(error);
   });
 };
@@ -60,7 +62,31 @@ controller.apiRequest = async (options) => {
       }
     })
     .catch((error) => {
-      logger.error(error);
+      logger.info(options);
+      logger.error(error.message);
+      if (error.response) {
+        if (error.response.status == "400") {
+          return {
+            success: false,
+            data: "Error: Missing data",
+          };
+        } else if (error.response.status == "401") {
+          return {
+            success: false,
+            data: "Error: You do not have permissions",
+          };
+        } else if (error.response.status == "404") {
+          return {
+            success: false,
+            data: "Error: Nothing found",
+          };
+        } else if (error.response.status == "503") {
+          return {
+            success: false,
+            data: "Error connecting to database",
+          };
+        }
+      }
       return {
         success: false,
         data: "Error when connecting to the API",

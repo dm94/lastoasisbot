@@ -64,7 +64,7 @@ itemsCommands.sendRecipe = async (channel, code) => {
           (data) => item.name != null && data.name === item.name
         );
         if (itemData) {
-          setItemInfo(channel, itemData, item.count ? item.count : 1);
+          sendItemInfo(channel, itemData, item.count ? item.count : 1);
         }
       });
     } else {
@@ -101,12 +101,12 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
   itemsfilters.forEach((item) => {
     if (itemsSent < 5) {
       itemsSent++;
-      setItemInfo(channel, item, multiplier);
+      sendItemInfo(channel, item, multiplier);
     }
   });
 };
 
-function setItemInfo(channel, item, multiplier) {
+function sendItemInfo(channel, item, multiplier) {
   let name = item.name;
   if (name.includes("Tier 1")) {
     name = "Walker Upgrade Wood";
@@ -192,6 +192,33 @@ itemsCommands.getAllItems = async () => {
       .catch((error) => {
         logger.error(error);
       });
+  }
+};
+
+itemsCommands.getItem = async (itemName) => {
+  if (allItems == null) {
+    allItems = await itemsCommands.getAllItems();
+  }
+  return allItems.find((it) => {
+    return itemName.split(" ").every((internalItem) => {
+      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+    });
+  });
+};
+
+itemsCommands.getTechTree = async (itemName) => {
+  if (allItems == null) {
+    allItems = await itemsCommands.getAllItems();
+  }
+  let item = allItems.find((it) => it.name === itemName);
+  if (item) {
+    if (item.parent) {
+      return await itemsCommands.getTechTree(item.parent);
+    } else {
+      return item.name;
+    }
+  } else {
+    return itemName;
   }
 };
 

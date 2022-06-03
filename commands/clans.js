@@ -26,7 +26,11 @@ clanCommands.kickMember = async (msg, user) => {
   }
 };
 
-clanCommands.linkserver = async (channel, serverid, memberid) => {
+clanCommands.linkserver = async (interaction) => {
+  await interaction.deferReply({ ephemeral: true });
+  let serverid = interaction.guildId;
+  let memberid = interaction.member.id;
+
   if (serverid != null && memberid != null) {
     const options = {
       method: "post",
@@ -39,23 +43,26 @@ clanCommands.linkserver = async (channel, serverid, memberid) => {
     let response = await othersFunctions.apiRequest(options);
 
     if (response.success) {
-      othersFunctions.sendChannelMessage(channel, "Linked server");
+      await interaction.editReply({
+        content: "Linked server",
+        ephemeral: true,
+      });
     } else {
-      othersFunctions.sendChannelMessage(
-        channel,
-        "Could not link server. Remember that you have to be the clan leader or have permission to manage the bot in the clan."
-      );
+      await interaction.editReply({
+        content:
+          "Could not link server. Remember that you have to be the clan leader or have permission to manage the bot in the clan.",
+        ephemeral: true,
+      });
     }
   }
 };
 
 clanCommands.createDiplomacyList = async (interaction) => {
+  await interaction.deferReply();
   let diplomacyType = "1";
 
   if (interaction.commandName === "createsettlerslist") {
     diplomacyType = "0";
-  } else if (interaction.commandName === "createalliancelist") {
-    diplomacyType = "1";
   } else if (interaction.commandName === "createenemylist") {
     diplomacyType = "2";
   }
@@ -72,8 +79,8 @@ clanCommands.createDiplomacyList = async (interaction) => {
       .setStyle("PRIMARY")
   );
 
-  interaction.channel
-    .send({
+  await interaction
+    .editReply({
       content: "Can only be updated every 10 minutes",
       embeds: embeds,
       components: [row],

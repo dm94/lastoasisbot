@@ -151,16 +151,7 @@ client.on("interactionCreate", async (interaction) => {
         ))
       ) {
         stats.editwalker++;
-        let params = {};
-        params.walkerid = interaction.options.getInteger("walkerid");
-        params.ready = interaction.options.getBoolean("ready") ? 1 : 0;
-        await interaction.reply("Updating the walker...");
-        walkerCommands.editWalker(
-          interaction.guildId,
-          interaction.channel,
-          params,
-          true
-        );
+        walkerCommands.editWalker(interaction);
       } else {
         await interaction.reply(
           "You do not have permissions to use this command"
@@ -187,44 +178,7 @@ client.on("interactionCreate", async (interaction) => {
       tradesCommands.tradeSearchWithParams(interaction.channel, params);
     } else if (interaction.commandName === "createtrade") {
       stats.createtrade++;
-      let params = {
-        discordid: interaction.member.id,
-        type: "Supply",
-        resource: "Aloe Vera",
-        amount: 0,
-        quality: 0,
-        region: "eu",
-        price: 0,
-      };
-      let allItems = await itemsCommands.getAllItems();
-      let resourceName = interaction.options
-        .getString("resource")
-        .toLowerCase();
-      let item = allItems.find(
-        (item) => item.name.toLowerCase() == resourceName
-      );
-      if (item) {
-        await interaction.reply("Creating the trade...");
-        params.resource = item.name;
-        params.region = interaction.options.getString("region")
-          ? interaction.options.getString("region").trim()
-          : "EU";
-        params.type = interaction.options.getString("type")
-          ? interaction.options.getString("type").trim()
-          : "Supply";
-        params.amount = interaction.options.getInteger("amount")
-          ? interaction.options.getInteger("amount")
-          : 0;
-        params.quality = interaction.options.getInteger("quality")
-          ? interaction.options.getInteger("quality")
-          : 0;
-        params.price = interaction.options.getInteger("price")
-          ? interaction.options.getInteger("price")
-          : 0;
-        tradesCommands.createTradeWithParams(interaction.channel, params);
-      } else {
-        await interaction.reply("No resource with this name has been found");
-      }
+      tradesCommands.createtrade(interaction);
     } else if (interaction.commandName === "config") {
       if (
         interaction.member.permissions.has("ADMINISTRATOR") ||
@@ -240,8 +194,7 @@ client.on("interactionCreate", async (interaction) => {
           client
         );
         if (guildConfig) {
-          await interaction.reply("This is the bot configuration");
-          configuration.sendConfigInfo(interaction.channel, guildConfig);
+          configuration.sendConfigInfo(interaction, guildConfig);
         } else {
           await interaction.reply("Bot is not configured in this discord");
         }
@@ -260,19 +213,7 @@ client.on("interactionCreate", async (interaction) => {
         ))
       ) {
         stats.configupdate++;
-        let params = {
-          languaje: interaction.options.getString("languaje"),
-          clanlog: interaction.options.getBoolean("clanlog"),
-          kick: interaction.options.getBoolean("kick"),
-          readypvp: interaction.options.getBoolean("readypvp"),
-          walkeralarm: interaction.options.getBoolean("walkeralarm"),
-        };
-        await interaction.reply("Updating the bot configuration...");
-        configuration.updateConfig(
-          interaction.channel,
-          interaction.guildId,
-          params
-        );
+        configuration.updateConfig(interaction);
       } else {
         await interaction.reply(
           "You do not have permissions to use this command"
@@ -288,12 +229,7 @@ client.on("interactionCreate", async (interaction) => {
         ))
       ) {
         stats.linkserver++;
-        clanCommands.linkserver(
-          interaction.channel,
-          interaction.guildId,
-          interaction.member.id
-        );
-        await interaction.reply("Linking the server...");
+        clanCommands.linkserver(interaction);
       } else {
         await interaction.reply(
           "You do not have permissions to use this command"
@@ -309,7 +245,6 @@ client.on("interactionCreate", async (interaction) => {
         ))
       ) {
         stats.createwalkerlist++;
-        await interaction.reply("Generating the list");
         walkerCommands.createWalkerList(interaction);
       } else {
         await interaction.reply(
@@ -329,7 +264,6 @@ client.on("interactionCreate", async (interaction) => {
           "diplomacy"
         ))
       ) {
-        await interaction.reply("Generating the list");
         clanCommands.createDiplomacyList(interaction);
       } else {
         await interaction.reply(
@@ -338,20 +272,10 @@ client.on("interactionCreate", async (interaction) => {
       }
     } else if (interaction.commandName === "skilltree") {
       stats.skilltree++;
-      await interaction.reply("Looking for items");
-      techCommands.getWhoHasLearntIt(
-        interaction.channel,
-        interaction.options.getString("item").trim().toLowerCase(),
-        interaction.guildId
-      );
+      techCommands.getWhoHasLearntIt(interaction);
     } else if (interaction.commandName === "learned") {
       stats.learned++;
-      await interaction.reply("Looking for items");
-      techCommands.addTech(
-        interaction.channel,
-        interaction.options.getString("item").trim().toLowerCase(),
-        interaction.member.id
-      );
+      techCommands.addTech(interaction);
     } else if (interaction.isButton()) {
       if (interaction.customId == "updateWalkerList") {
         await interaction.deferUpdate();
@@ -456,9 +380,6 @@ client.on("messageCreate", (msg) => {
         } else if (command === "tradesearch") {
           stats.tradesearch++;
           tradesCommands.tradesearch(msg, prefix);
-        } else if (command === "createtrade") {
-          stats.createtrade++;
-          tradesCommands.createtrade(msg, prefix);
         } else if (command === "locommands" || command === "lohelp") {
           stats.lohelp++;
           genericCommands.lohelp(msg, prefix);
@@ -474,7 +395,8 @@ client.on("messageCreate", (msg) => {
           command === "learned" ||
           command === "loconfig" ||
           command === "linkserver" ||
-          command === "loconfigupdate"
+          command === "loconfigupdate" ||
+          command === "createtrade"
         ) {
           stats.obsolete++;
           genericCommands.obsoleteCommand(msg);

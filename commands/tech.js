@@ -4,17 +4,15 @@ const Discord = require("discord.js");
 const itemsFunctions = require("../commands/items");
 const othersFunctions = require("../helpers/others");
 
-commands.getWhoHasLearntIt = async (channel, itemName, discordid) => {
-  let allItems = await itemsFunctions.getAllItems();
+commands.getWhoHasLearntIt = async (interaction) => {
+  await interaction.deferReply({ ephemeral: true });
+  let itemName = interaction.options.getString("item").trim().toLowerCase();
+  let discordid = interaction.guildId;
 
-  let item = allItems.find((it) => {
-    return itemName.split(" ").every((internalItem) => {
-      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
-    });
-  });
+  let item = await itemsFunctions.getItem(itemName);
 
   if (item != null) {
-    let tree = commands.getTechTree(allItems, item.name);
+    let tree = itemsFunctions.getTechTree(item.name);
     if (tree != null) {
       const options = {
         method: "get",
@@ -42,39 +40,41 @@ commands.getWhoHasLearntIt = async (channel, itemName, discordid) => {
               message.addField("Discord", response.data[i].discordtag, false);
             }
           }
-          othersFunctions.sendChannelEmbed(channel, message);
+          await interaction.editReply({
+            content: message,
+            ephemeral: true,
+          });
         } else {
-          othersFunctions.sendChannelMessage(
-            channel,
-            "There is no one from your clan with this learnt"
-          );
+          await interaction.editReply({
+            content: "There is no one from your clan with this learnt",
+            ephemeral: true,
+          });
         }
       } else {
-        othersFunctions.sendChannelMessage(
-          channel,
-          "For this command to work the clan must be linked to this discord."
-        );
+        await interaction.editReply({
+          content:
+            "For this command to work the clan must be linked to this discord.",
+          ephemeral: true,
+        });
       }
     }
   } else {
-    othersFunctions.sendChannelMessage(
-      channel,
-      "We have not found any items with this name"
-    );
+    await interaction.editReply({
+      content: "We have not found any items with this name",
+      ephemeral: true,
+    });
   }
 };
 
-commands.addTech = async (channel, itemName, discordid) => {
-  let allItems = await itemsFunctions.getAllItems();
+commands.addTech = async (interaction) => {
+  await interaction.deferReply({ ephemeral: true });
+  let itemName = interaction.options.getString("item").trim().toLowerCase();
+  let discordid = interaction.member.id;
 
-  let item = allItems.find((it) => {
-    return itemName.split(" ").every((internalItem) => {
-      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
-    });
-  });
+  let item = await itemsFunctions.getItem(itemName);
 
   if (item != null) {
-    let tree = commands.getTechTree(allItems, item.name);
+    let tree = itemsFunctions.getTechTree(item.name);
     if (tree != null) {
       const options = {
         method: "post",
@@ -87,29 +87,22 @@ commands.addTech = async (channel, itemName, discordid) => {
 
       let response = await othersFunctions.apiRequest(options);
       if (response.success) {
-        othersFunctions.sendChannelMessage(channel, "Learned: " + item.name);
+        await interaction.editReply({
+          content: "Added to the technology tree: " + item.name,
+          ephemeral: true,
+        });
       } else {
-        othersFunctions.sendChannelMessage(channel, response.data);
+        await interaction.editReply({
+          content: response.data,
+          ephemeral: true,
+        });
       }
     }
   } else {
-    othersFunctions.sendChannelMessage(
-      channel,
-      "We have not found any items with this name"
-    );
-  }
-};
-
-commands.getTechTree = (allItems, itemName) => {
-  let item = allItems.find((it) => it.name === itemName);
-  if (item) {
-    if (item.parent) {
-      return commands.getTechTree(allItems, item.parent);
-    } else {
-      return item.name;
-    }
-  } else {
-    return itemName;
+    await interaction.editReply({
+      content: "We have not found any items with this name",
+      ephemeral: true,
+    });
   }
 };
 
