@@ -181,6 +181,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
         extraClans.forEach((clan) => {
           embedText = embedText + clan + "\n";
         });
+        extraEmbed.setDescription(embedText);
         embedsList.push(extraEmbed);
       }
     } else {
