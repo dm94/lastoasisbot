@@ -3,6 +3,7 @@ const commands = {};
 const Discord = require("discord.js");
 const itemsFunctions = require("../commands/items");
 const othersFunctions = require("../helpers/others");
+const logger = require("../helpers/logger");
 
 commands.getWhoHasLearntIt = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
@@ -39,28 +40,36 @@ commands.getWhoHasLearntIt = async (interaction) => {
             message.addField("Discord", response.data[i].discordtag, false);
           }
         }
-        await interaction.editReply({
-          content: message,
-          ephemeral: true,
-        });
+        await interaction
+          .editReply({
+            content: message,
+            ephemeral: true,
+          })
+          .catch((error) => logger.error(error));
       } else {
-        await interaction.editReply({
-          content: "There is no one from your clan with this learnt",
-          ephemeral: true,
-        });
+        await interaction
+          .editReply({
+            content: "There is no one from your clan with this learnt",
+            ephemeral: true,
+          })
+          .catch((error) => logger.error(error));
       }
     } else {
-      await interaction.editReply({
-        content:
-          "For this command to work the clan must be linked to this discord.",
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content:
+            "For this command to work the clan must be linked to this discord.",
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     }
   } else {
-    await interaction.editReply({
-      content: "We have not found any items with this name",
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: "We have not found any items with this name",
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 
@@ -84,21 +93,27 @@ commands.addTech = async (interaction) => {
 
     let response = await othersFunctions.apiRequest(options);
     if (response.success) {
-      await interaction.editReply({
-        content: "Added to the technology tree: " + item.name,
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content: "Added to the technology tree: " + item.name,
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     } else {
-      await interaction.editReply({
-        content: response.data,
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content: response.data,
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     }
   } else {
-    await interaction.editReply({
-      content: "We have not found any items with this name",
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: "We have not found any items with this name",
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 

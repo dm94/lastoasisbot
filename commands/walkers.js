@@ -3,6 +3,7 @@ const walkerCommands = {};
 require("dotenv").config();
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const othersFunctions = require("../helpers/others");
+const logger = require("../helpers/logger");
 
 walkerCommands.walkersearch = async (msg, prefix) => {
   let args = msg.content.slice(prefix.length).trim().split(" -");
@@ -185,15 +186,19 @@ walkerCommands.editWalker = async (interaction) => {
 
   let response = await othersFunctions.apiRequest(options);
   if (response.success) {
-    await interaction.editReply({
-      content: "Walker updated",
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: "Walker updated",
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   } else {
-    await interaction.editReply({
-      content: response.data,
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: response.data,
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 
@@ -299,10 +304,12 @@ walkerCommands.updateWalkerList = async (interaction) => {
     new Date().getTime() - interaction.message.createdTimestamp > 600000
   ) {
     let embeds = await walkerCommands.getWalkerListMessage(interaction.guildId);
-    interaction.editReply({
-      content: "Can only be updated every 10 minutes",
-      embeds: embeds,
-    });
+    interaction
+      .editReply({
+        content: "Can only be updated every 10 minutes",
+        embeds: embeds,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 
@@ -323,7 +330,7 @@ walkerCommands.createWalkerList = async (interaction) => {
       embeds: embeds,
       components: [row],
     })
-    .catch(console.error);
+    .catch((error) => logger.error(error));
 };
 
 module.exports = walkerCommands;

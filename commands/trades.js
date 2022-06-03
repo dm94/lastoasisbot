@@ -3,6 +3,7 @@ const commands = {};
 const Discord = require("discord.js");
 const othersFunctions = require("../helpers/others");
 const itemsFunctions = require("../commands/items");
+const logger = require("../helpers/logger");
 
 commands.tradesearch = async (msg, prefix) => {
   let args = msg.content.slice(prefix.length).trim().split(" -");
@@ -98,21 +99,27 @@ commands.createtrade = async (interaction) => {
 
     let response = await othersFunctions.apiRequest(options);
     if (response.success) {
-      await interaction.editReply({
-        content: "Trade Created",
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content: "Trade Created",
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     } else {
-      await interaction.editReply({
-        content: response.data,
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content: response.data,
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     }
   } else {
-    await interaction.editReply({
-      content: "No resource with this name has been found",
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: "No resource with this name has been found",
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 

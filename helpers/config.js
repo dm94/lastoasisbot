@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 require("dotenv").config();
 const othersFunctions = require("./others");
 const discordlists = require("./discordlists");
+const logger = require("../helpers/logger");
 
 let lastConfigurationsUpdate = 0;
 let botConfigurations = [];
@@ -70,10 +71,12 @@ controller.sendConfigInfo = async (interaction, guildConfig) => {
     false
   );
 
-  await interaction.editReply({
-    embeds: [embed],
-    ephemeral: true,
-  });
+  await interaction
+    .editReply({
+      embeds: [embed],
+      ephemeral: true,
+    })
+    .catch((error) => logger.error(error));
 };
 
 controller.updateConfig = async (interaction) => {
@@ -103,15 +106,19 @@ controller.updateConfig = async (interaction) => {
       setnotreadypvp: params.readypvp,
       walkeralarm: params.walkeralarm,
     };
-    await interaction.editReply({
-      content: "Config updated",
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: "Config updated",
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   } else {
-    await interaction.editReply({
-      content: response.data,
-      ephemeral: true,
-    });
+    await interaction
+      .editReply({
+        content: response.data,
+        ephemeral: true,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 

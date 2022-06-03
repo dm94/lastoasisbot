@@ -3,6 +3,7 @@ const clanCommands = {};
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 require("dotenv").config();
 const othersFunctions = require("../helpers/others");
+const logger = require("../helpers/logger");
 
 clanCommands.kickMember = async (msg, user) => {
   let discordid = msg.guild.id;
@@ -43,16 +44,20 @@ clanCommands.linkserver = async (interaction) => {
     let response = await othersFunctions.apiRequest(options);
 
     if (response.success) {
-      await interaction.editReply({
-        content: "Linked server",
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content: "Linked server",
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     } else {
-      await interaction.editReply({
-        content:
-          "Could not link server. Remember that you have to be the clan leader or have permission to manage the bot in the clan.",
-        ephemeral: true,
-      });
+      await interaction
+        .editReply({
+          content:
+            "Could not link server. Remember that you have to be the clan leader or have permission to manage the bot in the clan.",
+          ephemeral: true,
+        })
+        .catch((error) => logger.error(error));
     }
   }
 };
@@ -85,7 +90,7 @@ clanCommands.createDiplomacyList = async (interaction) => {
       embeds: embeds,
       components: [row],
     })
-    .catch(console.error);
+    .catch((error) => logger.error(error));
 };
 
 clanCommands.updateDiplomacyList = async (interaction) => {
@@ -107,10 +112,12 @@ clanCommands.updateDiplomacyList = async (interaction) => {
       interaction.guildId,
       diplomacyType
     );
-    interaction.editReply({
-      content: "Can only be updated every 10 minutes",
-      embeds: embeds,
-    });
+    interaction
+      .editReply({
+        content: "Can only be updated every 10 minutes",
+        embeds: embeds,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 
