@@ -83,16 +83,22 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
     multiplier = 1;
   }
   let itemsSent = 0;
-  let itemsfilters = await itemsCommands.getItem(itemName);
-
+  const items = await itemsCommands.getAllItems();
+  let itemsfilters = items.filter((it) => {
+    return itemName.split(" ").every((internalItem) => {
+      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+    });
+  });
   if (itemsfilters.length < 1) {
-    const items = await itemsCommands.getAllItems();
     itemsfilters = items.filter((it) => {
       return itemName.split(" ").some((internalItem) => {
         return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
       });
     });
   }
+
+  console.log(itemsfilters);
+
   itemsfilters.forEach((item) => {
     if (itemsSent < 5) {
       itemsSent++;
