@@ -11,7 +11,7 @@ const logger = require("./helpers/logger");
 
 const autocompleteController = require("./commands/interaction_types/autocomplete");
 const buttonController = require("./commands/interaction_types/button");
-const commandController = require("./commands/interaction_types/button");
+const commandController = require("./commands/interaction_types/command");
 
 const client = new Client({
   intents: [

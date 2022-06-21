@@ -7,6 +7,8 @@ const clanPermissions = require("../../helpers/permissions");
 const configuration = require("../../helpers/config");
 const logger = require("../../helpers/logger");
 
+const defaultPrefix = process.env.DISCORD_PREFIX;
+
 const controller = {};
 
 controller.router = async (interaction) => {

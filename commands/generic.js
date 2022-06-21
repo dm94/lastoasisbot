@@ -42,7 +42,7 @@ genericCommands.obsoleteCommand = (msg) => {
   othersFunctions.sendChannelMessage(msg.channel, message);
 };
 
-genericCommands.getHelpContent = (prefix) => {
+genericCommands.getHelpContent = (prefix = "!") => {
   let messageEn =
     "```" +
     prefix +
