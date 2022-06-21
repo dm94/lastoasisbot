@@ -5,12 +5,13 @@ const genericCommands = require("./commands/generic");
 const itemsCommands = require("./commands/items");
 const walkerCommands = require("./commands/walkers");
 const clanCommands = require("./commands/clans");
-const tradesCommands = require("./commands/trades");
-const techCommands = require("./commands/tech");
 const configuration = require("./helpers/config");
-const clanPermissions = require("./helpers/permissions");
 const slashCommandsRegister = require("./slashCommandsRegister");
 const logger = require("./helpers/logger");
+
+const autocompleteController = require("./commands/interaction_types/autocomplete");
+const buttonController = require("./commands/interaction_types/button");
+const commandController = require("./commands/interaction_types/button");
 
 const client = new Client({
   intents: [
@@ -21,27 +22,9 @@ const client = new Client({
 });
 
 let stats = {
-  help: 0,
-  info: 0,
-  craft: 0,
-  recipe: 0,
-  walkerinfo: 0,
-  walkersearch: 0,
-  editwalker: 0,
-  tradesearch: 0,
-  createtrade: 0,
-  config: 0,
-  configupdate: 0,
-  linkserver: 0,
-  createwalkerlist: 0,
-  skilltree: 0,
-  learned: 0,
   lowalkerinfo: 0,
   lowalkersearch: 0,
   locraft: 0,
-  lorecipe: 0,
-  lotradesearch: 0,
-  locreatetrade: 0,
   lohelp: 0,
   obsolete: 0,
   loinfo: 0,
@@ -70,220 +53,15 @@ client.on("ready", () => {
 
 client.on("interactionCreate", async (interaction) => {
   try {
-    if (!interaction.isCommand() && !interaction.isButton()) return;
-
-    if (interaction.commandName === "lohelp") {
-      stats.help++;
-      await interaction.reply(genericCommands.getHelpContent(defaultPrefix));
-    } else if (interaction.commandName === "vote") {
-      await interaction.reply(
-        "Help us grow by voting here: https://top.gg/bot/" +
-          process.env.DISCORD_CLIENT_ID
-      );
-    } else if (interaction.commandName === "loinfo") {
-      stats.info++;
-      await interaction.reply({ embeds: [genericCommands.getInfoContent()] });
-    } else if (interaction.commandName === "craft") {
-      stats.craft++;
-      await interaction.reply("Looking for items");
-      itemsCommands.getNecessaryMaterials(
-        interaction.channel,
-        interaction.options.getString("item").trim().toLowerCase(),
-        interaction.options.getInteger("quantity")
-          ? interaction.options.getInteger("quantity")
-          : 1
-      );
-    } else if (interaction.commandName === "recipe") {
-      stats.recipe++;
-      await interaction.reply("Looking for items");
-      itemsCommands.sendRecipe(
-        interaction.channel,
-        interaction.options.getString("code").trim()
-      );
-    } else if (interaction.commandName === "walkerinfo") {
-      stats.walkerinfo++;
-      let walkerId = interaction.options.getString("id").trim();
-      await interaction.reply("Looking for the walker with id: " + walkerId);
-      walkerCommands.sendWalkerInfoFromID(
-        interaction.channel,
-        walkerId,
-        interaction.guildId
-      );
-    } else if (interaction.commandName === "walkersearch") {
-      stats.walkersearch++;
-      let params = {
-        discordid: interaction.guildId,
-      };
-      params.page = interaction.options.getInteger("page")
-        ? interaction.options.getInteger("page")
-        : 1;
-      params.name = interaction.options.getString("name")
-        ? interaction.options.getString("name").trim()
-        : undefined;
-      params.owner = interaction.options.getString("owner")
-        ? interaction.options.getString("owner").trim()
-        : undefined;
-      params.lastuser = interaction.options.getString("lastuser")
-        ? interaction.options.getString("lastuser").trim()
-        : undefined;
-      params.desc = interaction.options.getString("description")
-        ? interaction.options.getString("description").trim()
-        : undefined;
-      params.type = interaction.options.getString("type")
-        ? interaction.options.getString("type").trim()
-        : undefined;
-      params.ready = interaction.options.getBoolean("ready") ? 1 : undefined;
-      params.use = interaction.options.getString("use")
-        ? interaction.options.getString("use")
-        : undefined;
-      params.walkerid = interaction.options.getString("id")
-        ? interaction.options.getString("id")
-        : undefined;
-      await interaction.reply("Looking for walkers...");
-      walkerCommands.walkerSearchWithParams(interaction.channel, params);
-    } else if (interaction.commandName === "editwalker") {
-      if (
-        interaction.member.permissions.has("ADMINISTRATOR") ||
-        (await clanPermissions.userHasPermissions(
-          interaction.guildId,
-          interaction.member.id,
-          "walkers"
-        ))
-      ) {
-        stats.editwalker++;
-        walkerCommands.editWalker(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (interaction.commandName === "tradesearch") {
-      stats.tradesearch++;
-      let params = {
-        discordid: interaction.member.id,
-      };
-      params.page = interaction.options.getInteger("page")
-        ? interaction.options.getInteger("page")
-        : 1;
-      params.resource = interaction.options.getString("resource")
-        ? interaction.options.getString("resource").trim()
-        : undefined;
-      params.region = interaction.options.getString("region")
-        ? interaction.options.getString("region").trim()
-        : undefined;
-      params.type = interaction.options.getString("type")
-        ? interaction.options.getString("type").trim()
-        : undefined;
-      await interaction.reply("Looking for trades...");
-      tradesCommands.tradeSearchWithParams(interaction.channel, params);
-    } else if (interaction.commandName === "createtrade") {
-      stats.createtrade++;
-      tradesCommands.createtrade(interaction);
-    } else if (interaction.commandName === "config") {
-      if (
-        interaction.member.permissions.has("ADMINISTRATOR") ||
-        (await clanPermissions.userHasPermissions(
-          interaction.guildId,
-          interaction.member.id,
-          "bot"
-        ))
-      ) {
-        stats.config++;
-        let guildConfig = configuration.getConfiguration(
-          interaction.guildId,
-          client
-        );
-        if (guildConfig) {
-          configuration.sendConfigInfo(interaction, guildConfig);
-        } else {
-          await interaction.reply("Bot is not configured in this discord");
-        }
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (interaction.commandName === "configupdate") {
-      if (
-        interaction.member.permissions.has("ADMINISTRATOR") ||
-        (await clanPermissions.userHasPermissions(
-          interaction.guildId,
-          interaction.member.id,
-          "bot"
-        ))
-      ) {
-        stats.configupdate++;
-        configuration.updateConfig(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (interaction.commandName === "linkserver") {
-      if (
-        interaction.member.permissions.has("ADMINISTRATOR") ||
-        (await clanPermissions.userHasPermissions(
-          interaction.guildId,
-          interaction.member.id,
-          "bot"
-        ))
-      ) {
-        stats.linkserver++;
-        clanCommands.linkserver(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (interaction.commandName === "createwalkerlist") {
-      if (
-        interaction.member.permissions.has("ADMINISTRATOR") ||
-        (await clanPermissions.userHasPermissions(
-          interaction.guildId,
-          interaction.member.id,
-          "walkers"
-        ))
-      ) {
-        stats.createwalkerlist++;
-        walkerCommands.createWalkerList(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (
-      interaction.commandName === "createsettlerslist" ||
-      interaction.commandName === "createalliancelist" ||
-      interaction.commandName === "createenemylist"
-    ) {
-      if (
-        interaction.member.permissions.has("ADMINISTRATOR") ||
-        (await clanPermissions.userHasPermissions(
-          interaction.guildId,
-          interaction.member.id,
-          "diplomacy"
-        ))
-      ) {
-        clanCommands.createDiplomacyList(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (interaction.commandName === "skilltree") {
-      stats.skilltree++;
-      techCommands.getWhoHasLearntIt(interaction);
-    } else if (interaction.commandName === "learned") {
-      stats.learned++;
-      techCommands.addTech(interaction);
+    if (interaction.isAutocomplete()) {
+      autocompleteController.router(interaction);
+      return;
     } else if (interaction.isButton()) {
-      if (interaction.customId == "updateWalkerList") {
-        await interaction.deferUpdate();
-        walkerCommands.updateWalkerList(interaction);
-      } else if (interaction.customId.includes("updateDiplomacyList-")) {
-        await interaction.deferUpdate();
-        clanCommands.updateDiplomacyList(interaction);
-      }
+      buttonController.router(interaction);
+      return;
+    } else if (interaction.isCommand()) {
+      commandController.router(interaction);
+      return;
     }
   } catch (e) {
     logger.error(e);
@@ -374,12 +152,6 @@ client.on("messageCreate", (msg) => {
         } else if (command === "locraft") {
           stats.locraft++;
           itemsCommands.locraft(msg, args, prefix);
-        } else if (command === "lorecipe") {
-          stats.lorecipe++;
-          itemsCommands.lorecipe(msg, args, prefix);
-        } else if (command === "tradesearch") {
-          stats.tradesearch++;
-          tradesCommands.tradesearch(msg, prefix);
         } else if (command === "locommands" || command === "lohelp") {
           stats.lohelp++;
           genericCommands.lohelp(msg, prefix);
@@ -396,7 +168,9 @@ client.on("messageCreate", (msg) => {
           command === "loconfig" ||
           command === "linkserver" ||
           command === "loconfigupdate" ||
-          command === "createtrade"
+          command === "createtrade" ||
+          command === "tradesearch" ||
+          command === "lorecipe"
         ) {
           stats.obsolete++;
           genericCommands.obsoleteCommand(msg);

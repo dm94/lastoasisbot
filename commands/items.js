@@ -97,8 +97,6 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
     });
   }
 
-  console.log(itemsfilters);
-
   itemsfilters.forEach((item) => {
     if (itemsSent < 5) {
       itemsSent++;

@@ -29,6 +29,7 @@ module.exports = {
         .setName("type")
         .setDescription("Walker Type (Dinghy, Hornet ....)")
         .setRequired(false)
+        .setAutocomplete(true)
     )
     .addStringOption((option) =>
       option
