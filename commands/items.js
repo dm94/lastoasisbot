@@ -86,13 +86,13 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
   const items = await itemsCommands.getAllItems();
   let itemsfilters = items.filter((it) => {
     return itemName.split(" ").every((internalItem) => {
-      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+      return it.name.toLowerCase().includes(internalItem.toLowerCase());
     });
   });
   if (itemsfilters.length < 1) {
     itemsfilters = items.filter((it) => {
       return itemName.split(" ").some((internalItem) => {
-        return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+        return it.name.toLowerCase().includes(internalItem.toLowerCase());
       });
     });
   }
@@ -200,7 +200,7 @@ itemsCommands.getItem = async (itemName) => {
   }
   return allItems.find((it) => {
     return itemName.split(" ").every((internalItem) => {
-      return it.name.toLowerCase().indexOf(internalItem.toLowerCase()) !== -1;
+      return it.name.toLowerCase().includes(internalItem.toLowerCase());
     });
   });
 };

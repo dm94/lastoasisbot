@@ -32,7 +32,7 @@ controller.craft = async (interaction) => {
     filtered = items
       .filter((it) => {
         return focusedOption.value.split(" ").every((word) => {
-          return it.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
+          return it.name.toLowerCase().includes(word.toLowerCase());
         });
       })
       .map((item) => {
@@ -54,9 +54,9 @@ controller.walkersearch = async (interaction) => {
       const allItems = await itemController.getAllItems();
       if (allItems) {
         let onlyWalkers = allItems
-          .filter((item) => item.name.includes("Walker Body"))
+          .filter((item) => item.category === "Walkers")
           .map((item) => {
-            return item.name.replace("Walker Body", "").trim();
+            return item.name.replace("Walker", "").trim();
           });
 
         if (focusedOption.name === "type") {
@@ -66,9 +66,8 @@ controller.walkersearch = async (interaction) => {
     }
   }
 
-  const filtered = walkerTypes.filter(
-    (choice) =>
-      choice.toLowerCase().indexOf(focusedOption.value.toLowerCase()) !== -1
+  const filtered = walkerTypes.filter((choice) =>
+    choice.toLowerCase().includes(focusedOption.value.toLowerCase())
   );
 
   await interaction.respond(
