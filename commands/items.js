@@ -185,6 +185,7 @@ itemsCommands.getAllItems = async () => {
     )
       .then((response) => {
         allItems = response.data;
+        allItems = allItems.filter((it) => it.crafting);
         itemsLastCheck = Date.now();
         return allItems;
       })
