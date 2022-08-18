@@ -10,16 +10,18 @@ module.exports = {
       option
         .setName("languaje")
         .setDescription("Bot Languaje")
-        .addChoice("EN", "en")
-        .addChoice("ES", "es")
-        .addChoice("DE", "de")
-        .addChoice("FR", "fr")
-        .addChoice("IT", "it")
-        .addChoice("JA", "ja")
-        .addChoice("PL", "pl")
-        .addChoice("PT", "pt")
-        .addChoice("RU", "ru")
-        .addChoice("ZH", "zh")
+        .addChoices(
+          { name: "EN", value: "en" },
+          { name: "ES", value: "es" },
+          { name: "DE", value: "de" },
+          { name: "FR", value: "fr" },
+          { name: "IT", value: "it" },
+          { name: "JA", value: "ja" },
+          { name: "PL", value: "pl" },
+          { name: "PT", value: "pt" },
+          { name: "RU", value: "ru" },
+          { name: "ZH", value: "zh" }
+        )
         .setRequired(true)
     )
     .addBooleanOption((option) =>

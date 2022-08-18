@@ -44,9 +44,12 @@ module.exports = {
       option
         .setName("use")
         .setDescription("Filter by use")
-        .addChoice("PVP", "pvp")
-        .addChoice("Farming", "farming")
-        .addChoice("Personal", "personal")
+        .addChoices(
+          { name: "PVP", value: "pvp" },
+          { name: "Farming", value: "farming" },
+          { name: "Personal", value: "personal" },
+          { name: "RAM", value: "RAM" }
+        )
         .setRequired(false)
     )
     .addStringOption((option) =>

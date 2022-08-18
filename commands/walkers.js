@@ -1,47 +1,17 @@
 const walkerCommands = {};
 
 require("dotenv").config();
-const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
 const othersFunctions = require("../helpers/others");
 const logger = require("../helpers/logger");
 
-walkerCommands.walkersearch = async (msg, prefix) => {
-  let args = msg.content.slice(prefix.length).trim().split(" -");
-  let page = 1;
-  let params = {
-    discordid: msg.guild.id,
-  };
-
-  args.forEach((arg) => {
-    if (arg.startsWith("page=")) {
-      try {
-        page = parseInt(arg.slice(6));
-      } catch (error) {}
-    } else if (arg.startsWith("name=")) {
-      params.name = arg.slice(6).trim();
-    } else if (arg.startsWith("owner=")) {
-      params.owner = arg.slice(7).trim();
-    } else if (arg.startsWith("lastuser=")) {
-      params.lastuser = arg.slice(10).trim();
-    } else if (arg.startsWith("desc=")) {
-      params.desc = arg.slice(6).trim();
-    } else if (arg.startsWith("type=")) {
-      params.type = arg.slice(6).trim();
-    } else if (arg.startsWith("ready")) {
-      params.ready = 1;
-    } else if (arg.startsWith("pvp")) {
-      params.use = "pvp";
-    } else if (arg.startsWith("farming")) {
-      params.use = "farming";
-    }
-  });
-
-  params.page = page;
-
-  walkerCommands.walkerSearchWithParams(msg.channel, params);
-};
-
-walkerCommands.walkerSearchWithParams = async (channel, params) => {
+walkerCommands.walkerSearchWithParams = async (interaction, params) => {
+  await interaction.deferReply();
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/bot/walkers",
@@ -53,36 +23,34 @@ walkerCommands.walkerSearchWithParams = async (channel, params) => {
   if (response.success) {
     if (response.data.length > 0) {
       let embeds = walkerCommands.getWalkersEmbed(response.data);
-      othersFunctions.sendChannelData(channel, { embeds: embeds });
+      await interaction
+        .editReply({
+          content: "Walker List",
+          embeds: embeds,
+        })
+        .catch((error) => console.error(error));
     } else {
-      othersFunctions.sendChannelMessage(channel, "No walker found");
+      await interaction
+        .editReply({
+          content: "No walker found",
+        })
+        .catch((error) => console.error(error));
     }
   } else {
-    othersFunctions.sendChannelMessage(channel, response.data);
+    await interaction
+      .editReply({
+        content: response.data,
+      })
+      .catch((error) => console.error(error));
   }
 };
 
-walkerCommands.lowalkerinfo = async (msg, args, prefix) => {
-  if (args.length != 1) {
-    msg.reply(
-      "To view the information of a walker write " +
-        prefix +
-        "lowalkerinfo id \n```Example: " +
-        prefix +
-        "lowalkerinfo 721480717```"
-    );
-  } else {
-    let walkerId = 0;
-    try {
-      walkerId = parseInt(args[0]);
-    } catch (error) {}
-
-    walkerCommands.sendWalkerInfoFromID(msg.channel, walkerId, msg.guild.id);
-  }
-};
-
-walkerCommands.sendWalkerInfoFromID = async (channel, walkerId, guildId) => {
-  walkerCommands.walkerSearchWithParams(channel, {
+walkerCommands.sendWalkerInfoFromID = async (
+  interaction,
+  walkerId,
+  guildId
+) => {
+  walkerCommands.walkerSearchWithParams(interaction, {
     discordid: guildId,
     walkerid: walkerId,
   });
@@ -93,35 +61,42 @@ walkerCommands.getWalkersEmbed = (walkers) => {
   walkers.forEach((walker) => {
     if (walker != null) {
       let date = new Date(walker.datelastuse);
-      let embed = new MessageEmbed().setColor("#58ACFA").setTitle(walker.name);
-      embed.addField("Walker ID", walker.walkerID.toString(), true);
-      embed.addField("Last User", walker.lastUser, true);
-      embed.addField(
-        "Last use",
-        date.getDate() +
+      let embed = new EmbedBuilder().setColor("#58ACFA").setTitle(walker.name);
+      let fields = [];
+      fields.push({
+        name: "Walker ID",
+        value: walker.walkerID.toString(),
+        inline: true,
+      });
+      fields.push({ name: "Last User", value: walker.lastUser, inline: true });
+      fields.push({
+        name: "Last use",
+        value:
+          date.getDate() +
           "-" +
           (parseInt(date.getMonth()) + 1) +
           "-" +
           date.getFullYear(),
-        true
-      );
+        inline: true,
+      });
       if (walker.ownerUser != null && walker.ownerUser) {
-        embed.addField("Owner", walker.ownerUser, true);
+        fields.push({ name: "Owner", value: walker.ownerUser, inline: true });
       }
       if (walker.type != null && walker.type) {
-        embed.addField("Type", walker.type, true);
+        fields.push({ name: "Type", value: walker.type, inline: true });
       }
       if (walker.walker_use != null && walker.walker_use) {
-        embed.addField("Use", walker.walker_use, true);
+        fields.push({ name: "Use", value: walker.walker_use, inline: true });
       }
       if (walker.description != null && walker.description) {
-        embed.addField("Description", walker.description);
+        fields.push({ name: "Description", value: walker.description });
       }
       if (walker.isReady != null && walker.isReady == "1") {
-        embed.addField("Ready", ":white_check_mark:");
+        fields.push({ name: "Ready", value: ":white_check_mark:" });
       } else {
-        embed.addField("Ready", ":x:");
+        fields.push({ name: "Ready", value: ":x:" });
       }
+      embed.addFields(fields);
       embedList.push(embed);
     }
   });
@@ -129,42 +104,6 @@ walkerCommands.getWalkersEmbed = (walkers) => {
     embedList = embedList.splice(0, 10);
   }
   return embedList;
-};
-
-walkerCommands.sendWalkerInfo = (channel, walker) => {
-  if (walker != null) {
-    let date = new Date(walker.datelastuse);
-    let message = new MessageEmbed().setColor("#58ACFA").setTitle(walker.name);
-    message.addField("Walker ID", walker.walkerID.toString(), true);
-    message.addField("Last User", walker.lastUser, true);
-    message.addField(
-      "Last use",
-      date.getDate() +
-        "-" +
-        (parseInt(date.getMonth()) + 1) +
-        "-" +
-        date.getFullYear(),
-      true
-    );
-    if (walker.ownerUser != null && walker.ownerUser) {
-      message.addField("Owner", walker.ownerUser, true);
-    }
-    if (walker.type != null && walker.type) {
-      message.addField("Type", walker.type, true);
-    }
-    if (walker.walker_use != null && walker.walker_use) {
-      message.addField("Use", walker.walker_use, true);
-    }
-    if (walker.description != null && walker.description) {
-      message.addField("Description", walker.description);
-    }
-    if (walker.isReady != null && walker.isReady == "1") {
-      message.addField("Ready", ":white_check_mark:");
-    } else {
-      message.addField("Ready", ":x:");
-    }
-    othersFunctions.sendChannelEmbed(channel, message);
-  }
 };
 
 walkerCommands.setnotreadypvp = async (walkerid, msg) => {
@@ -261,7 +200,7 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
 };
 
 walkerCommands.getWalkerListMessage = async (guildId) => {
-  let message = new MessageEmbed()
+  let message = new EmbedBuilder()
     .setColor("#58ACFA")
     .setTitle("Walker Ready List")
     .setTimestamp();
@@ -280,6 +219,7 @@ walkerCommands.getWalkerListMessage = async (guildId) => {
 
   if (response.success) {
     if (response.data.length > 0) {
+      let fields = [];
       response.data.forEach((walker) => {
         let date = new Date(walker.datelastuse);
         let type = "Unknown";
@@ -287,23 +227,23 @@ walkerCommands.getWalkerListMessage = async (guildId) => {
         if (walker.type != null && walker.type) {
           type = walker.type;
         }
-        message.addField(
-          walker.name,
-          `Type: ${type} - Last Use: ${
+        fields.push({
+          name: walker.name,
+          value: `Type: ${type} - Last Use: ${
             date.getDate() +
             "-" +
             (parseInt(date.getMonth()) + 1) +
             "-" +
             date.getFullYear()
           } `,
-          false
-        );
+        });
       });
+      message.addFields(fields);
     } else {
-      message.addField("Walkers", "No walkers");
+      message.addFields({ name: "Walkers", value: "No walkers" });
     }
   } else {
-    message.addField("Walkers", "No walkers");
+    message.addFields({ name: "Walkers", value: "No walkers" });
   }
 
   return message;
@@ -329,11 +269,11 @@ walkerCommands.createWalkerList = async (interaction) => {
   await interaction.deferReply();
   let embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
 
-  const row = new MessageActionRow().addComponents(
-    new MessageButton()
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
       .setCustomId("updateWalkerList")
       .setLabel("Update")
-      .setStyle("PRIMARY")
+      .setStyle(ButtonStyle.Primary)
   );
 
   await interaction

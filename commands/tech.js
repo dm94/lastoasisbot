@@ -1,6 +1,7 @@
 const commands = {};
 
-const Discord = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
+
 const itemsFunctions = require("../commands/items");
 const othersFunctions = require("../helpers/others");
 const logger = require("../helpers/logger");
@@ -26,7 +27,7 @@ commands.getWhoHasLearntIt = async (interaction) => {
     let response = await othersFunctions.apiRequest(options);
     if (response.success) {
       if (Array.isArray(response.data) && response.data.length > 0) {
-        let message = new Discord.MessageEmbed()
+        let message = new EmbedBuilder()
           .setColor("#3A78EA")
           .setTitle(item.name)
           .setDescription("These are the people who have learned it")
@@ -35,15 +36,20 @@ commands.getWhoHasLearntIt = async (interaction) => {
               encodeURI(item.name.toLowerCase())
           );
         let respondeLenght = response.data.length;
+        let learnedList = [];
         for (let i = 0; i < respondeLenght; i++) {
           if (response.data[i].discordtag != null) {
-            message.addField("Discord", response.data[i].discordtag, false);
+            learnedList.push({
+              name: "Discord",
+              value: response.data[i].discordtag,
+            });
           }
         }
+        message.addFields(learnedList);
         await interaction
           .editReply({
-            content: message,
-            ephemeral: true,
+            embeds: [message],
+            ephemeral: false,
           })
           .catch((error) => logger.error(error));
       } else {

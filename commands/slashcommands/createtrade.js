@@ -14,21 +14,25 @@ module.exports = {
       option
         .setName("type")
         .setDescription("Type of trade")
-        .addChoice("Demand", "Demand")
-        .addChoice("Supply", "Supply")
+        .addChoices(
+          { name: "Demand", value: "Demand" },
+          { name: "Supply", value: "Supply" }
+        )
         .setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("region")
         .setDescription("Region")
-        .addChoice("EU", "EU")
-        .addChoice("NA-EAST", "NA-EAST")
-        .addChoice("NA-WEST", "NA-WEST")
-        .addChoice("SA", "SA")
-        .addChoice("SEA", "SEA")
-        .addChoice("OCE", "OCE")
-        .addChoice("RUSSIA", "RUSSIA")
+        .addChoices(
+          { name: "EU", value: "EU" },
+          { name: "NA-EAST", value: "NA-EAST" },
+          { name: "NA-WEST", value: "NA-WEST" },
+          { name: "SA", value: "SA" },
+          { name: "SEA", value: "SEA" },
+          { name: "OCE", value: "OCE" },
+          { name: "RUSSIA", value: "RUSSIA" }
+        )
         .setRequired(true)
     )
     .addIntegerOption((option) =>

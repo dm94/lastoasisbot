@@ -1,54 +1,15 @@
 const itemsCommands = {};
-const logger = require("../helpers/logger");
-const Discord = require("discord.js");
+
+const { EmbedBuilder } = require("discord.js");
 const Axios = require("axios");
+
+const logger = require("../helpers/logger");
 const othersFunctions = require("../helpers/others");
 let itemsLastCheck = 0;
 let allItems = null;
 
-itemsCommands.locraft = (msg, args, prefix) => {
-  logger.info(msg.content);
-  if (!args.length) {
-    return msg.reply(
-      "You have to write what you want to craft and if you want the quantity to make. For more info write " +
-        prefix +
-        "locommands"
-    );
-  }
-  let multiplier = 1;
-  if (/(\d+)/.test(msg.content)) {
-    multiplier = msg.content.match(/(\d+)/)[1];
-  }
-  let item = msg.content.slice(msg.content.indexOf("locraft") + 7).trim();
-  if (multiplier != 1) {
-    item = msg.content
-      .slice(msg.content.indexOf(multiplier) + multiplier.length)
-      .trim();
-  }
-  try {
-    itemsCommands.getNecessaryMaterials(
-      msg.channel,
-      item.trim().toLowerCase(),
-      multiplier
-    );
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-itemsCommands.lorecipe = async (msg, args, prefix) => {
-  if (!args.length) {
-    return msg.reply(
-      "You have to add the recipe code. Example: " +
-        prefix +
-        "lorecipe 616b3570c66aaa1b355a8fd2"
-    );
-  }
-  let code = msg.content.slice(msg.content.indexOf("lorecipe") + 8).trim();
-  itemsCommands.sendRecipe(msg.channel, code);
-};
-
-itemsCommands.sendRecipe = async (channel, code) => {
+itemsCommands.sendRecipe = async (interaction, code) => {
+  await interaction.deferReply();
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/recipes/" + code,
@@ -59,30 +20,52 @@ itemsCommands.sendRecipe = async (channel, code) => {
     if (response.data.items != null) {
       let itemsResponse = JSON.parse(response.data.items);
       const items = await itemsCommands.getAllItems();
+      let embedList = [];
       itemsResponse.forEach((item) => {
         let itemData = items.find(
           (data) => item.name != null && data.name === item.name
         );
         if (itemData) {
-          sendItemInfo(channel, itemData, item.count ? item.count : 1);
+          if (embedList.length < 10) {
+            embedList.push(
+              itemsCommands.getItemInfo(itemData, item.count ? item.count : 1)
+            );
+          }
         }
       });
+      await interaction
+        .editReply({
+          embeds: embedList,
+        })
+        .catch((error) => logger.error(error));
     } else {
-      othersFunctions.sendChannelMessage(channel, "No items found");
+      await interaction
+        .editReply({
+          content: "No items found",
+        })
+        .catch((error) => logger.error(error));
     }
   } else {
-    othersFunctions.sendChannelMessage(channel, response.data);
+    await interaction
+      .editReply({
+        content: response.data,
+      })
+      .catch((error) => logger.error(error));
   }
 };
 
-itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
+itemsCommands.getNecessaryMaterials = async (
+  interaction,
+  itemName,
+  multiplier
+) => {
+  await interaction.deferReply();
   if (itemName.length <= 0) {
     return;
   }
   if (!multiplier) {
     multiplier = 1;
   }
-  let itemsSent = 0;
   const items = await itemsCommands.getAllItems();
   let itemsfilters = items.filter((it) => {
     return itemName.split(" ").every((internalItem) => {
@@ -97,15 +80,28 @@ itemsCommands.getNecessaryMaterials = async (channel, itemName, multiplier) => {
     });
   }
 
-  itemsfilters.forEach((item) => {
-    if (itemsSent < 5) {
-      itemsSent++;
-      sendItemInfo(channel, item, multiplier);
-    }
-  });
+  if (itemsfilters.length > 0) {
+    let embedList = [];
+    itemsfilters.forEach((item) => {
+      if (embedList.length < 10) {
+        embedList.push(itemsCommands.getItemInfo(item, multiplier));
+      }
+    });
+    await interaction
+      .editReply({
+        embeds: embedList,
+      })
+      .catch((error) => logger.error(error));
+  } else {
+    await interaction
+      .editReply({
+        content: "No items found",
+      })
+      .catch((error) => logger.error(error));
+  }
 };
 
-function sendItemInfo(channel, item, multiplier) {
+itemsCommands.getItemInfo = (item, multiplier) => {
   let name = item.name;
   if (name.includes("Tier 1")) {
     name = "Walker Upgrade Wood";
@@ -142,7 +138,7 @@ function sendItemInfo(channel, item, multiplier) {
   }
   name = name.replaceAll("Body", "");
 
-  let message = new Discord.MessageEmbed()
+  let message = new EmbedBuilder()
     .setColor("#FFE400")
     .setTitle(multiplier + "x " + item.name)
     .setDescription("Here are the necessary materials")
@@ -155,26 +151,28 @@ function sendItemInfo(channel, item, multiplier) {
     );
   let ingredie = item.crafting;
   if (ingredie != null) {
+    let allIngrediends = [];
     for (var i = 0; i < ingredie.length; i++) {
       let output = ingredie[i].output != null ? ingredie[i].output : 1;
       let le = ingredie[i].ingredients;
       for (var ing in le) {
         areItems = true;
-        message.addField(
-          le[ing].name,
-          ((le[ing].count / output) * multiplier).toString(),
-          true
-        );
+        allIngrediends.push({
+          name: le[ing].name,
+          value: ((le[ing].count / output) * multiplier).toString(),
+          inline: true,
+        });
       }
     }
+    message.addFields(allIngrediends);
   }
   if (item.cost != null) {
     message.setFooter({
       text: "Cost: " + item.cost.count + " " + item.cost.name,
     });
   }
-  othersFunctions.sendChannelEmbed(channel, message);
-}
+  return message;
+};
 
 itemsCommands.getAllItems = async () => {
   if (allItems != null && itemsLastCheck >= Date.now() - 3600000) {

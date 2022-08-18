@@ -1,40 +1,13 @@
 const commands = {};
 
-const Discord = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
+
 const othersFunctions = require("../helpers/others");
 const itemsFunctions = require("../commands/items");
 const logger = require("../helpers/logger");
 
-commands.tradesearch = async (msg, prefix) => {
-  let args = msg.content.slice(prefix.length).trim().split(" -");
-  let page = 1;
-  let params = {
-    discordid: msg.author.id,
-  };
-
-  args.forEach((arg) => {
-    if (arg.startsWith("page=")) {
-      try {
-        page = parseInt(arg.slice(6));
-      } catch (error) {}
-    } else if (arg.startsWith("type=")) {
-      let data = arg.slice(5).trim().toLowerCase();
-      if (data == "supply" || data == "demand") {
-        params.type = data;
-      }
-    } else if (arg.startsWith("resource=")) {
-      params.resource = arg.slice(9).trim();
-    } else if (arg.startsWith("region=")) {
-      params.region = arg.slice(7).trim();
-    }
-  });
-
-  params.page = page;
-
-  commands.tradeSearchWithParams(msg.channel, params);
-};
-
-commands.tradeSearchWithParams = async (channel, params) => {
+commands.tradeSearchWithParams = async (interaction, params) => {
+  await interaction.deferReply();
   const options = {
     method: "get",
     url: process.env.APP_API_URL + "/trades",
@@ -44,19 +17,43 @@ commands.tradeSearchWithParams = async (channel, params) => {
   let response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
+    let embedList = [];
     if (Array.isArray(response.data)) {
       if (response.data.length < 1) {
-        othersFunctions.sendChannelMessage(
-          channel,
-          "No trades with that filters"
-        );
+        await interaction
+          .editReply({
+            content: "No trades with that filters",
+          })
+          .catch((error) => console.error(error));
+        return;
+      } else {
+        response.data.forEach((trade) => {
+          if (embedList.length < 10) {
+            embedList.push(commands.getTradeInfo(trade));
+          }
+        });
+        await interaction
+          .editReply({
+            content: "Trade List",
+            embeds: embedList,
+          })
+          .catch((error) => console.error(error));
         return;
       }
-      response.data.forEach((trade) => sentTradeinfo(channel, trade));
     }
   } else {
-    othersFunctions.sendChannelMessage(channel, response.data);
+    await interaction
+      .editReply({
+        content: response.data,
+      })
+      .catch((error) => console.error(error));
+    return;
   }
+  await interaction
+    .editReply({
+      content: "No trades with that filters",
+    })
+    .catch((error) => console.error(error));
 };
 
 commands.createtrade = async (interaction) => {
@@ -123,23 +120,46 @@ commands.createtrade = async (interaction) => {
   }
 };
 
-function sentTradeinfo(channel, trade) {
-  let message = new Discord.MessageEmbed()
+commands.getTradeInfo = (trade) => {
+  let message = new EmbedBuilder()
     .setColor("#FFE400")
     .setTitle(trade.type + " // " + trade.region);
 
+  let fields = [];
+
+  if (trade.resource != null) {
+    fields.push({
+      name: "Item",
+      value: trade.resource,
+      inline: false,
+    });
+  }
+
   if (trade.price != null && trade.price != 0) {
-    message.addField("Price in flots", trade.price.toString(), true);
+    fields.push({
+      name: "Price in flots",
+      value: trade.price.toString(),
+      inline: true,
+    });
   }
   if (trade.amount != null && trade.amount != 0) {
-    message.addField("Quantity", trade.amount.toString(), true);
+    fields.push({
+      name: "Quantity",
+      value: trade.amount.toString(),
+      inline: true,
+    });
   }
   if (trade.quality != null && trade.quality != 0) {
-    message.addField("Quality", trade.quality.toString(), true);
+    fields.push({
+      name: "Quality",
+      value: trade.quality.toString(),
+      inline: true,
+    });
   }
+  message.addFields(fields);
   message.setFooter({ text: "Discord: " + trade.discordtag });
 
-  othersFunctions.sendChannelEmbed(channel, message);
-}
+  return message;
+};
 
 module.exports = commands;

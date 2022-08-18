@@ -7,10 +7,6 @@ controller.sendChannelMessage = (channel, text) => {
   controller.sendChannelData(channel, text);
 };
 
-controller.sendChannelEmbed = (channel, embed) => {
-  controller.sendChannelData(channel, { embeds: [embed] });
-};
-
 controller.sendChannelData = (channel, data) => {
   channel.send(data).catch((error) => {
     logger.error(error);

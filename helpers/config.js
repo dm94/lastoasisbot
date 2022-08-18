@@ -1,5 +1,5 @@
 const controller = {};
-const Discord = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 require("dotenv").config();
 const othersFunctions = require("./others");
 const discordlists = require("./discordlists");
@@ -37,38 +37,42 @@ controller.getConfigurations = async () => {
 controller.sendConfigInfo = async (interaction, guildConfig) => {
   await interaction.deferReply({ ephemeral: true });
 
-  let embed = new Discord.MessageEmbed()
-    .setColor("#58ACFA")
-    .setTitle("Bot Config");
+  let embed = new EmbedBuilder().setColor("#58ACFA").setTitle("Bot Config");
 
-  embed.addField("Language", guildConfig.botlanguaje, true);
-  embed.addField(
-    "Read discord clan log",
-    guildConfig.readclanlog && guildConfig.readclanlog != "0"
-      ? ":white_check_mark:"
-      : ":x:",
-    true
-  );
-  embed.addField(
-    "Automatic kick members from the clan",
-    guildConfig.automatickick && guildConfig.automatickick != "0"
-      ? ":white_check_mark:"
-      : ":x:",
-    false
-  );
-  embed.addField(
-    "Automatically if a PVP walker is used it is marked as not ready.",
-    guildConfig.setnotreadypvp && guildConfig.setnotreadypvp != "0"
-      ? ":white_check_mark:"
-      : ":x:",
-    false
-  );
-  embed.addField(
-    "Warns if someone brings out a walker they don't own.",
-    guildConfig.walkeralarm && guildConfig.walkeralarm != "0"
-      ? ":white_check_mark:"
-      : ":x:",
-    false
+  embed.addFields(
+    { name: "Language", value: guildConfig.botlanguaje, inline: true },
+    {
+      name: "Read discord clan log",
+      value:
+        guildConfig.readclanlog && guildConfig.readclanlog != "0"
+          ? ":white_check_mark:"
+          : ":x:",
+      inline: true,
+    },
+    {
+      name: "Automatic kick members from the clan",
+      value:
+        guildConfig.automatickick && guildConfig.automatickick != "0"
+          ? ":white_check_mark:"
+          : ":x:",
+      inline: true,
+    },
+    {
+      name: "Automatically if a PVP walker is used it is marked as not ready.",
+      value:
+        guildConfig.setnotreadypvp && guildConfig.setnotreadypvp != "0"
+          ? ":white_check_mark:"
+          : ":x:",
+      inline: false,
+    },
+    {
+      name: "Warns if someone brings out a walker they don't own.",
+      value:
+        guildConfig.walkeralarm && guildConfig.walkeralarm != "0"
+          ? ":white_check_mark:"
+          : ":x:",
+      inline: false,
+    }
   );
 
   await interaction

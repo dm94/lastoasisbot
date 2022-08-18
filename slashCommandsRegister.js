@@ -12,6 +12,7 @@ const commandFiles = fs
 
 for (const file of commandFiles) {
   const command = require(`./commands/slashcommands/${file}`);
+  console.info("/" + command.data.name + " = " + command.data.description);
   commands.push(command.data.toJSON());
 }
 

@@ -1,6 +1,11 @@
 const clanCommands = {};
 
-const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
 require("dotenv").config();
 const othersFunctions = require("../helpers/others");
 const logger = require("../helpers/logger");
@@ -77,11 +82,11 @@ clanCommands.createDiplomacyList = async (interaction) => {
     diplomacyType
   );
 
-  const row = new MessageActionRow().addComponents(
-    new MessageButton()
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
       .setCustomId("updateDiplomacyList-" + diplomacyType)
       .setLabel("Update")
-      .setStyle("PRIMARY")
+      .setStyle(ButtonStyle.Primary)
   );
 
   message.components = [row];
@@ -141,7 +146,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
   }
 
   embedsList.push(
-    new MessageEmbed().setColor(color).setTitle(title).setTimestamp()
+    new EmbedBuilder().setColor(color).setTitle(title).setTimestamp()
   );
 
   const options = {
@@ -166,7 +171,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
           extraClans.push(name);
         } else {
           embedsList.push(
-            new MessageEmbed().setColor(flagcolor).setAuthor({
+            new EmbedBuilder().setColor(flagcolor).setAuthor({
               name: name,
               iconURL: `https://resources.stiletto.live/symbols/${symbol}.png`,
             })
@@ -174,7 +179,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
         }
       });
       if (extraClans.length > 0) {
-        let extraEmbed = new MessageEmbed()
+        let extraEmbed = new EmbedBuilder()
           .setColor(color)
           .setTitle("More clans");
         let embedText = "";
@@ -186,7 +191,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
       }
     } else {
       embedsList.push(
-        new MessageEmbed()
+        new EmbedBuilder()
           .setColor(color)
           .setTitle(
             "Diplomacy is empty. You can manage it from here: https://www.stiletto.live/diplomacy"
@@ -195,7 +200,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
     }
   } else {
     embedsList.push(
-      new MessageEmbed()
+      new EmbedBuilder()
         .setColor(color)
         .setTitle(
           "Diplomacy is empty. You can manage it from here: https://www.stiletto.live/diplomacy"

@@ -20,21 +20,25 @@ module.exports = {
       option
         .setName("type")
         .setDescription("Filter by type")
-        .addChoice("Demand", "demand")
-        .addChoice("Supply", "supply")
+        .addChoices(
+          { name: "Demand", value: "Demand" },
+          { name: "Supply", value: "Supply" }
+        )
         .setRequired(false)
     )
     .addStringOption((option) =>
       option
         .setName("region")
         .setDescription("Filter by region")
-        .addChoice("EU", "EU")
-        .addChoice("NA-EAST", "NA-EAST")
-        .addChoice("NA-WEST", "NA-WEST")
-        .addChoice("SA", "SA")
-        .addChoice("SEA", "SEA")
-        .addChoice("OCE", "OCE")
-        .addChoice("RUSSIA", "RUSSIA")
+        .addChoices(
+          { name: "EU", value: "EU" },
+          { name: "NA-EAST", value: "NA-EAST" },
+          { name: "NA-WEST", value: "NA-WEST" },
+          { name: "SA", value: "SA" },
+          { name: "SEA", value: "SEA" },
+          { name: "OCE", value: "OCE" },
+          { name: "RUSSIA", value: "RUSSIA" }
+        )
         .setRequired(false)
     ),
 };

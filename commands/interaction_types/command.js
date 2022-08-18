@@ -3,6 +3,7 @@ const clanCommands = require("../clans");
 const techCommands = require("../tech");
 const genericCommands = require("../generic");
 const itemsCommands = require("../items");
+const tradesCommands = require("../trades");
 const clanPermissions = require("../../helpers/permissions");
 const configuration = require("../../helpers/config");
 const logger = require("../../helpers/logger");
@@ -11,10 +12,10 @@ const defaultPrefix = process.env.DISCORD_PREFIX;
 
 const controller = {};
 
-controller.router = async (interaction) => {
+controller.router = async (interaction, client) => {
   try {
     if (interaction.commandName === "lohelp") {
-      await interaction.reply(genericCommands.getHelpContent(defaultPrefix));
+      await interaction.reply(genericCommands.getHelpContent());
     } else if (interaction.commandName === "vote") {
       await interaction.reply(
         "Help us grow by voting here: https://top.gg/bot/" +
@@ -23,25 +24,22 @@ controller.router = async (interaction) => {
     } else if (interaction.commandName === "loinfo") {
       await interaction.reply({ embeds: [genericCommands.getInfoContent()] });
     } else if (interaction.commandName === "craft") {
-      await interaction.reply("Looking for items");
       itemsCommands.getNecessaryMaterials(
-        interaction.channel,
+        interaction,
         interaction.options.getString("item").trim().toLowerCase(),
         interaction.options.getInteger("quantity")
           ? interaction.options.getInteger("quantity")
           : 1
       );
     } else if (interaction.commandName === "recipe") {
-      await interaction.reply("Looking for items");
       itemsCommands.sendRecipe(
-        interaction.channel,
+        interaction,
         interaction.options.getString("code").trim()
       );
     } else if (interaction.commandName === "walkerinfo") {
       let walkerId = interaction.options.getString("id").trim();
-      await interaction.reply("Looking for the walker with id: " + walkerId);
       walkerCommands.sendWalkerInfoFromID(
-        interaction.channel,
+        interaction,
         walkerId,
         interaction.guildId
       );
@@ -74,8 +72,7 @@ controller.router = async (interaction) => {
       params.walkerid = interaction.options.getString("id")
         ? interaction.options.getString("id")
         : undefined;
-      await interaction.reply("Looking for walkers...");
-      walkerCommands.walkerSearchWithParams(interaction.channel, params);
+      walkerCommands.walkerSearchWithParams(interaction, params);
     } else if (interaction.commandName === "editwalker") {
       if (await controller.hasPermissions(interaction, "walkers")) {
         walkerCommands.editWalker(interaction);
@@ -100,8 +97,7 @@ controller.router = async (interaction) => {
       params.type = interaction.options.getString("type")
         ? interaction.options.getString("type").trim()
         : undefined;
-      await interaction.reply("Looking for trades...");
-      tradesCommands.tradeSearchWithParams(interaction.channel, params);
+      tradesCommands.tradeSearchWithParams(interaction, params);
     } else if (interaction.commandName === "createtrade") {
       tradesCommands.createtrade(interaction);
     } else if (interaction.commandName === "config") {
@@ -162,6 +158,7 @@ controller.router = async (interaction) => {
       techCommands.addTech(interaction);
     }
   } catch (e) {
+    console.log(e);
     logger.error(e);
   }
 };

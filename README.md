@@ -8,22 +8,24 @@ To add the bot to your discord: https://discord.com/api/oauth2/authorize?client_
 
 Example: https://twitter.com/Dm94Dani/status/1293121001421705216
 
-Currently all commands with ! are deprecated and / must be used.
+With this latest update, all commands are slash commands /
 
-- !locraft = With this command you can see the materials needed to make an object.
-  Example of use: !locraft Barrier Base
-  If you want to see the materials to make 10: !locraft 10x Barrier Base
-- !loinfo = Displays bot information.
-- !lorecipe (code) = Displays the list of recipes for that code
-- !lowalkerinfo (id) = Shows the information of a specific walker
-- !walkersearch = To search for a walker or several walkers, has different filters: -page=, -name=, -owner=, -lastuser=, -ready, -pvp, -farming
-  An example of use: !walkersearch -page=1 -name=walker -ready -pvp
-  This will bring out all the walkers that are called walker are pvp and ready
-- !tradesearch = To perform a search for trades, has different filters: -page=, -type=, -resource=, -region=
-  An example of use: !tradesearch -page=1 -type=demand -type=cattail -region=eu
-- !createtrade = To create a trade, has different parameters: -type=Supply|Demand, -resource=, -region=EU|NA|OCE|RUSSIA|SEA|SA, -quality, -price, -amount
-  An example of use: !createtrade -type=supply -region=eu -resource=bone splinter -quality=100 price=200
-- !skilltree = It will tell you which members of your clan have learned that item.
-  Example of use: !skilltree Desert Mule
-- !learned = Add the item to the list of learned items.
-  Example of use: !learned Desert Mule
+/config = Shows all the info for the bot config (Only for admins or members with permissions)
+/configupdate = To update the bot configuration (Only for admins or members with permissions)
+/craft = With this command you can see the materials needed to make an item
+/createalliancelist = Create a list of allied clans. (Only for admins or members with permissions)
+/createenemylist = Create a list of enemy clans. (Only for admins or members with permissions)
+/createsettlerslist = Generate a list of clans that are settlers or NAPs. (Only for admins or members with permissions)
+/createtrade = To create a trade, has different parameters
+/createwalkerlist = Generates a list of clan walkers that are ready. (Only for admins or members with permissions)
+/editwalker = Edit the walker you want (Only for admins or members with permissions)
+/learned = Add the item to the list of learned items
+/linkserver = Link the discord server to the clan you are in. (Only for admins)
+/lohelp = Replies with commands info
+/loinfo = Bot info
+/recipe = Displays the list of recipes for that code
+/skilltree = Tells you who in your clan has learned that item.
+/tradesearch = To perform a search for trades, has different filters
+/vote = Information for voting and helping the bot
+/walkerinfo = Shows the information of a specific walker
+/walkersearch = To search for a walker or several walkers, has different filters

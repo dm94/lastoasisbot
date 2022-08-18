@@ -1,8 +1,6 @@
 require("dotenv").config();
-const { Client, Intents } = require("discord.js");
-const { Permissions } = require("discord.js");
+const { Client, GatewayIntentBits, InteractionType } = require("discord.js");
 const genericCommands = require("./commands/generic");
-const itemsCommands = require("./commands/items");
 const walkerCommands = require("./commands/walkers");
 const clanCommands = require("./commands/clans");
 const configuration = require("./helpers/config");
@@ -15,20 +13,10 @@ const commandController = require("./commands/interaction_types/command");
 
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_TYPING,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages /*GatewayIntentBits.MessageContent*/,
   ],
 });
-
-let stats = {
-  lowalkerinfo: 0,
-  lowalkersearch: 0,
-  locraft: 0,
-  lohelp: 0,
-  obsolete: 0,
-  loinfo: 0,
-};
 
 client.on("ready", () => {
   logger.info(`Logged in as ${client.user.tag}!`);
@@ -53,14 +41,14 @@ client.on("ready", () => {
 
 client.on("interactionCreate", async (interaction) => {
   try {
-    if (interaction.isAutocomplete()) {
+    if (interaction.type === InteractionType.ApplicationCommandAutocomplete) {
       autocompleteController.router(interaction);
       return;
     } else if (interaction.isButton()) {
       buttonController.router(interaction);
       return;
-    } else if (interaction.isCommand()) {
-      commandController.router(interaction);
+    } else if (interaction.type === InteractionType.ApplicationCommand) {
+      commandController.router(interaction, client);
       return;
     }
   } catch (e) {
@@ -132,33 +120,12 @@ client.on("messageCreate", (msg) => {
           }
         }
 
-        let prefix = defaultPrefix;
+        if (!msg.content.startsWith(defaultPrefix) || msg.author.bot) return;
 
-        if (!msg.content.startsWith(prefix) || msg.author.bot) return;
-
-        const args = msg.content.slice(prefix.length).trim().split(" ");
+        const args = msg.content.slice(defaultPrefix.length).trim().split(" ");
         const command = args.shift().toLowerCase();
 
-        if (command === "lostats" && msg.author.id == "82444319507615744") {
-          msg.channel.send(JSON.stringify(stats)).catch((e) => {
-            console.log(e);
-          });
-        } else if (command === "lowalkerinfo") {
-          stats.lowalkerinfo++;
-          walkerCommands.lowalkerinfo(msg, args, prefix);
-        } else if (command === "walkersearch") {
-          stats.lowalkersearch++;
-          walkerCommands.walkersearch(msg, prefix);
-        } else if (command === "locraft") {
-          stats.locraft++;
-          itemsCommands.locraft(msg, args, prefix);
-        } else if (command === "locommands" || command === "lohelp") {
-          stats.lohelp++;
-          genericCommands.lohelp(msg, prefix);
-        } else if (command === "loinfo") {
-          stats.loinfo++;
-          genericCommands.loinfo(msg);
-        } else if (
+        if (
           command === "lolistwalkers" ||
           command === "lowalkersearchbyname" ||
           command === "lowalkersearchbyowner" ||
@@ -170,9 +137,14 @@ client.on("messageCreate", (msg) => {
           command === "loconfigupdate" ||
           command === "createtrade" ||
           command === "tradesearch" ||
-          command === "lorecipe"
+          command === "lorecipe" ||
+          command === "locraft" ||
+          command === "lowalkerinfo" ||
+          command === "walkersearch" ||
+          command === "locommands" ||
+          command === "lohelp" ||
+          command === "loinfo"
         ) {
-          stats.obsolete++;
           genericCommands.obsoleteCommand(msg);
         }
       } else {
