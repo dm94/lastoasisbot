@@ -45,6 +45,13 @@ module.exports = {
       option
         .setName("quality")
         .setDescription("The quality you sell")
+        .addChoices(
+          { name: "Common", value: 0 },
+          { name: "Uncommon", value: 1 },
+          { name: "Rare", value: 2 },
+          { name: "Epic", value: 3 },
+          { name: "Legendary", value: 4 }
+        )
         .setRequired(false)
     )
     .addIntegerOption((option) =>
