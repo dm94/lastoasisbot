@@ -3,7 +3,7 @@
   "version": "3.6.1",
   "main": "index.js",
   "dependencies": {
-    "@discordjs/rest": "1.0.1",
+    "@discordjs/rest": "1.4.0",
     "axios": "^1.2.1",
     "discord-api-types": "^0.37.2",
     "discord.js": "^14.0.3",
