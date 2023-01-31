@@ -6,7 +6,7 @@ const discordlists = require("./discordlists");
 const logger = require("../helpers/logger");
 
 let lastConfigurationsUpdate = 0;
-let botConfigurations = [];
+const botConfigurations = [];
 
 controller.getConfiguration = (guildID, client) => {
   if (guildID != null) {
@@ -25,7 +25,7 @@ controller.getConfigurations = async () => {
     url: process.env.APP_API_URL + "/bot/config",
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     return response.data;
@@ -37,7 +37,7 @@ controller.getConfigurations = async () => {
 controller.sendConfigInfo = async (interaction, guildConfig) => {
   await interaction.deferReply({ ephemeral: true });
 
-  let embed = new EmbedBuilder().setColor("#58ACFA").setTitle("Bot Config");
+  const embed = new EmbedBuilder().setColor("#58ACFA").setTitle("Bot Config");
 
   embed.addFields(
     { name: "Language", value: guildConfig.botlanguaje, inline: true },
@@ -85,7 +85,7 @@ controller.sendConfigInfo = async (interaction, guildConfig) => {
 
 controller.updateConfig = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
-  let params = {
+  const params = {
     languaje: interaction.options.getString("languaje"),
     clanlog: interaction.options.getBoolean("clanlog"),
     kick: interaction.options.getBoolean("kick"),
@@ -93,7 +93,7 @@ controller.updateConfig = async (interaction) => {
     walkeralarm: interaction.options.getBoolean("walkeralarm"),
   };
 
-  let guildId = interaction.guildId;
+  const guildId = interaction.guildId;
 
   const options = {
     method: "put",
@@ -101,7 +101,7 @@ controller.updateConfig = async (interaction) => {
     params: params,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
   if (response.success) {
     botConfigurations[guildId] = {
       botlanguaje: params.languaje,
@@ -127,7 +127,7 @@ controller.updateConfig = async (interaction) => {
 };
 
 controller.createConfiguration = async (guildId) => {
-  let params = {
+  const params = {
     languaje: "en",
     clanlog: true,
     kick: false,
@@ -152,7 +152,7 @@ controller.createConfiguration = async (guildId) => {
 
 controller.updateConfigurations = async (client) => {
   if (client && client.guilds && client.guilds.cache) {
-    let allConfigurations = await controller.getConfigurations();
+    const allConfigurations = await controller.getConfigurations();
     client.guilds.cache.forEach((guild) => {
       let config = null;
       if (allConfigurations) {
@@ -166,7 +166,7 @@ controller.updateConfigurations = async (client) => {
     });
     lastConfigurationsUpdate = Date.now();
 
-    let guildsCount = client.guilds.cache.size;
+    const guildsCount = client.guilds.cache.size;
 
     discordlists.updateStatistics(guildsCount);
   }

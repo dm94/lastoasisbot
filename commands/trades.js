@@ -14,10 +14,10 @@ commands.tradeSearchWithParams = async (interaction, params) => {
     params: params,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
-    let embedList = [];
+    const embedList = [];
     if (Array.isArray(response.data)) {
       if (response.data.length < 1) {
         await interaction
@@ -58,7 +58,7 @@ commands.tradeSearchWithParams = async (interaction, params) => {
 
 commands.createtrade = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
-  let params = {
+  const params = {
     discordid: interaction.member.id,
     type: "Supply",
     resource: "Aloe Vera",
@@ -67,9 +67,9 @@ commands.createtrade = async (interaction) => {
     region: "eu",
     price: 0,
   };
-  let allItems = await itemsFunctions.getAllItems();
-  let resourceName = interaction.options.getString("resource").toLowerCase();
-  let item = allItems.find((it) => it.name.toLowerCase() == resourceName);
+  const allItems = await itemsFunctions.getAllItems();
+  const resourceName = interaction.options.getString("resource").toLowerCase();
+  const item = allItems.find((it) => it.name.toLowerCase() == resourceName);
   if (item) {
     params.resource = item.name;
     params.region = interaction.options.getString("region")
@@ -94,7 +94,7 @@ commands.createtrade = async (interaction) => {
       params: params,
     };
 
-    let response = await othersFunctions.apiRequest(options);
+    const response = await othersFunctions.apiRequest(options);
     if (response.success) {
       await interaction
         .editReply({
@@ -121,11 +121,11 @@ commands.createtrade = async (interaction) => {
 };
 
 commands.getTradeInfo = (trade) => {
-  let message = new EmbedBuilder()
+  const message = new EmbedBuilder()
     .setColor("#FFE400")
     .setTitle(trade.type + " // " + trade.region);
 
-  let fields = [];
+  const fields = [];
 
   if (trade.resource != null) {
     fields.push({

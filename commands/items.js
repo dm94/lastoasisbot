@@ -15,14 +15,14 @@ itemsCommands.sendRecipe = async (interaction, code) => {
     url: process.env.APP_API_URL + "/recipes/" + code,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
   if (response.success) {
     if (response.data.items != null) {
-      let itemsResponse = JSON.parse(response.data.items);
+      const itemsResponse = JSON.parse(response.data.items);
       const items = await itemsCommands.getAllItems();
-      let embedList = [];
+      const embedList = [];
       itemsResponse.forEach((item) => {
-        let itemData = items.find(
+        const itemData = items.find(
           (data) => item.name != null && data.name === item.name
         );
         if (itemData) {
@@ -81,7 +81,7 @@ itemsCommands.getNecessaryMaterials = async (
   }
 
   if (itemsfilters.length > 0) {
-    let embedList = [];
+    const embedList = [];
     itemsfilters.forEach((item) => {
       if (embedList.length < 10) {
         embedList.push(itemsCommands.getItemInfo(item, multiplier));
@@ -138,7 +138,7 @@ itemsCommands.getItemInfo = (item, multiplier) => {
   }
   name = name.replaceAll("Body", "");
 
-  let message = new EmbedBuilder()
+  const message = new EmbedBuilder()
     .setColor("#FFE400")
     .setTitle(multiplier + "x " + item.name)
     .setDescription("Here are the necessary materials")
@@ -149,14 +149,14 @@ itemsCommands.getItemInfo = (item, multiplier) => {
       "https://resources.stiletto.live/items/" +
         encodeURI(name.trim() + " icon.png")
     );
-  let ingredie = item.crafting;
+  const ingredie = item.crafting;
   if (ingredie != null) {
-    let allIngrediends = [];
-    for (var i = 0; i < ingredie.length; i++) {
-      let output = ingredie[i].output != null ? ingredie[i].output : 1;
-      let le = ingredie[i].ingredients;
-      for (var ing in le) {
-        areItems = true;
+    const allIngrediends = [];
+    const ingredientLength = ingredie.length;
+    for (let i = 0; i < ingredientLength; i++) {
+      const output = ingredie[i].output != null ? ingredie[i].output : 1;
+      const le = ingredie[i].ingredients;
+      for (const ing in le) {
         allIngrediends.push({
           name: le[ing].name,
           value: ((le[ing].count / output) * multiplier).toString(),
@@ -208,7 +208,7 @@ itemsCommands.getTechTree = async (itemName) => {
   if (allItems == null) {
     allItems = await itemsCommands.getAllItems();
   }
-  let item = allItems.find((it) => it.name === itemName);
+  const item = allItems.find((it) => it.name === itemName);
   if (item) {
     if (item.parent) {
       return await itemsCommands.getTechTree(item.parent);

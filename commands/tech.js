@@ -8,13 +8,13 @@ const logger = require("../helpers/logger");
 
 commands.getWhoHasLearntIt = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
-  let itemName = interaction.options.getString("item").trim().toLowerCase();
-  let discordid = interaction.guildId;
+  const itemName = interaction.options.getString("item").trim().toLowerCase();
+  const discordid = interaction.guildId;
 
-  let item = await itemsFunctions.getItem(itemName);
+  const item = await itemsFunctions.getItem(itemName);
 
   if (item != null) {
-    let tree = await itemsFunctions.getTechTree(item.name);
+    const tree = await itemsFunctions.getTechTree(item.name);
     const options = {
       method: "get",
       url: process.env.APP_API_URL + "/bot/" + discordid + "/tech",
@@ -24,10 +24,10 @@ commands.getWhoHasLearntIt = async (interaction) => {
       },
     };
 
-    let response = await othersFunctions.apiRequest(options);
+    const response = await othersFunctions.apiRequest(options);
     if (response.success) {
       if (Array.isArray(response.data) && response.data.length > 0) {
-        let message = new EmbedBuilder()
+        const message = new EmbedBuilder()
           .setColor("#3A78EA")
           .setTitle(item.name)
           .setDescription("These are the people who have learned it")
@@ -35,8 +35,8 @@ commands.getWhoHasLearntIt = async (interaction) => {
             "https://www.stiletto.live/item/" +
               encodeURI(item.name.toLowerCase())
           );
-        let respondeLenght = response.data.length;
-        let learnedList = [];
+        const respondeLenght = response.data.length;
+        const learnedList = [];
         for (let i = 0; i < respondeLenght; i++) {
           if (response.data[i].discordtag != null) {
             learnedList.push({
@@ -81,13 +81,13 @@ commands.getWhoHasLearntIt = async (interaction) => {
 
 commands.addTech = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
-  let itemName = interaction.options.getString("item").trim().toLowerCase();
-  let discordid = interaction.member.id;
+  const itemName = interaction.options.getString("item").trim().toLowerCase();
+  const discordid = interaction.member.id;
 
-  let item = await itemsFunctions.getItem(itemName);
+  const item = await itemsFunctions.getItem(itemName);
 
   if (item != null) {
-    let tree = await itemsFunctions.getTechTree(item.name);
+    const tree = await itemsFunctions.getTechTree(item.name);
     const options = {
       method: "post",
       url: process.env.APP_API_URL + "/bot/" + discordid + "/tech",
@@ -97,7 +97,7 @@ commands.addTech = async (interaction) => {
       },
     };
 
-    let response = await othersFunctions.apiRequest(options);
+    const response = await othersFunctions.apiRequest(options);
     if (response.success) {
       await interaction
         .editReply({

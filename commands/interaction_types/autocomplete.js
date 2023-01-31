@@ -3,13 +3,14 @@ const logger = require("../../helpers/logger");
 
 const controller = {};
 let walkerTypes = [];
+let itemNames = [];
 
-controller.router = (interaction) => {
+controller.router = async (interaction) => {
   try {
     if (interaction.commandName === "walkersearch") {
-      controller.walkersearch(interaction);
+      await controller.walkersearch(interaction);
     } else if (interaction.commandName === "craft") {
-      controller.craft(interaction);
+      await controller.craft(interaction);
     }
   } catch (e) {
     logger.error(e);
@@ -18,25 +19,27 @@ controller.router = (interaction) => {
 
 controller.craft = async (interaction) => {
   const focusedOption = interaction.options.getFocused(true);
-  let items = [];
 
   if (focusedOption.name === "item") {
-    const allItems = await itemController.getAllItems();
-    if (allItems) {
-      items = allItems;
+    if (itemNames.length <= 0) {
+      const allItems = await itemController.getAllItems();
+      if (allItems) {
+        itemNames = allItems
+          .filter((it) => it.crafting && it.name)
+          .map((it) => {
+            return it.name.toLowerCase();
+          });
+      }
     }
   }
 
   let filtered = [];
-  if (focusedOption.value.length > 5) {
-    filtered = items
+  if (focusedOption.value.length >= 5) {
+    filtered = itemNames
       .filter((it) => {
         return focusedOption.value.split(" ").every((word) => {
-          return it.name.toLowerCase().includes(word.toLowerCase());
+          return it.includes(word.toLowerCase());
         });
-      })
-      .map((item) => {
-        return item.name;
       })
       .slice(0, 20);
   }
@@ -53,7 +56,7 @@ controller.walkersearch = async (interaction) => {
     if (walkerTypes.length <= 0) {
       const allItems = await itemController.getAllItems();
       if (allItems) {
-        let onlyWalkers = allItems
+        const onlyWalkers = allItems
           .filter((item) => item.category === "Walkers")
           .map((item) => {
             return item.name.replace("Walker", "").trim();

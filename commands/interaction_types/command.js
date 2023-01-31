@@ -8,15 +8,11 @@ const clanPermissions = require("../../helpers/permissions");
 const configuration = require("../../helpers/config");
 const logger = require("../../helpers/logger");
 
-const defaultPrefix = process.env.DISCORD_PREFIX;
-
 const controller = {};
 
 controller.router = async (interaction, client) => {
   try {
-    if (interaction.commandName === "lohelp") {
-      await interaction.reply(genericCommands.getHelpContent());
-    } else if (interaction.commandName === "vote") {
+    if (interaction.commandName === "vote") {
       await interaction.reply(
         "Help us grow by voting here: https://top.gg/bot/" +
           process.env.DISCORD_CLIENT_ID
@@ -37,14 +33,14 @@ controller.router = async (interaction, client) => {
         interaction.options.getString("code").trim()
       );
     } else if (interaction.commandName === "walkerinfo") {
-      let walkerId = interaction.options.getString("id").trim();
+      const walkerId = interaction.options.getString("id").trim();
       walkerCommands.sendWalkerInfoFromID(
         interaction,
         walkerId,
         interaction.guildId
       );
     } else if (interaction.commandName === "walkersearch") {
-      let params = {
+      const params = {
         discordid: interaction.guildId,
       };
       params.page = interaction.options.getInteger("page")
@@ -82,7 +78,7 @@ controller.router = async (interaction, client) => {
         );
       }
     } else if (interaction.commandName === "tradesearch") {
-      let params = {
+      const params = {
         discordid: interaction.member.id,
       };
       params.page = interaction.options.getInteger("page")
@@ -102,7 +98,7 @@ controller.router = async (interaction, client) => {
       tradesCommands.createtrade(interaction);
     } else if (interaction.commandName === "config") {
       if (await controller.hasPermissions(interaction, "bot")) {
-        let guildConfig = configuration.getConfiguration(
+        const guildConfig = configuration.getConfiguration(
           interaction.guildId,
           client
         );

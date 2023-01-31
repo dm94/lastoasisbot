@@ -11,7 +11,7 @@ const othersFunctions = require("../helpers/others");
 const logger = require("../helpers/logger");
 
 clanCommands.kickMember = async (msg, user) => {
-  let discordid = msg.guild.id;
+  const discordid = msg.guild.id;
 
   if (discordid != null) {
     const options = {
@@ -22,7 +22,7 @@ clanCommands.kickMember = async (msg, user) => {
       },
     };
 
-    let response = await othersFunctions.apiRequest(options);
+    const response = await othersFunctions.apiRequest(options);
 
     if (response.success) {
       othersFunctions.sendChannelMessage(msg.channel, "Member kicked");
@@ -34,8 +34,8 @@ clanCommands.kickMember = async (msg, user) => {
 
 clanCommands.linkserver = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
-  let serverid = interaction.guildId;
-  let memberid = interaction.member.id;
+  const serverid = interaction.guildId;
+  const memberid = interaction.member.id;
 
   if (serverid != null && memberid != null) {
     const options = {
@@ -46,7 +46,7 @@ clanCommands.linkserver = async (interaction) => {
       },
     };
 
-    let response = await othersFunctions.apiRequest(options);
+    const response = await othersFunctions.apiRequest(options);
 
     if (response.success) {
       await interaction
@@ -77,7 +77,7 @@ clanCommands.createDiplomacyList = async (interaction) => {
     diplomacyType = "2";
   }
 
-  let message = await clanCommands.getDiplomacyListMessage(
+  const message = await clanCommands.getDiplomacyListMessage(
     interaction.guildId,
     diplomacyType
   );
@@ -109,7 +109,7 @@ clanCommands.updateDiplomacyList = async (interaction) => {
       diplomacyType = "2";
     }
 
-    let message = await clanCommands.getDiplomacyListMessage(
+    const message = await clanCommands.getDiplomacyListMessage(
       interaction.guildId,
       diplomacyType
     );
@@ -118,10 +118,10 @@ clanCommands.updateDiplomacyList = async (interaction) => {
 };
 
 clanCommands.getDiplomacyListMessage = async (guildId, type) => {
-  let message = {
+  const message = {
     content: "Can only be updated every 10 minutes",
   };
-  let embedsList = [];
+  const embedsList = [];
 
   if (!guildId) {
     return "";
@@ -154,18 +154,18 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
     url: `${process.env.APP_API_URL}/bot/${guildId}/relationships`,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     if (response.data.length > 0) {
-      let diplomacyList = response.data.filter((d) => d.typed == type);
+      const diplomacyList = response.data.filter((d) => d.typed == type);
 
-      let extraClans = [];
+      const extraClans = [];
 
       diplomacyList.forEach((clan, index) => {
-        let name = clan.name ? clan.name : "Clan";
-        let flagcolor = clan.flagcolor ? clan.flagcolor : "#000";
-        let symbol = clan.symbol ? clan.symbol : "C1";
+        const name = clan.name ? clan.name : "Clan";
+        const flagcolor = clan.flagcolor ? clan.flagcolor : "#000";
+        const symbol = clan.symbol ? clan.symbol : "C1";
 
         if (index > 7) {
           extraClans.push(name);
@@ -179,7 +179,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
         }
       });
       if (extraClans.length > 0) {
-        let extraEmbed = new EmbedBuilder()
+        const extraEmbed = new EmbedBuilder()
           .setColor(color)
           .setTitle("More clans");
         let embedText = "";

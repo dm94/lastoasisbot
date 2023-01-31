@@ -18,11 +18,11 @@ walkerCommands.walkerSearchWithParams = async (interaction, params) => {
     params: params,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     if (response.data.length > 0) {
-      let embeds = walkerCommands.getWalkersEmbed(response.data);
+      const embeds = walkerCommands.getWalkersEmbed(response.data);
       await interaction
         .editReply({
           content: "Walker List",
@@ -60,9 +60,9 @@ walkerCommands.getWalkersEmbed = (walkers) => {
   let embedList = [];
   walkers.forEach((walker) => {
     if (walker != null) {
-      let date = new Date(walker.datelastuse);
-      let embed = new EmbedBuilder().setColor("#58ACFA").setTitle(walker.name);
-      let fields = [];
+      const date = new Date(walker.datelastuse);
+      const embed = new EmbedBuilder().setColor("#58ACFA").setTitle(walker.name);
+      const fields = [];
       fields.push({
         name: "Walker ID",
         value: walker.walkerID.toString(),
@@ -107,7 +107,7 @@ walkerCommands.getWalkersEmbed = (walkers) => {
 };
 
 walkerCommands.setnotreadypvp = async (walkerid, msg) => {
-  let params = {
+  const params = {
     walkerid: walkerid,
     ready: 0,
   };
@@ -126,7 +126,7 @@ walkerCommands.editWalker = async (interaction) => {
     },
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
   if (response.success) {
     await interaction
       .editReply({
@@ -151,7 +151,7 @@ walkerCommands.updateWalker = async (guildId, params) => {
     params: params,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
   return response.success;
 };
 
@@ -180,7 +180,7 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
     },
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     if (response.data.length > 0) {
@@ -200,7 +200,7 @@ walkerCommands.walkerAlarm = async (newWalker, msg) => {
 };
 
 walkerCommands.getWalkerListMessage = async (guildId) => {
-  let message = new EmbedBuilder()
+  const message = new EmbedBuilder()
     .setColor("#58ACFA")
     .setTitle("Walker Ready List")
     .setTimestamp();
@@ -215,13 +215,13 @@ walkerCommands.getWalkerListMessage = async (guildId) => {
     },
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     if (response.data.length > 0) {
-      let fields = [];
+      const fields = [];
       response.data.forEach((walker) => {
-        let date = new Date(walker.datelastuse);
+        const date = new Date(walker.datelastuse);
         let type = "Unknown";
 
         if (walker.type != null && walker.type) {
@@ -255,7 +255,7 @@ walkerCommands.updateWalkerList = async (interaction) => {
     interaction.message.createdTimestamp &&
     new Date().getTime() - interaction.message.createdTimestamp > 600000
   ) {
-    let embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
+    const embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
     interaction
       .editReply({
         content: "Can only be updated every 10 minutes",
@@ -267,7 +267,7 @@ walkerCommands.updateWalkerList = async (interaction) => {
 
 walkerCommands.createWalkerList = async (interaction) => {
   await interaction.deferReply();
-  let embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
+  const embed = await walkerCommands.getWalkerListMessage(interaction.guildId);
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()

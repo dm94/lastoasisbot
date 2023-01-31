@@ -9,7 +9,7 @@ controller.getClanPermissions = async (discordId) => {
     url: `${process.env.APP_API_URL}/bot/${discordId}/members`,
   };
 
-  let response = await othersFunctions.apiRequest(options);
+  const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     return response.data;
@@ -24,12 +24,12 @@ controller.userHasPermissions = async (
   permissionType
 ) => {
   if (serverDiscordID && userDiscordId && permissionType) {
-    let allClanPermissions = await controller.getClanPermissions(
+    const allClanPermissions = await controller.getClanPermissions(
       serverDiscordID
     );
 
     if (allClanPermissions != null) {
-      let user = allClanPermissions.find(
+      const user = allClanPermissions.find(
         (userData) => userData.discordID === userDiscordId
       );
       if (user && user[permissionType] === "1") {

@@ -4,6 +4,7 @@ const fs = require("fs");
 const controller = {};
 const logger = require("./helpers/logger");
 
+const commandsJson = [];
 const commands = [];
 const commandFiles = fs
   .readdirSync("./commands/slashcommands")
@@ -12,7 +13,8 @@ const commandFiles = fs
 for (const file of commandFiles) {
   const command = require(`./commands/slashcommands/${file}`);
   console.info("/" + command.data.name + " = " + command.data.description);
-  commands.push(command.data.toJSON());
+  commands.push(command.data);
+  commandsJson.push(command.data.toJSON());
 }
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
@@ -20,7 +22,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 controller.registerSlashCommandsGlobal = async () => {
   try {
     await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
-      body: commands,
+      body: commandsJson,
     });
   } catch (error) {
     logger.error(error);
@@ -33,13 +35,17 @@ controller.registerSlashCommands = async (guildId) => {
       await rest.put(
         Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId),
         {
-          body: commands,
+          body: commandsJson,
         }
       );
     }
   } catch (error) {
     logger.error(error);
   }
+};
+
+controller.getCommands = () => {
+  return commands;
 };
 
 module.exports = controller;

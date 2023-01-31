@@ -33,13 +33,11 @@ controller.sendDiscordBotList = async (guildsCount) => {
     },
   };
   return Axios.request(options)
-    .then((response) => {
+    .then(() => {
       console.log("discordbotlist updated");
-      return;
     })
     .catch((error) => {
       logger.error(error);
-      return;
     });
 };
 
@@ -64,13 +62,11 @@ controller.sendTopGG = async (guildsCount) => {
     },
   };
   return Axios.request(options)
-    .then((response) => {
+    .then(() => {
       console.log("TopGG updated");
-      return;
     })
     .catch((error) => {
       logger.error(error);
-      return;
     });
 };
 
@@ -98,13 +94,11 @@ controller.sendDiscordBotsGG = async (guildsCount) => {
     },
   };
   return Axios.request(options)
-    .then((response) => {
+    .then(() => {
       console.log("discord.bots.gg updated");
-      return;
     })
     .catch((error) => {
       logger.error(error);
-      return;
     });
 };
 

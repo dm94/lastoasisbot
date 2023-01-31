@@ -12,10 +12,7 @@ const buttonController = require("./commands/interaction_types/button");
 const commandController = require("./commands/interaction_types/command");
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages /*GatewayIntentBits.MessageContent*/,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
 client.on("ready", () => {
@@ -23,7 +20,6 @@ client.on("ready", () => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
-const defaultPrefix = process.env.DISCORD_PREFIX;
 
 client.on("ready", () => {
   configuration.updateConfigurations(client);
@@ -42,14 +38,17 @@ client.on("ready", () => {
 client.on("interactionCreate", async (interaction) => {
   try {
     if (interaction.type === InteractionType.ApplicationCommandAutocomplete) {
-      autocompleteController.router(interaction);
-      return;
+      await autocompleteController.router(interaction);
     } else if (interaction.isButton()) {
-      buttonController.router(interaction);
-      return;
+      await buttonController.router(interaction);
     } else if (interaction.type === InteractionType.ApplicationCommand) {
-      commandController.router(interaction, client);
-      return;
+      if (interaction.commandName === "lohelp") {
+        await interaction.reply(
+          genericCommands.getHelpContent(slashCommandsRegister.getCommands())
+        );
+      } else {
+        await commandController.router(interaction, client);
+      }
     }
   } catch (e) {
     logger.error(e);
@@ -64,7 +63,7 @@ client.on("messageCreate", (msg) => {
 
       if (guildConfig != null) {
         if (
-          guildConfig.readclanlog == true &&
+          Boolean(guildConfig.readclanlog) &&
           msg.content.includes("traveled") &&
           msg.author.bot
         ) {
@@ -74,7 +73,9 @@ client.on("messageCreate", (msg) => {
           if (/\((\d+)\)/.test(msg.content)) {
             try {
               walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
-            } catch (error) {}
+            } catch (error) {
+              console.error(error);
+            }
           }
           if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
             lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
@@ -85,7 +86,7 @@ client.on("messageCreate", (msg) => {
             )[1];
           }
 
-          if (guildConfig.walkerAlarm == true) {
+          if (guildConfig.walkerAlarm) {
             walkerCommands.walkerAlarm(
               {
                 walkerID: walkerId,
@@ -104,48 +105,20 @@ client.on("messageCreate", (msg) => {
             msg.guild.id
           );
 
-          if (guildConfig.setnotreadypvp == true) {
+          if (guildConfig.setnotreadypvp) {
             walkerCommands.setnotreadypvp(walkerId, msg);
           }
         }
 
         if (
-          guildConfig.automatickick == true &&
+          Boolean(guildConfig.automatickick) &&
           msg.content.includes("kicked") &&
           msg.author.bot
         ) {
           if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
-            let user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
+            const user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
             clanCommands.kickMember(msg, user);
           }
-        }
-
-        if (!msg.content.startsWith(defaultPrefix) || msg.author.bot) return;
-
-        const args = msg.content.slice(defaultPrefix.length).trim().split(" ");
-        const command = args.shift().toLowerCase();
-
-        if (
-          command === "lolistwalkers" ||
-          command === "lowalkersearchbyname" ||
-          command === "lowalkersearchbyowner" ||
-          command === "lowalkersearchbylastuser" ||
-          command === "skilltree" ||
-          command === "learned" ||
-          command === "loconfig" ||
-          command === "linkserver" ||
-          command === "loconfigupdate" ||
-          command === "createtrade" ||
-          command === "tradesearch" ||
-          command === "lorecipe" ||
-          command === "locraft" ||
-          command === "lowalkerinfo" ||
-          command === "walkersearch" ||
-          command === "locommands" ||
-          command === "lohelp" ||
-          command === "loinfo"
-        ) {
-          genericCommands.obsoleteCommand(msg);
         }
       } else {
         configuration.createConfiguration(msg.guild.id);

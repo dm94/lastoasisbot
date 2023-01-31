@@ -1,6 +1,6 @@
 {
   "name": "lastoasis-bot",
-  "version": "3.6.2",
+  "version": "3.6.3",
   "main": "index.js",
   "dependencies": {
     "axios": "^1.2.1",
@@ -16,8 +16,13 @@
     "node": "16.x"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint --fix --ext .js,.jsx ."
   },
   "author": "Dm94Dani",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.33.0",
+    "prettier": "^2.8.3"
+  }
 }

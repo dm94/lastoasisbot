@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "sonarsource.sonarlint-vscode",
+    "SonarSource.sonarlint-vscode"
+  ]
+}
