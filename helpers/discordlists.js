@@ -22,9 +22,7 @@ controller.sendDiscordBotList = async (guildsCount) => {
   const options = {
     method: "post",
     url:
-      "https://discordbotlist.com/api/v1/bots/" +
-      process.env.DISCORD_CLIENT_ID +
-      "/stats",
+      `https://discordbotlist.com/api/v1/bots/${process.env.DISCORD_CLIENT_ID}/stats`,
     data: {
       guilds: guildsCount,
     },
@@ -53,7 +51,7 @@ controller.sendTopGG = async (guildsCount) => {
 
   const options = {
     method: "post",
-    url: "https://top.gg/api/bots/" + process.env.DISCORD_CLIENT_ID + "/stats",
+    url: `https://top.gg/api/bots/${process.env.DISCORD_CLIENT_ID}/stats`,
     data: {
       server_count: guildsCount,
     },
@@ -83,9 +81,7 @@ controller.sendDiscordBotsGG = async (guildsCount) => {
   const options = {
     method: "post",
     url:
-      "https://discord.bots.gg/api/v1/bots/" +
-      process.env.DISCORD_CLIENT_ID +
-      "/stats",
+      `https://discord.bots.gg/api/v1/bots/${process.env.DISCORD_CLIENT_ID}/stats`,
     data: {
       guildCount: guildsCount,
     },

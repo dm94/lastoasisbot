@@ -10,13 +10,16 @@ require("dotenv").config();
 const othersFunctions = require("../helpers/others");
 const logger = require("../helpers/logger");
 
+const STATIC_RESOURCES_URL = process.env.STATIC_RESOURCES_URL;
+const WEBPAGE_URL = process.env.WEBPAGE_URL;
+
 clanCommands.kickMember = async (msg, user) => {
   const discordid = msg.guild.id;
 
   if (discordid != null) {
     const options = {
       method: "delete",
-      url: process.env.APP_API_URL + "/bot/clans/" + discordid,
+      url: `${process.env.APP_API_URL}/bot/clans/${discordid}`,
       params: {
         nick: user,
       },
@@ -40,7 +43,7 @@ clanCommands.linkserver = async (interaction) => {
   if (serverid != null && memberid != null) {
     const options = {
       method: "post",
-      url: process.env.APP_API_URL + "/bot/clans/" + serverid,
+      url: `${process.env.APP_API_URL}/bot/clans/${serverid}`,
       params: {
         memberid: memberid,
       },
@@ -84,7 +87,7 @@ clanCommands.createDiplomacyList = async (interaction) => {
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setCustomId("updateDiplomacyList-" + diplomacyType)
+      .setCustomId(`updateDiplomacyList-${diplomacyType}`)
       .setLabel("Update")
       .setStyle(ButtonStyle.Primary)
   );
@@ -96,8 +99,7 @@ clanCommands.createDiplomacyList = async (interaction) => {
 
 clanCommands.updateDiplomacyList = async (interaction) => {
   if (
-    interaction.message &&
-    interaction.message.createdTimestamp &&
+    interaction.message?.createdTimestamp &&
     new Date().getTime() - interaction.message.createdTimestamp > 600000
   ) {
     let diplomacyType = "1";
@@ -158,7 +160,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
 
   if (response.success) {
     if (response.data.length > 0) {
-      const diplomacyList = response.data.filter((d) => d.typed == type);
+      const diplomacyList = response.data.filter((d) => d.typed === type);
 
       const extraClans = [];
 
@@ -173,7 +175,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
           embedsList.push(
             new EmbedBuilder().setColor(flagcolor).setAuthor({
               name: name,
-              iconURL: `https://resources.stiletto.live/symbols/${symbol}.png`,
+              iconURL: `${STATIC_RESOURCES_URL}/symbols/${symbol}.png`,
             })
           );
         }
@@ -184,7 +186,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
           .setTitle("More clans");
         let embedText = "";
         extraClans.forEach((clan) => {
-          embedText = embedText + clan + "\n";
+          embedText = `${embedText + clan}\n`;
         });
         extraEmbed.setDescription(embedText);
         embedsList.push(extraEmbed);
@@ -194,7 +196,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
         new EmbedBuilder()
           .setColor(color)
           .setTitle(
-            "Diplomacy is empty. You can manage it from here: https://www.stiletto.live/diplomacy"
+            `Diplomacy is empty. You can manage it from here: ${WEBPAGE_URL}/diplomacy`
           )
       );
     }
@@ -203,7 +205,7 @@ clanCommands.getDiplomacyListMessage = async (guildId, type) => {
       new EmbedBuilder()
         .setColor(color)
         .setTitle(
-          "Diplomacy is empty. You can manage it from here: https://www.stiletto.live/diplomacy"
+          `Diplomacy is empty. You can manage it from here: ${WEBPAGE_URL}/diplomacy`
         )
     );
   }

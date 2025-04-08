@@ -8,11 +8,14 @@ const othersFunctions = require("../helpers/others");
 let itemsLastCheck = 0;
 let allItems = null;
 
+const WEBPAGE_URL = process.env.WEBPAGE_URL;
+const STATIC_RESOURCES_URL = process.env.STATIC_RESOURCES_URL;
+
 itemsCommands.sendRecipe = async (interaction, code) => {
   await interaction.deferReply();
   const options = {
     method: "get",
-    url: process.env.APP_API_URL + "/recipes/" + code,
+    url: `${process.env.APP_API_URL}/recipes/${code}`,
   };
 
   const response = await othersFunctions.apiRequest(options);
@@ -140,14 +143,13 @@ itemsCommands.getItemInfo = (item, multiplier) => {
 
   const message = new EmbedBuilder()
     .setColor("#FFE400")
-    .setTitle(multiplier + "x " + item.name)
+    .setTitle(`${multiplier}x ${item.name}`)
     .setDescription("Here are the necessary materials")
     .setURL(
-      "https://www.stiletto.live/item/" + encodeURI(item.name.toLowerCase())
+      `${WEBPAGE_URL}/item/${encodeURI(item.name.toLowerCase())}`
     )
     .setThumbnail(
-      "https://resources.stiletto.live/items/" +
-        encodeURI(name.trim() + " icon.png")
+      `${STATIC_RESOURCES_URL}/items/${encodeURI(`${name.trim()} icon.png`)}`
     );
   const ingredie = item.crafting;
   if (ingredie != null) {
@@ -168,7 +170,7 @@ itemsCommands.getItemInfo = (item, multiplier) => {
   }
   if (item.cost != null) {
     message.setFooter({
-      text: "Cost: " + item.cost.count + " " + item.cost.name,
+      text: `Cost: ${item.cost.count} ${item.cost.name}`,
     });
   }
   return message;
@@ -177,20 +179,20 @@ itemsCommands.getItemInfo = (item, multiplier) => {
 itemsCommands.getAllItems = async () => {
   if (allItems != null && itemsLastCheck >= Date.now() - 3600000) {
     return allItems;
-  } else {
-    return Axios.get(
-      "https://raw.githubusercontent.com/dm94/stiletto-web/master/public/json/items_min.json"
-    )
-      .then((response) => {
-        allItems = response.data;
-        allItems = allItems.filter((it) => it.crafting);
-        itemsLastCheck = Date.now();
-        return allItems;
-      })
-      .catch((error) => {
-        logger.error(error);
-      });
   }
+
+  return Axios.get(
+    "https://raw.githubusercontent.com/dm94/stiletto-web/master/public/json/items_min.json"
+  )
+    .then((response) => {
+      allItems = response.data;
+      allItems = allItems.filter((it) => it.crafting);
+      itemsLastCheck = Date.now();
+      return allItems;
+    })
+    .catch((error) => {
+      logger.error(error);
+    });
 };
 
 itemsCommands.getItem = async (itemName) => {
@@ -212,12 +214,11 @@ itemsCommands.getTechTree = async (itemName) => {
   if (item) {
     if (item.parent) {
       return await itemsCommands.getTechTree(item.parent);
-    } else {
-      return item.name;
     }
-  } else {
-    return itemName;
+    return item.name;
   }
+
+  return itemName;
 };
 
 module.exports = itemsCommands;

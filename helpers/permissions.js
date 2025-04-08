@@ -13,9 +13,9 @@ controller.getClanPermissions = async (discordId) => {
 
   if (response.success) {
     return response.data;
-  } else {
-    return null;
   }
+
+  return null;
 };
 
 controller.userHasPermissions = async (

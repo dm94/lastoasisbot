@@ -6,6 +6,8 @@ const itemsFunctions = require("../commands/items");
 const othersFunctions = require("../helpers/others");
 const logger = require("../helpers/logger");
 
+const WEBPAGE_URL = process.env.WEBPAGE_URL;
+
 commands.getWhoHasLearntIt = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
   const itemName = interaction.options.getString("item").trim().toLowerCase();
@@ -17,7 +19,7 @@ commands.getWhoHasLearntIt = async (interaction) => {
     const tree = await itemsFunctions.getTechTree(item.name);
     const options = {
       method: "get",
-      url: process.env.APP_API_URL + "/bot/" + discordid + "/tech",
+      url: `${process.env.APP_API_URL}/bot/${discordid}/tech`,
       params: {
         tree: tree,
         tech: item.name,
@@ -32,8 +34,7 @@ commands.getWhoHasLearntIt = async (interaction) => {
           .setTitle(item.name)
           .setDescription("These are the people who have learned it")
           .setURL(
-            "https://www.stiletto.live/item/" +
-              encodeURI(item.name.toLowerCase())
+            `${WEBPAGE_URL}/item/${encodeURI(item.name.toLowerCase())}`
           );
         const respondeLenght = response.data.length;
         const learnedList = [];
@@ -90,7 +91,7 @@ commands.addTech = async (interaction) => {
     const tree = await itemsFunctions.getTechTree(item.name);
     const options = {
       method: "post",
-      url: process.env.APP_API_URL + "/bot/" + discordid + "/tech",
+      url: `${process.env.APP_API_URL}/bot/${discordid}/tech`,
       params: {
         tree: tree,
         tech: item.name,
@@ -101,7 +102,7 @@ commands.addTech = async (interaction) => {
     if (response.success) {
       await interaction
         .editReply({
-          content: "Added to the technology tree: " + item.name,
+          content: `Added to the technology tree: ${item.name}`,
           ephemeral: true,
         })
         .catch((error) => logger.error(error));

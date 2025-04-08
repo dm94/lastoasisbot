@@ -22,16 +22,16 @@ controller.getConfiguration = (guildID, client) => {
 controller.getConfigurations = async () => {
   const options = {
     method: "get",
-    url: process.env.APP_API_URL + "/bot/config",
+    url: `${process.env.APP_API_URL}/bot/config`,
   };
 
   const response = await othersFunctions.apiRequest(options);
 
   if (response.success) {
     return response.data;
-  } else {
-    return null;
   }
+
+  return null;
 };
 
 controller.sendConfigInfo = async (interaction, guildConfig) => {
@@ -97,7 +97,7 @@ controller.updateConfig = async (interaction) => {
 
   const options = {
     method: "put",
-    url: process.env.APP_API_URL + "/bot/config/" + guildId,
+    url: `${process.env.APP_API_URL}/bot/config/${guildId}`,
     params: params,
   };
 
@@ -136,7 +136,7 @@ controller.createConfiguration = async (guildId) => {
   };
   const options = {
     method: "put",
-    url: process.env.APP_API_URL + "/bot/config/" + guildId,
+    url: `${process.env.APP_API_URL}/bot/config/${guildId}`,
     params: params,
   };
 
@@ -151,13 +151,13 @@ controller.createConfiguration = async (guildId) => {
 };
 
 controller.updateConfigurations = async (client) => {
-  if (client && client.guilds && client.guilds.cache) {
+  if (client?.guilds?.cache) {
     const allConfigurations = await controller.getConfigurations();
     client.guilds.cache.forEach((guild) => {
       let config = null;
       if (allConfigurations) {
         config = allConfigurations.find(
-          (server) => server.serverdiscordid == guild.id
+          (server) => server.serverdiscordid === guild.id
         );
       }
       if (config) {
