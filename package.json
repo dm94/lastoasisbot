@@ -13,7 +13,7 @@
 		"url": "https://github.com/dm94/lastoasisbot.git"
 	},
 	"engines": {
-		"node": "16.x"
+		"node": "22.x"
 	},
 	"scripts": {
 		"start": "node index.js",

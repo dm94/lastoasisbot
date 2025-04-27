@@ -7,7 +7,7 @@ module.exports = {
     .addIntegerOption((option) =>
       option
         .setName("page")
-        .setDescription("Page (10 walkers per page)")
+        .setDescription("Page (10 trades per page)")
         .setRequired(false)
     )
     .addStringOption((option) =>

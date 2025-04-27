@@ -1,4 +1,3 @@
-const walkerCommands = require("../walkers");
 const clanCommands = require("../clans");
 const techCommands = require("../tech");
 const genericCommands = require("../generic");
@@ -14,8 +13,7 @@ controller.router = async (interaction, client) => {
   try {
     if (interaction.commandName === "vote") {
       await interaction.reply(
-        "Help us grow by voting here: https://top.gg/bot/" +
-          process.env.DISCORD_CLIENT_ID
+        `Help us grow by voting here: https://top.gg/bot/${process.env.DISCORD_CLIENT_ID}`
       );
     } else if (interaction.commandName === "loinfo") {
       await interaction.reply({ embeds: [genericCommands.getInfoContent()] });
@@ -32,51 +30,6 @@ controller.router = async (interaction, client) => {
         interaction,
         interaction.options.getString("code").trim()
       );
-    } else if (interaction.commandName === "walkerinfo") {
-      const walkerId = interaction.options.getString("id").trim();
-      walkerCommands.sendWalkerInfoFromID(
-        interaction,
-        walkerId,
-        interaction.guildId
-      );
-    } else if (interaction.commandName === "walkersearch") {
-      const params = {
-        discordid: interaction.guildId,
-      };
-      params.page = interaction.options.getInteger("page")
-        ? interaction.options.getInteger("page")
-        : 1;
-      params.name = interaction.options.getString("name")
-        ? interaction.options.getString("name").trim()
-        : undefined;
-      params.owner = interaction.options.getString("owner")
-        ? interaction.options.getString("owner").trim()
-        : undefined;
-      params.lastuser = interaction.options.getString("lastuser")
-        ? interaction.options.getString("lastuser").trim()
-        : undefined;
-      params.desc = interaction.options.getString("description")
-        ? interaction.options.getString("description").trim()
-        : undefined;
-      params.type = interaction.options.getString("type")
-        ? interaction.options.getString("type").trim()
-        : undefined;
-      params.ready = interaction.options.getBoolean("ready") ? 1 : undefined;
-      params.use = interaction.options.getString("use")
-        ? interaction.options.getString("use")
-        : undefined;
-      params.walkerid = interaction.options.getString("id")
-        ? interaction.options.getString("id")
-        : undefined;
-      walkerCommands.walkerSearchWithParams(interaction, params);
-    } else if (interaction.commandName === "editwalker") {
-      if (await controller.hasPermissions(interaction, "walkers")) {
-        walkerCommands.editWalker(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
     } else if (interaction.commandName === "tradesearch") {
       const params = {
         discordid: interaction.member.id,
@@ -123,14 +76,6 @@ controller.router = async (interaction, client) => {
     } else if (interaction.commandName === "linkserver") {
       if (await controller.hasPermissions(interaction, "bot")) {
         clanCommands.linkserver(interaction);
-      } else {
-        await interaction.reply(
-          "You do not have permissions to use this command"
-        );
-      }
-    } else if (interaction.commandName === "createwalkerlist") {
-      if (await controller.hasPermissions(interaction, "walkers")) {
-        walkerCommands.createWalkerList(interaction);
       } else {
         await interaction.reply(
           "You do not have permissions to use this command"

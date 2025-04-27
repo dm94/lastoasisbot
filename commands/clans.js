@@ -13,28 +13,6 @@ const logger = require("../helpers/logger");
 const STATIC_RESOURCES_URL = process.env.STATIC_RESOURCES_URL;
 const WEBPAGE_URL = process.env.WEBPAGE_URL;
 
-clanCommands.kickMember = async (msg, user) => {
-  const discordid = msg.guild.id;
-
-  if (discordid != null) {
-    const options = {
-      method: "delete",
-      url: `${process.env.APP_API_URL}/bot/clans/${discordid}`,
-      params: {
-        nick: user,
-      },
-    };
-
-    const response = await othersFunctions.apiRequest(options);
-
-    if (response.success) {
-      othersFunctions.sendChannelMessage(msg.channel, "Member kicked");
-    } else {
-      othersFunctions.sendChannelMessage(msg.channel, response.data);
-    }
-  }
-};
-
 clanCommands.linkserver = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
   const serverid = interaction.guildId;
