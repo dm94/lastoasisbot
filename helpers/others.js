@@ -25,8 +25,8 @@ controller.apiRequest = async (options) => {
   }
 
   options.headers = {
+    ...options.headers,
     apiKey: process.env.APP_API_KEY,
-    "Content-type": "charset=utf-8",
   };
   return Axios.request(options)
     .then((response) => {
@@ -35,27 +35,30 @@ controller.apiRequest = async (options) => {
           success: false,
           data: "Error: Missing data",
         };
-      } else if (response.status == "401") {
+      }
+      if (response.status == "401") {
         return {
           success: false,
           data: "Error: You do not have permissions",
         };
-      } else if (response.status == "404") {
+      }
+      if (response.status == "404") {
         return {
           success: false,
           data: "Error: Nothing found",
         };
-      } else if (response.status == "503") {
+      }
+      if (response.status == "503") {
         return {
           success: false,
           data: "Error connecting to database",
         };
-      } else {
-        return {
-          success: true,
-          data: response.data,
-        };
       }
+
+      return {
+        success: true,
+        data: response.data,
+      };
     })
     .catch((error) => {
       logger.info(options);
@@ -66,17 +69,20 @@ controller.apiRequest = async (options) => {
             success: false,
             data: "Error: Missing data",
           };
-        } else if (error.response.status == "401") {
+        }
+        if (error.response.status == "401") {
           return {
             success: false,
             data: "Error: You do not have permissions",
           };
-        } else if (error.response.status == "404") {
+        }
+        if (error.response.status == "404") {
           return {
             success: false,
             data: "Error: Nothing found",
           };
-        } else if (error.response.status == "503") {
+        }
+        if (error.response.status == "503") {
           return {
             success: false,
             data: "Error connecting to database",

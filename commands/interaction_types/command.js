@@ -74,7 +74,9 @@ controller.router = async (interaction, client) => {
         );
       }
     } else if (interaction.commandName === "linkserver") {
-      if (await controller.hasPermissions(interaction, "bot")) {
+      const hasPermissions = await controller.hasPermissions(interaction, "bot");
+
+      if (hasPermissions) {
         clanCommands.linkserver(interaction);
       } else {
         await interaction.reply(

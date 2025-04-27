@@ -25,6 +25,12 @@ clanCommands.linkserver = async (interaction) => {
       params: {
         memberid: memberid,
       },
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      data: {
+        memberid: memberid,
+      }
     };
 
     const response = await othersFunctions.apiRequest(options);

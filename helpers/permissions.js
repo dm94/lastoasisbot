@@ -32,6 +32,7 @@ controller.userHasPermissions = async (
       const user = allClanPermissions.find(
         (userData) => userData.discordID === userDiscordId
       );
+
       if (user && user[permissionType] === "1") {
         return true;
       }
