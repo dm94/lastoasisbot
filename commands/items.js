@@ -60,8 +60,9 @@ itemsCommands.sendRecipe = async (interaction, code) => {
 itemsCommands.getNecessaryMaterials = async (
   interaction,
   itemName,
-  multiplier
+  multiplierParam
 ) => {
+  let multiplier = multiplierParam;
   await interaction.deferReply();
   if (itemName.length <= 0) {
     return;

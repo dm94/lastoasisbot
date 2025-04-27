@@ -1,8 +1,6 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, InteractionType } = require("discord.js");
 const genericCommands = require("./commands/generic");
-const walkerCommands = require("./commands/walkers");
-const clanCommands = require("./commands/clans");
 const configuration = require("./helpers/config");
 const slashCommandsRegister = require("./slashCommandsRegister");
 const logger = require("./helpers/logger");
@@ -29,7 +27,7 @@ client.on("ready", () => {
     client.guilds.cache.forEach((guild) => {
       slashCommandsRegister.registerSlashCommands(guild.id);
     });
-    console.log("Servers:" + client.guilds.cache.size);
+    console.log(`Servers:${client.guilds.cache.size}`);
   } else {
     slashCommandsRegister.registerSlashCommandsGlobal();
   }
@@ -61,66 +59,7 @@ client.on("messageCreate", (msg) => {
     if (msg.guild.id) {
       guildConfig = configuration.getConfiguration(msg.guild.id, client);
 
-      if (guildConfig != null) {
-        if (
-          Boolean(guildConfig.readclanlog) &&
-          msg.content.includes("traveled") &&
-          msg.author.bot
-        ) {
-          let walkerId = 0;
-          let walkerName = "";
-          let lastUser = "";
-          if (/\((\d+)\)/.test(msg.content)) {
-            try {
-              walkerId = parseInt(msg.content.match(/\((\d+)\)/)[1]);
-            } catch (error) {
-              console.error(error);
-            }
-          }
-          if (/(?:``)(.+)(?:`` traveled)/.test(msg.content)) {
-            lastUser = msg.content.match(/(?:``)(.+)(?:`` traveled)/)[1];
-          }
-          if (/(?:with walker\s``)(.+)(?:``\s)/.test(msg.content)) {
-            walkerName = msg.content.match(
-              /(?:with walker\s``)(.+)(?:``\s)/
-            )[1];
-          }
-
-          if (guildConfig.walkerAlarm) {
-            walkerCommands.walkerAlarm(
-              {
-                walkerID: walkerId,
-                lastUser: lastUser,
-                name: walkerName,
-              },
-              msg
-            );
-          }
-          walkerCommands.insertNewWalker(
-            {
-              walkerID: walkerId,
-              lastUser: lastUser,
-              name: walkerName,
-            },
-            msg.guild.id
-          );
-
-          if (guildConfig.setnotreadypvp) {
-            walkerCommands.setnotreadypvp(walkerId, msg);
-          }
-        }
-
-        if (
-          Boolean(guildConfig.automatickick) &&
-          msg.content.includes("kicked") &&
-          msg.author.bot
-        ) {
-          if (/(?:``)(.+)(?:`` kicked)/.test(msg.content)) {
-            const user = msg.content.match(/(?:``)(.+)(?:`` kicked)/)[1];
-            clanCommands.kickMember(msg, user);
-          }
-        }
-      } else {
+      if (!guildConfig) {
         configuration.createConfiguration(msg.guild.id);
       }
     }

@@ -1,8 +1,9 @@
 {
 	"name": "lastoasis-bot",
-	"version": "3.6.4",
+	"version": "3.7.0",
 	"main": "index.js",
 	"dependencies": {
+		"@discordjs/builders": "^1.11.1",
 		"axios": "^1.2.1",
 		"discord.js": "^14.0.3",
 		"dotenv": "^16.0.0",
@@ -13,7 +14,7 @@
 		"url": "https://github.com/dm94/lastoasisbot.git"
 	},
 	"engines": {
-		"node": "16.x"
+		"node": "22.x"
 	},
 	"scripts": {
 		"start": "node index.js",

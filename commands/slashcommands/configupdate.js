@@ -23,35 +23,5 @@ module.exports = {
           { name: "ZH", value: "zh" }
         )
         .setRequired(true)
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("clanlog")
-        .setDescription("For reading the clan log")
-        .setRequired(true)
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("kick")
-        .setDescription(
-          "If you want to automatically kick out of the website those who are kicked out in the game"
-        )
-        .setRequired(true)
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("readypvp")
-        .setDescription(
-          "If you want to automatically mark as not ready the used pvp walkers"
-        )
-        .setRequired(true)
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("walkeralarm")
-        .setDescription(
-          "If you want the bot to warn you if someone uses a walker that has another owner"
-        )
-        .setRequired(true)
     ),
 };
