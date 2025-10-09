@@ -3,7 +3,7 @@
 	"version": "3.7.1",
 	"main": "index.js",
 	"dependencies": {
-		"@discordjs/builders": "^1.11.3",
+		"@discordjs/builders": "^1.12.2",
 		"axios": "^1.12.2",
 		"discord.js": "^14.23.2",
 		"dotenv": "^17.2.3",
