@@ -24,6 +24,6 @@
 	"license": "MIT",
 	"devDependencies": {
 		"eslint": "^10.4.1",
-		"prettier": "^3.8.4"
+		"prettier": "^3.9.1"
 	}
 }
