@@ -18,8 +18,8 @@ importers:
         specifier: ^14.27.0
         version: 14.27.0
       dotenv:
-        specifier: ^18.0.3
-        version: 18.0.3
+        specifier: ^18.0.4
+        version: 18.0.4
       winston:
         specifier: ^3.19.0
         version: 3.19.0
@@ -261,8 +261,8 @@ packages:
     resolution: {integrity: sha512-qHbFlFG2N7y3LjPySYsL6A1+BnX6bkTVgo842EX0CqVPk/KTMwZkojPHEXKsQUpWZNyz5BISNHK1cPpQw0+m4A==}
     engines: {node: '>=18'}
 
-  dotenv@18.0.3:
-    resolution: {integrity: sha512-/8CJTyL817qPnfbQrJgOEcrU3fDrJkRIoXBE566wHuvIXKOCHUZhPqGPbCPi9SogjdGnreF0TlvnTgK6J/8zpA==}
+  dotenv@18.0.4:
+    resolution: {integrity: sha512-jGt9uI5BIxpVO15kvy+iEFqNAwxYClKWnkptLjSNPnFLC003Imd0ofr3aEVsbpHdSBdSsbcApNIlz4nbyGMwdA==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -899,7 +899,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  dotenv@18.0.3: {}
+  dotenv@18.0.4: {}
 
   dunder-proto@1.0.1:
     dependencies:
